@@ -1,5 +1,26 @@
+# LRG — Liquidation Route Graph
 
-with `CF` the close factor, `S` the supply cap, `P` the oracle price, and `β` the share of the book liquidatable at once. `β = 1` is adversarial and is the default.
+What a liquidation actually costs to execute on-chain, and what that implies for lending-market risk parameters.
+
+A lending protocol's liquidation bonus has to cover the cost of converting seized collateral back into the debt asset. That conversion is a path through the chain's trading venues, and its cost depends on which pools exist, how deep they are at the current price, how many hops the path takes, and how much is being sold. LRG builds that path graph from live pool state and inverts it: for each collateral and debt asset, how much can clear the routes within the bonus available to a liquidator.
+
+The reference instance is [Navi Protocol](https://naviprotocol.io) on Sui — 24 assets, 506 ordered liquidation pairs, six venues. The engine itself is protocol- and chain-agnostic; everything specific to Navi lives in one file.
+
+---
+
+## The condition
+
+A liquidator repays debt `D` and receives collateral worth `(1 + b)·D`, where `b` is the bonus net of whatever share the protocol retains. They sell that collateral at a total cost `c` — swap fees plus price impact, referenced to the oracle rate — and must end with at least `(1 + φ)·D` to cover the repayment and the flash-loan fee:
+
+    (1 + b) * (1 - c) >= 1 + phi      which is      c <= 1 - (1 + phi) / (1 + b)
+
+The right-hand side is the **cost budget**. The familiar first-order form `b − φ` overstates it by roughly `b` squared, because it measures the loss against the pre-bonus base while the quantity being sold is the post-bonus amount. At a 10% bonus with a 10% protocol share the exact budget is **8.17%**, not 8.91%; at a 15% bonus the gap is 1.6 percentage points. LRG uses the exact form.
+
+The quantity that has to clear is the collateral a full liquidation would put on the market:
+
+    Q = beta * CF * (1 + b) * LTV * S * P
+
+with `CF` the close factor, `S` the supply cap, `P` the oracle price, and `beta` the share of the book liquidatable at once. `beta = 1` is adversarial and is the default.
 
 **Capacity** `Q*` is the inverse: the largest `Q` whose route cost stays inside the budget. Comparing `Q` against `Q*` is the question the tool exists to answer.
 
@@ -8,8 +29,8 @@ with `CF` the close factor, `S` the supply cap, `P` the oracle price, and `β` t
 ## Install
 
 ```bash
-git clone https://github.com/ipakresearch/lrg
-cd lrg
+git clone https://github.com/ipakresearch/ipak-lrg
+cd ipak-lrg
 pip install -r requirements.txt
 ```
 
@@ -56,11 +77,23 @@ r = load("data/navi_pools.csv", navi.COIN_TYPES)
 r.find("vSUI", "SUI")
 ```
 
+```
+1. vSUI → SUI   (1 hop)
+     vSUI → SUI
+       ferra-dlmm       DLMM      $     111,530  fee ?        0x0d6b...
+       cetus            CLMM      $     107,199  fee 0.05%    0xa528...
+       momentum         CLMM      $      94,825  fee 0.05%    0x4e1a...
+       bluefin          CLMM      $      69,029  fee 0.20%    0x8f0c...
+
+2. vSUI → BUCK → SUI   (2 hops)
+     ...
+```
+
 ### Reading the matrix
 
 ```python
 df = analysis.to_frame(M)              # one row per pair: capacity, path, hops
-analysis.to_wide(df)                   # collateral × debt grid
+analysis.to_wide(df)                   # collateral x debt grid
 analysis.collateral_view(M)            # Q vs Q*, ratio, implied cap, flags
 analysis.row_stats(M)                  # min / p10 / median / p90 / max per row
 analysis.concentration(M)              # one thin route, or thin throughout?
@@ -107,7 +140,7 @@ Adding a venue means writing a class that satisfies `lrg.pool.Pool` — five met
 |---|---|---|
 | route selection | every simple path up to 4 hops, top 20 by bottleneck depth, best by capacity | a thin direct pool loses to a deeper two-hop; shortest-path gets this wrong |
 | per leg | all pools between the two tokens, split by marginal value | what an aggregator does; `pick="best"` gives the single-pool floor |
-| multi-hop cost | composed leg by leg, output of one is input to the next | `min` over legs overstates a two-hop by roughly 2× |
+| multi-hop cost | composed leg by leg, output of one is input to the next | `min` over legs overstates a two-hop by roughly 2x |
 | reference price | oracle, not pool spot | the liquidator was credited at the oracle rate |
 | no route | capacity zero, with a reason | absence of an exit is the worst case, not a missing datum |
 | zero-volume pools | flagged, not filtered | standing liquidity that does not trade is not a demonstrated exit |
@@ -128,7 +161,7 @@ Adding a venue means writing a class that satisfies `lrg.pool.Pool` — five met
 Reading pool state directly took some spelunking, recorded here because it is not documented in one place.
 
 - JSON-RPC on Sui Foundation fullnodes was retired on 28 July 2026. This uses GraphQL at `https://graphql.mainnet.sui.io/graphql`.
-- Square-root prices and tick prices are X64 fixed point: divide by 2⁶⁴.
+- Square-root prices and tick prices are X64 fixed point: divide by 2^64.
 - Fee rates use a denominator of 10⁶ across every CLMM venue seen so far (`500` → 0.05%).
 - Tick indices are two's-complement `u32`; `liquidity_net` is two's-complement `u128`.
 - The tick index lives in a different place per venue: in the value for Cetus (wrapped in a `skip_list::Node`) and Bluefin (a plain `Table` entry), and in the **dynamic-field key** for Momentum. Cetus keys by a `u64` score equal to `tick + 443636`.
@@ -144,12 +177,12 @@ Reading pool state directly took some spelunking, recorded here because it is no
 ## Known limitations
 
 - **No multi-path splitting.** One best path per pair, split within legs only.
-- **No position data.** Demand is computed from the supply cap, so the output describes what the parameters permit rather than what the book currently holds. `β` is the placeholder for this and defaults to the adversarial 1.
+- **No position data.** Demand is computed from the supply cap, so the output describes what the parameters permit rather than what the book currently holds. `beta` is the placeholder for this and defaults to the adversarial 1.
 - **No debt-side bound.** A pair's demand should be capped by the debt asset's own borrowable amount as well as the collateral's supply cap. Not yet applied, so demand against thinly-supplied debt assets is overstated.
 - **Derived prices.** USD prices are propagated from USDC through pool spot rates, deepest pools first. Supply oracle prices via `Params(prices=...)` where accuracy matters.
 - **E-Mode not modelled.** Boosted LTV and LT are published; the E-Mode liquidation bonus is not, so rows use normal-mode parameters. `Asset` carries the E-Mode fields for when it is resolved.
 - **Close factor unresolved.** Navi's docs say "up to 35%", the newer hub says 50%. It scales demand linearly. `Params(close_factor=...)`.
-- **Venues not covered.** Magma, fullsail, flowx, kriya and ferra-dlmm are discovered but unpriced — roughly $2–3M of Sui TVL. DLMM is a different model and would need its own adapter.
+- **Venues not covered.** Magma, fullsail, flowx, kriya and ferra-dlmm are discovered but unpriced — roughly $2-3M of Sui TVL. DLMM is a different model and would need its own adapter.
 - **Single protocol.** Liquidations from other lending markets on the same chain compete for the same pools. Not modelled.
 
 ---
