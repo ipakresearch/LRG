@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+pools_cache/
+liq_network.html
+liq_*.html
+*_matrix.json
+*_view.csv
+*_stats.csv
+.ipynb_checkpoints/
+.DS_Store
