@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Liquidation route graph — Ipak Systems</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  :root { --purple:#3B2A5C; --soft:#5E4B89; --blue:#1F3A68; --grey:#8A8A8A;
+          --lav:#EDEBF7; --bg:#FBFAFE; --warn:#8a2f2f; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, 'Times New Roman', serif; background:var(--bg);
+         color:#2b2b2b; }
+  header { padding:16px 26px 8px; }
+  header h1 { margin:0; font-size:19px; color:var(--purple); font-weight:600; }
+  header .sub { font-size:12px; color:var(--grey); margin-top:3px; }
+  #layout { display:flex; height: calc(100vh - 62px); }
+  #canvas { flex:1; position:relative; }
+  svg { width:100%; height:100%; display:block; }
+  #panel { width:360px; border-left:1px solid #ddd7ee; background:#fff;
+           padding:14px 18px 24px; overflow-y:auto; font-size:13.5px; }
+  select, input { font:inherit; width:100%; padding:6px 8px; border:1px solid #cfc8e4;
+                  border-radius:4px; background:#fff; color:var(--purple); }
+  input { margin-bottom:6px; }
+  .slip { display:flex; gap:6px; margin:8px 0 2px; }
+  .slip button { flex:1; padding:5px 0; border:1px solid #cfc8e4; background:#fff;
+                 border-radius:4px; cursor:pointer; color:var(--soft); font:inherit; }
+  .slip button.on { background:var(--purple); color:#fff; border-color:var(--purple); }
+  .lbl { font-size:10.5px; letter-spacing:.06em; text-transform:uppercase;
+         color:var(--grey); margin:14px 0 5px; }
+  table.legs { width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.legs td { padding:4px 2px; border-bottom:1px solid #eee9f7; vertical-align:top; }
+  table.legs td.r { text-align:right; font-variant-numeric: tabular-nums; }
+  .cap { font-size:22px; color:var(--purple); font-weight:600; }
+  .muted { color:var(--grey); font-size:12px; }
+  .warn { color:var(--warn); }
+  .binding { color:var(--warn); }
+  #bottlenecks li, #deadlist li { margin:3px 0; }
+  .bar { display:inline-block; height:8px; background:var(--soft);
+         border-radius:2px; margin-right:6px; vertical-align:middle; }
+  .note { font-size:11.5px; color:var(--grey); line-height:1.45; margin-top:14px;
+          border-top:1px solid #eee9f7; padding-top:10px; }
+  .tip { position:absolute; pointer-events:none; background:#fff; border:1px solid #cfc8e4;
+         border-radius:4px; padding:6px 9px; font-size:12px; color:#2b2b2b;
+         box-shadow:0 1px 4px rgba(59,42,92,.12); display:none; max-width:260px; }
+  .pill { display:inline-block; font-size:10.5px; padding:1px 6px; border-radius:8px;
+          background:var(--lav); color:var(--soft); margin:0 4px 3px 0; }
+  .pill.bad { background:#f7e9e9; color:var(--warn); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Liquidation route graph</h1>
+  <div class="sub" id="meta"></div>
+</header>
+<div id="layout">
+  <div id="canvas"><svg id="svg"></svg><div class="tip" id="tip"></div></div>
+  <div id="panel">
+    <div class="lbl">Pair (collateral to debt)</div>
+    <input id="filter" placeholder="filter, e.g. vSUI">
+    <select id="pair"></select>
+    <div class="lbl">Slippage level</div>
+    <div class="slip" id="slip"></div>
+    <div id="routebox"></div>
+    <div class="lbl">Most loaded pools at this level</div>
+    <ul id="bottlenecks" style="list-style:none;padding:0;margin:0;"></ul>
+    <div id="coverage"></div>
+    <div class="note" id="method"></div>
+  </div>
+</div>
+
+<script>
+const DATA = __DATA__;
+
+window.onerror = function(msg, src, line){
+  document.getElementById("canvas").innerHTML =
+    '<div style="padding:24px;font-size:13px;color:#8a2f2f">Render error: '
+    + msg + ' (line ' + line + ')</div>';
+};
+if (typeof d3 === "undefined")
+  document.getElementById("canvas").innerHTML =
+    '<div style="padding:24px;color:#8a2f2f">D3 did not load.</div>';
+
+const svg = d3.select("#svg"), tip = d3.select("#tip");
+const cvs = document.getElementById("canvas");
+const W = cvs.clientWidth || 900, H = cvs.clientHeight || 640;
+svg.attr("viewBox", [0,0,W,H]);
+
+const byId  = Object.fromEntries(DATA.nodes.map(n=>[n.id,n]));
+const EDGES = DATA.edges.filter(e => byId[e.source] && byId[e.target] && e.source!==e.target);
+
+let slip = DATA.slippages[1] || DATA.slippages[0];
+let currentPair = null;
+
+const fmt = v => (v==null ? "\u2014" : d3.format(",.0f")(v));
+const pressureAt = (n,s) => Object.entries(n.pressure)
+  .filter(([k])=>k.startsWith(s+":")).reduce((a,[,v])=>a+v,0);
+
+const nReach = DATA.routes.filter(r=>r.reachable).length;
+document.getElementById("meta").textContent =
+  DATA.nodes.length + " pools \u00b7 " + nReach + "/" + DATA.routes.length
+  + " pairs routed \u00b7 " + DATA.no_route.length + " with no route \u00b7 "
+  + DATA.dead_routes.length + " crossing a dead pool \u00b7 \u2264"
+  + DATA.max_hops + " hops \u00b7 " + DATA.execution + " execution \u00b7 snapshot "
+  + DATA.generated_at;
+
+document.getElementById("method").innerHTML =
+  "Node size is pool TVL; fill intensity is routed pressure at the selected level. "
+  + "Pools with reported liquidity but <b>no 24-hour volume</b> are outlined dashed red, "
+  + "and routes crossing one are marked \u26a0 \u2014 standing liquidity that does not "
+  + "trade is not a demonstrated exit. Pairs with no priced path are kept in the list "
+  + "with zero capacity rather than dropped. Capacity composes cost across legs and is "
+  + "measured at a single block; liquidity during a real liquidation may be lower.";
+
+const venueColor = {cetus:"#5E4B89", bluefin:"#1F3A68", momentum:"#7A6BA8",
+                    "turbos-finance":"#4A7BA7", deepbook:"#2E7D6B", aftermath:"#9B7BB8"};
+const rScale = d3.scaleSqrt()
+  .domain([0, d3.max(DATA.nodes, d=>d.tvl)||1]).range([5, 26]);
+
+const sim = d3.forceSimulation(DATA.nodes)
+  .force("link", d3.forceLink(EDGES.map(e=>({...e}))).id(d=>d.id).distance(90).strength(.25))
+  .force("charge", d3.forceManyBody().strength(-170))
+  .force("center", d3.forceCenter(W/2, H/2))
+  .force("collide", d3.forceCollide(d=>rScale(d.tvl)+14));
+
+const linkSel = svg.append("g").selectAll("line")
+  .data(EDGES).join("line")
+  .attr("stroke","#d8d2ea").attr("stroke-width",d=>Math.min(1+d.n*.3,4));
+
+const routeLayer = svg.append("g");
+
+const nodeSel = svg.append("g").selectAll("g").data(DATA.nodes).join("g")
+  .call(d3.drag()
+    .on("start",(e,d)=>{ if(!e.active) sim.alphaTarget(.2).restart(); d.fx=d.x; d.fy=d.y; })
+    .on("drag",(e,d)=>{ d.fx=e.x; d.fy=e.y; })
+    .on("end",(e,d)=>{ if(!e.active) sim.alphaTarget(0); d.fx=null; d.fy=null; }));
+
+nodeSel.append("circle")
+  .attr("r", d=>rScale(d.tvl))
+  .attr("stroke", d=>d.dead ? "#8a2f2f" : (venueColor[d.venue]||"#8A8A8A"))
+  .attr("stroke-width", d=>d.dead ? 2 : 1.5)
+  .attr("stroke-dasharray", d=>d.dead ? "3,2" : null);
+
+nodeSel.append("text").text(d=>d.label)
+  .attr("text-anchor","middle").attr("dy", d=>-rScale(d.tvl)-4)
+  .style("font-size","10.5px").style("fill","#4a4560");
+
+nodeSel.on("mousemove",(e,d)=>{
+  const c = d.cap[slip]||{};
+  tip.style("display","block")
+     .style("left",(e.offsetX+14)+"px").style("top",(e.offsetY+8)+"px")
+     .html("<b>"+d.venue+"</b> "+d.label+" "+(d.fee*100).toFixed(2)+"%<br>"
+       + "TVL $"+fmt(d.tvl)+(d.dead ? " \u00b7 <b class='warn'>no 24h volume</b>" : "")+"<br>"
+       + "24h volume $"+fmt(d.volume_24h)+"<br>"
+       + "alone @"+(+slip*100).toFixed(0)+"%: "+d.sym_a+" $"+fmt(c.a)
+       + " \u00b7 "+d.sym_b+" $"+fmt(c.b)+"<br>"
+       + "routed pressure $"+fmt(pressureAt(d,slip)));
+}).on("mouseleave",()=>tip.style("display","none"));
+
+sim.on("tick",()=>{
+  linkSel.attr("x1",d=>pos(d.source).x).attr("y1",d=>pos(d.source).y)
+         .attr("x2",d=>pos(d.target).x).attr("y2",d=>pos(d.target).y);
+  nodeSel.attr("transform",d=>"translate("+d.x+","+d.y+")");
+  drawRoute();
+});
+function pos(x){
+  const n = (x && typeof x==="object") ? (byId[x.id]||x) : byId[x];
+  return n && n.x!=null ? n : {x:W/2, y:H/2};
+}
+
+function recolor(){
+  const maxP = d3.max(DATA.nodes, n=>pressureAt(n,slip)) || 1;
+  const shade = d3.scaleLinear().domain([0,maxP]).range(["#F4F1FB","#3B2A5C"]);
+  nodeSel.select("circle").attr("fill", d=>shade(pressureAt(d,slip)));
+  bottlenecks();
+}
+
+function bottlenecks(){
+  const rows = DATA.nodes.map(n=>({n, p: pressureAt(n,slip)}))
+    .filter(x=>x.p>0).sort((a,b)=>b.p-a.p).slice(0,8);
+  const maxP = rows.length ? rows[0].p : 1;
+  const ul = d3.select("#bottlenecks").html("");
+  if(!rows.length){ ul.append("li").attr("class","muted").text("no routed flow"); return; }
+  rows.forEach(function(x){
+    ul.append("li").html(
+      '<span class="bar" style="width:'+Math.max(4,90*x.p/maxP)+'px"></span>'
+      + x.n.venue+" "+x.n.label+(x.n.dead?' <span class="warn">\u26a0</span>':'')
+      + ' <span class="muted">$'+fmt(x.p)+'</span>');
+  });
+}
+
+function curRoute(){
+  if(!currentPair) return null;
+  const r = DATA.routes.find(x=>x.pair===currentPair);
+  if(!r) return null;
+  return {meta:r, sel:(r.by_slip||{})[slip]};
+}
+
+function drawRoute(){
+  routeLayer.selectAll("*").remove();
+  const cr = curRoute();
+  if(!cr || !cr.meta.reachable || !cr.sel || !cr.sel.legs.length) return;
+  const defs = routeLayer.append("defs");
+  defs.append("marker").attr("id","arr").attr("viewBox","0 -4 8 8")
+      .attr("refX",7).attr("markerWidth",7).attr("markerHeight",7).attr("orient","auto")
+    .append("path").attr("d","M0,-4L8,0L0,4").attr("fill","#B0433B");
+  const legNodes = cr.sel.legs.map(l => (l.pools||[]).map(p=>byId[p.pool]).filter(Boolean));
+  for(let i=0;i<legNodes.length-1;i++){
+    legNodes[i].forEach(a => legNodes[i+1].forEach(b => {
+      routeLayer.append("line")
+        .attr("x1",a.x).attr("y1",a.y).attr("x2",b.x).attr("y2",b.y)
+        .attr("stroke","#B0433B").attr("stroke-width",1.4).attr("opacity",.55)
+        .attr("marker-end","url(#arr)");
+    }));
+  }
+  legNodes.flat().forEach(p=>routeLayer.append("circle")
+    .attr("cx",p.x).attr("cy",p.y).attr("r",rScale(p.tvl)+4)
+    .attr("fill","none").attr("stroke","#B0433B").attr("stroke-width",2));
+}
+
+function routebox(){
+  const box = d3.select("#routebox").html("");
+  const cr = curRoute();
+  if(!cr) return;
+  const m = cr.meta, sel = cr.sel;
+
+  if(!m.reachable){
+    box.append("div").attr("class","lbl").text("No route");
+    box.append("div").attr("class","warn").text(m.reason || "no priced path");
+    box.append("div").attr("class","muted").style("margin-top","6px")
+       .text("Capacity is recorded as zero for this pair rather than omitted: a "
+             + "collateral with no exit into this debt asset is the worst case, "
+             + "not a missing measurement.");
+    if(m.alts && m.alts.length){
+      box.append("div").attr("class","lbl").text("Paths that exist but could not be priced");
+      m.alts.forEach(p=>box.append("div").attr("class","muted").text(p.join(" \u2192 ")));
+    }
+    return;
+  }
+
+  box.append("div").attr("class","lbl").text("Best route at this level");
+  box.append("div").html(sel.path.join(" \u2192 ")
+    + (sel.dead ? ' <span class="warn">\u26a0</span>' : ''));
+  box.append("div").attr("class","lbl")
+     .text("Capacity at "+(+slip*100).toFixed(0)+"% total cost");
+  box.append("div").attr("class","cap").text("$"+fmt(sel.cap));
+  box.append("div").attr("class","muted")
+     .text((DATA.execution==="split" ? "split across pools per leg"
+                                     : "single pool per leg")
+           + " \u00b7 cost composed across legs");
+  if(sel.dead)
+    box.append("div").attr("class","warn").style("font-size","12px")
+       .style("margin-top","5px")
+       .text("\u26a0 a leg on this route has no 24-hour volume");
+
+  const tb = box.append("table").attr("class","legs");
+  tb.append("tr").html("<td class='muted'>leg</td><td class='muted r'>in \u2192 out</td>");
+  const minC = d3.min(sel.legs.map(l=>l.cap).filter(v=>v!=null));
+  sel.legs.forEach(function(l){
+    const bind = (l.cap!=null && l.cap===minC) ? " binding" : "";
+    tb.append("tr").html(
+      "<td>"+l.from+" \u2192 "+l.to
+      + (l.dead?' <span class="warn">\u26a0</span>':'')
+      + '<div class="muted">24h vol $'+fmt(l.volume_24h)+'</div></td>'
+      + '<td class="r'+bind+'">$'+fmt(l.in)+" \u2192 $"+fmt(l.out)
+      + (bind?" \u25c0":"")+"</td>");
+    (l.pools||[]).forEach(function(p){
+      const n = byId[p.pool]; if(!n) return;
+      tb.append("tr").html(
+        '<td style="padding-left:12px" class="muted">'+n.venue+" "+n.label+" "
+        + (n.fee*100).toFixed(2)+"%"
+        + (n.dead?' <span class="warn">\u26a0</span>':'')+"</td>"
+        + '<td class="r muted">$'+fmt(p.usd)+"</td>");
+    });
+  });
+
+  if(m.alts && m.alts.length>1){
+    box.append("div").attr("class","lbl").text("Other paths considered");
+    m.alts.slice(0,5).forEach(function(p){
+      if(p.join()!==sel.path.join())
+        box.append("div").attr("class","muted").text(p.join(" \u2192 "));
+    });
+  }
+}
+
+const selEl = d3.select("#pair");
+function fillPairs(q){
+  selEl.html("");
+  selEl.append("option").attr("value","").text("\u2014 select a pair \u2014");
+  DATA.routes
+    .filter(r => !q || r.pair.toLowerCase().indexOf(q.toLowerCase()) >= 0)
+    .forEach(function(r){
+      const s = r.by_slip[slip] || {};
+      const tag = !r.reachable ? "  \u2715 no route" : (s.dead ? "  \u26a0" : "");
+      selEl.append("option").attr("value",r.pair)
+           .text(r.pair + tag + (r.reachable ? "   $"+fmt(s.cap) : ""));
+    });
+  if(currentPair) selEl.property("value", currentPair);
+}
+d3.select("#filter").on("input", function(){ fillPairs(this.value); });
+selEl.on("change", function(){ currentPair=this.value||null; routebox(); drawRoute(); });
+
+const slipBox = d3.select("#slip");
+DATA.slippages.forEach(function(s){
+  slipBox.append("button").text((+s*100).toFixed(0)+"%")
+    .classed("on", s===slip)
+    .on("click",function(){
+      slip=s; slipBox.selectAll("button").classed("on",false);
+      d3.select(this).classed("on",true);
+      recolor(); routebox(); drawRoute();
+      fillPairs(d3.select("#filter").property("value"));
+    });
+});
+
+const cov = d3.select("#coverage");
+cov.append("div").attr("class","lbl").text("Coverage");
+cov.append("div").attr("class","muted").html(
+  '<span class="pill">'+DATA.venues.join(", ")+"</span><br>"
+  + '<span class="pill'+(DATA.no_route.length?" bad":"")+'">'
+  + DATA.no_route.length+" pairs with no route</span>"
+  + '<span class="pill'+(DATA.dead_routes.length?" bad":"")+'">'
+  + DATA.dead_routes.length+" crossing a dead pool</span>"
+  + (DATA.absent_assets.length
+      ? '<br><span class="pill bad">absent from every pool: '
+        + DATA.absent_assets.join(", ")+"</span>" : ""));
+if(DATA.no_route.length){
+  cov.append("div").attr("class","lbl").text("No route");
+  const ul = cov.append("ul").attr("id","deadlist")
+                .style("list-style","none").style("padding",0).style("margin",0);
+  DATA.no_route.slice(0,20).forEach(p=>ul.append("li").attr("class","muted warn").text(p));
+  if(DATA.no_route.length>20)
+    ul.append("li").attr("class","muted").text("\u2026 "+(DATA.no_route.length-20)+" more");
+}
+
+fillPairs("");
+recolor();
+</script>
+</body>
+</html>
