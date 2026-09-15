@@ -201,6 +201,6 @@ The methodology documents in `docs/` are licensed under **CC BY 4.0** — reuse 
 
 ---
 
-**Ipak Systems** — independent DeFi risk research. [ipak.systems](https://ipak.systems)
+**Ipak Systems** — independent DeFi risk research. [ipak.systems](https://www.ipak.systems)
 
 Corrections and venue adapters welcome. If a number looks wrong, it may well be: `clmm.sanity(pool, oracle_price=...)` is the first check, and the open items above are the known suspects.
