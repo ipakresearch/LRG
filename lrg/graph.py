@@ -24,7 +24,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from . import clmm
 from .coins import norm_type, USDC
 from .book import PoolBook, pool_key
-from .curves import LegCurve, allocate, route_capacity, route_cost, side_of
+from .curves import REF_USD, LegCurve, _out_usd, route_capacity, route_cost, side_of
 
 SLIPPAGES = [0.02, 0.05, 0.07, 0.10]
 MAX_POOLS_PER_LEG = 4
@@ -76,22 +76,19 @@ def build_adjacency(rows):
     return adj
 
 
-def read_legs(adj, legs, book, n: int, key_of) -> tuple:
+def read_legs(adj, legs, book, key_of) -> tuple:
     """
-    Read pools leg by leg, down each leg's ranked list, until the leg has n
-    readable pools or the list runs out. A failed or empty pool does not use
-    up a slot: the next one in the ranking takes it. Returns (pools by key,
-    {frozenset(leg): [keys of the readable pools chosen, in rank order]}).
+    Read every pool on the given legs. Returns (pools by key,
+    {frozenset(leg): [keys of the readable pools]}). Failed and empty pools
+    are left out, so they never take a slot when the leg's pools are chosen.
     """
-    pools, chosen = {}, {}
+    pools, readable = {}, {}
     for x, y in legs:
         leg = frozenset((x, y))
-        if leg in chosen:
+        if leg in readable:
             continue
         got = []
         for r in adj[x][y]:
-            if len(got) >= n:
-                break
             key = key_of(r)
             if key not in pools:
                 q = book.get(key[0], coin_a=key[1], coin_b=key[2])
@@ -99,8 +96,27 @@ def read_legs(adj, legs, book, n: int, key_of) -> tuple:
                     continue
                 pools[key] = q
             got.append(key)
-        chosen[leg] = got
-    return pools, chosen
+        readable[leg] = got
+    return pools, readable
+
+
+def choose_pools(pools, keys, coin_in: str, prices, n: int,
+                 ref_usd: float = REF_USD) -> list:
+    """
+    The n pools of a leg that give the most USD out for ref_usd of coin_in,
+    best first. Ranked by execution rather than listed TVL, which is in no
+    common unit across venues and can be stale.
+    """
+    scored = []
+    for k in keys:
+        p = pools[k]
+        try:
+            sd = side_of(p, coin_in)
+        except ValueError:
+            continue
+        scored.append((_out_usd(p, sd, ref_usd, prices), k))
+    scored.sort(key=lambda t: -t[0])
+    return [k for o, k in scored[:n] if o > 0] or [k for _, k in scored[:n]]
 
 
 def all_paths(adj, s: str, d: str, max_hops: int) -> List[List[str]]:
@@ -120,6 +136,38 @@ def all_paths(adj, s: str, d: str, max_hops: int) -> List[List[str]]:
     if s in adj:
         walk(s, [s])
     return out
+
+
+# Reference sizes for ranking paths. Thin routes (e.g. into LSTs) can be best
+# only below ~$1.5k, deep ones only above $100k, so one size is not enough;
+# with $10k and $250k alone, stSUI -> SUI -> vSUI ranked 24th of 29 and was
+# missed although it sets stSUI's row minimum (checked against an uncapped
+# search, 2026-10-16).
+RANK_SIZES = (1_000.0, 10_000.0, 250_000.0)
+
+
+def rank_paths(paths, curve, k: Optional[int] = 6, sizes=RANK_SIZES) -> list:
+    """
+    [(path, leg curves)] for the paths whose every leg is priced, keeping the
+    union of the k cheapest at each reference size (grid route cost; fewer
+    hops break ties). k=None keeps every priced path. One cost evaluation per
+    path and size, so all paths can be ranked before any capacity search.
+    """
+    priced = []
+    for path in paths:
+        cs = [curve(path[i], path[i + 1]) for i in range(len(path) - 1)]
+        if all(cs):
+            priced.append((path, cs))
+    if k is None:
+        return sorted(priced, key=lambda pc: (route_cost(pc[1], sizes[0]), len(pc[0])))
+    keep, seen = [], set()
+    for size in sizes:
+        order = sorted(priced, key=lambda pc: (route_cost(pc[1], size), len(pc[0])))
+        for path, cs in order[:k]:
+            if tuple(path) not in seen:
+                seen.add(tuple(path))
+                keep.append((path, cs))
+    return keep
 
 
 def derive_prices(pools, anchor: str = USDC,
@@ -184,28 +232,26 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
     assets = [s for s in name if name[s] in adj]
     absent = [s for s in name if s not in assets]
 
-    chosen: Dict[frozenset, list] = {}       # filled by read_legs below
+    readable: Dict[frozenset, list] = {}     # filled by read_legs below
+    chosen: Dict[Tuple[str, str], list] = {}
 
     def leg_ids(x, y):
-        """The leg's readable pools, best-ranked first (after the read)."""
-        return chosen.get(frozenset((x, y)), [])
+        """The leg's chosen pools for x -> y, best first (after the read)."""
+        if (x, y) not in chosen:
+            chosen[(x, y)] = choose_pools(pools, readable.get(frozenset((x, y)), []),
+                                          x, prices, max_pools_per_leg)
+        return chosen[(x, y)]
 
     def leg_volume(x, y):
         return sum(vol_of.get(pid, 0.0) for pid in leg_ids(x, y))
 
-    def bottleneck(path):
-        return min(float(adj[path[i]][path[i + 1]][0]["tvl_usd"])
-                   for i in range(len(path) - 1))
-
-    # ---- candidate paths, every ordered pair kept -------------------------
+    # ---- candidate paths: all of them, ranked once pools are read ----------
     cands: Dict[Tuple[str, str], List[List[str]]] = {}
     for a in assets:
         for b in assets:
             if a == b:
                 continue
-            ps = all_paths(adj, name[a], name[b], max_hops)
-            ps.sort(key=lambda p: (-bottleneck(p), len(p)))
-            cands[(a, b)] = ps[:max_candidates]
+            cands[(a, b)] = all_paths(adj, name[a], name[b], max_hops)
     if verbose:
         tot = sum(len(v) for v in cands.values())
         empty = sum(1 for v in cands.values() if not v)
@@ -220,8 +266,8 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
                     tokens=tokens)
     if verbose:
         print(f"reading pools for {len(legs)} legs…")
-    pools, legs_read = read_legs(adj, legs, book, max_pools_per_leg, key_of)
-    chosen.update(legs_read)
+    pools, legs_read = read_legs(adj, legs, book, key_of)
+    readable.update(legs_read)
     prices = derive_prices(pools)
     if verbose:
         print(f"{len(pools)} readable, {len(book.failed)} unreadable · "
@@ -248,11 +294,7 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
     no_route, dead_routes = [], []
 
     for (a, b), paths in sorted(cands.items()):
-        usable = []
-        for p in paths:
-            cs = [curve(p[i], p[i + 1]) for i in range(len(p) - 1)]
-            if all(cs):
-                usable.append((p, cs))
+        usable = rank_paths(paths, curve, k=max(1, max_candidates // len(RANK_SIZES)))
 
         if not usable:
             reason = ("no path within the hop limit" if not paths

@@ -50,7 +50,7 @@ class Params:
     venues: Optional[set] = None
     max_hops: int = 4
     max_pools_per_leg: int = 4
-    max_candidates: int = 20
+    max_candidates: Optional[int] = 20     # paths kept per pair after ranking; None keeps all
     pick: str = "split"
 
     def tf(self, symbol: str) -> float:
@@ -130,6 +130,7 @@ class Matrix:
     paths: Dict[Tuple[str, str], Optional[List[str]]]
     curves: Dict[Tuple[str, str], object] = field(default_factory=dict)
     candidates: Dict[Tuple[str, str], List[list]] = field(default_factory=dict)
+    candidate_paths: Dict[Tuple[str, str], List[list]] = field(default_factory=dict)  # coin types, same order
     unreachable: List[Tuple[str, str]] = field(default_factory=list)
     dead_leg: Dict[Tuple[str, str], Optional[str]] = field(default_factory=dict)
     pools_read: int = 0
@@ -439,25 +440,28 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         if absent:
             print(f"absent from the pool set: {', '.join(absent)}")
 
-    # candidate paths, same selection as the network build
-    chosen: Dict[frozenset, list] = {}       # filled by read_legs below
+    # Every path up to max_hops; they are ranked once pools are read (by
+    # route cost at reference sizes), not by listed TVL beforehand.
+    readable: Dict[frozenset, list] = {}     # filled by read_legs below
+    chosen: Dict[Tuple[str, str], list] = {}
 
     def leg_ids(x, y):
-        """The leg's readable pools, best-ranked first (after the read)."""
-        return chosen.get(frozenset((x, y)), [])
-
-    def bottleneck(path):
-        return min(float(adj[path[i]][path[i + 1]][0]["tvl_usd"])
-                   for i in range(len(path) - 1))
+        """The leg's chosen pools for x -> y: the max_pools_per_leg readable
+        pools giving the most USD out at REF_USD, best first."""
+        if (x, y) not in chosen:
+            chosen[(x, y)] = _graph.choose_pools(
+                pools, readable.get(frozenset((x, y)), []), x, prices,
+                p.max_pools_per_leg)
+        return chosen[(x, y)]
 
     cands = {}
     for B in colls:
         for D in dbts:
             if B == D:
                 continue
-            ps = _graph.all_paths(adj, name[B], name[D], p.max_hops)
-            ps.sort(key=lambda x: (-bottleneck(x), len(x)))
-            cands[(B, D)] = ps[:p.max_candidates]
+            cands[(B, D)] = _graph.all_paths(adj, name[B], name[D], p.max_hops)
+    if verbose:
+        print(f"{sum(len(v) for v in cands.values())} paths (≤{p.max_hops} hops)")
 
     legs = sorted({(path[i], path[i + 1]) for ps in cands.values() for path in ps
                    for i in range(len(path) - 1)})
@@ -466,10 +470,10 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
                     tokens=tokens)
     if verbose:
         print(f"reading pools for {len(legs)} legs…")
-    # failed and empty pools do not take a slot: each leg reads down its
-    # ranking until it has max_pools_per_leg readable pools
-    pools, legs_read = _graph.read_legs(adj, legs, book, p.max_pools_per_leg, key_of)
-    chosen.update(legs_read)
+    # every pool on every leg is read; failed and empty ones are left out, and
+    # leg_ids() then keeps the best max_pools_per_leg by output
+    pools, legs_read = _graph.read_legs(adj, legs, book, key_of)
+    readable.update(legs_read)
     if verbose:
         print(f"largest tick table read: {clmm.max_ticks_seen} ticks")
     # Supplied prices win; coins they do not cover get a price derived from
@@ -496,19 +500,20 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
 
     cells, paths, curves, unreachable = {}, {}, {}, []
     candidates: Dict[Tuple[str, str], List[list]] = {}
+    candidate_paths: Dict[Tuple[str, str], List[list]] = {}
     dead_leg: Dict[Tuple[str, str], Optional[str]] = {}
 
     def leg_volume(x, y):
         """Total 24h volume across the pools used on this leg."""
         return sum(vol_of.get(pid, 0.0) for pid in leg_ids(x, y))
+    # up to max_candidates paths: the cheapest few at each reference size
+    k = (None if p.max_candidates is None
+         else max(1, p.max_candidates // len(_graph.RANK_SIZES)))
     for (B, D), ps in cands.items():
         tau = p.budget(A[B].lb, p.tf(B))
-        priced = []
-        for path in ps:
-            cs = [curve(path[i], path[i + 1]) for i in range(len(path) - 1)]
-            if all(cs):
-                priced.append((path, cs))
+        priced = _graph.rank_paths(ps, curve, k=k)
         candidates[(B, D)] = [cs for _, cs in priced]
+        candidate_paths[(B, D)] = [path for path, _ in priced]
         best_cap, i = _best_route(candidates[(B, D)], tau)
         best_path, best_curves = priced[i] if i is not None else (None, None)
         if best_cap is None:
@@ -537,7 +542,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         print(f"{n} routes have a leg with no 24h volume")
 
     return Matrix(params=p, assets=A, prices=prices, cells=cells, paths=paths,
-                  curves=curves, candidates=candidates,
+                  curves=curves, candidates=candidates, candidate_paths=candidate_paths,
                   unreachable=unreachable, dead_leg=dead_leg,
                   pools_read=len(pools), pools_failed=len(book.failed),
                   pools_empty=len(book.empty),

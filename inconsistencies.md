@@ -556,3 +556,36 @@ The old method's overstatement grows as the budget shrinks. After step 1, Navi b
 - **10 largest pairs move little,** −3.9% to +6.9%. For example haSUI→SUI is +0.9%, USDSUI→USDC +1.3%, USDSUI→BUCK +6.9% and USDSUI→SUI −3.9%. Deep single-hop legs were already near-linear between grid points.
 - **Row minimum excluding zeros:** most collaterals fall 20–58%. Examples: USDC 2,641 → 2,114, LBTC 2,115 → 1,099, wBTC 2,088 → 943, WAL 3,227 → 1,341, BUCK 770 → 106.
   - SUI, SOL, WBTC.lz and xBTC appear to rise (236 → 2,294, for example). That's because their old minimum was a small, overstated stSUI cell that is now exactly 0, and zeros are excluded from this measure.
+
+# Path ranking (2026-10-16)
+
+## Changes (uncommitted)
+
+- **Pools per leg:**
+  - `graph.read_legs` reads every pool on every leg that a path uses.
+  - `graph.choose_pools` keeps the `max_pools_per_leg` (4) that give the most USD out at $10k for that direction, rather than the top 4 by listed TVL.
+  - Failed and empty pools never take a slot.
+- **Paths:**
+  - `matrix.build` and `graph.build` enumerate every path up to 4 hops (22,853 here) and rank them only after pools are read.
+  - `graph.rank_paths` scores each path by grid route cost at $1k, $10k and $250k (`RANK_SIZES`) and keeps the union of the cheapest 6 at each, at most 18 (`max_candidates // 3`).
+  - The capacity search (grid plus exact refinement, step 7) runs only on those.
+  - `Params.max_candidates=None` keeps every path. `Matrix.candidate_paths` records the kept paths.
+- **Removed:** the bottleneck-TVL pre-ranking.
+- **Tests:** the read-robustness leg test now covers read-all plus choose-by-output. 16 tests pass.
+
+## Verification (one snapshot: 146 pools read, 0 failed, 0 empty)
+
+- **Uncapped build:** 1,005–1,119 s. Ranked selection plus capacity on the same curves: 38 s (three sizes) or 42–53 s (two sizes). Pool reads went from about 130 to 146 now that every pool on a used leg is read.
+- **Pairs where the uncapped search still beats the ranked set by more than 0.5%:**
+
+| ranking | misses | pair | ranked | uncapped | rank of winner at $10k |
+|---|---|---|---|---|---|
+| $10k + $250k, top 10 each | 1 | stSUI→vSUI | $749 | $1,305 | 24 / 29 |
+| $1k + $10k + $250k, top 6 each (adopted) | 1 | vSUI→wBTC | $41,840 | $46,199 | 8 / 51 |
+
+  - A first two-size run also missed stSUI→haSUI ($0 vs $1,205).
+  - stSUI→vSUI sets stSUI's row minimum, so the two-size ranking would understate stSUI's Q\*. The adopted three-size ranking keeps it.
+  - Its remaining miss, vSUI→wBTC at −9%, is far above vSUI's row minimum (about $6.5k), so no row minimum is affected.
+  - Other differences were under 0.1%, which is refinement noise.
+- **The pairs from 2026-10-09 that improved without the cap:** all match the uncapped result, apart from refinement noise. These include SUI→SOL ($2,229, direct path), SOL→SUI ($2,669) and the SOL↔BTC routes. The stSUI-debt pairs are $0 under both, and MBTC is no longer in the pool set.
+- **SUI → USDC leg in the matrix:** DeepBook `0xe05dafb5` is now first, then Bluefin `0x15dbcac8`, then Cetus `0xb8d7d9e6` and `0x51e883ba`.

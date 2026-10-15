@@ -132,29 +132,31 @@ class LegSlots(unittest.TestCase):
     def key_of(r):
         return pool_key(r["pool_id"], r["coin_type_a"], r["coin_type_b"])
 
-    def test_failed_top_pool_is_replaced(self):
-        book = mock.Mock()
-        book.get.side_effect = lambda pid, coin_a=None, coin_b=None: (
-            None if pid == "0xp0" else object())
-        pools, chosen = graph.read_legs(self._adj(6), [(self.X, self.Y)], book, 4, self.key_of)
-        ids = [k[0] for k in chosen[frozenset((self.X, self.Y))]]
-        self.assertEqual(ids, ["0xp1", "0xp2", "0xp3", "0xp4"])
+    def _pool(self, pid, depth):
+        """A linear pool: out = q * depth / (depth + q), $1 coins, 0 decimals."""
+        p = mock.Mock(pool_id=pid, coin_a=self.X, coin_b=self.Y, dec_a=0, dec_b=0)
+        p.out.side_effect = lambda q, side="a": q * depth / (depth + q)
+        return p
 
-    def test_empty_pool_takes_no_slot(self):
+    def test_failed_and_empty_pools_take_no_slot(self):
         book = PoolBook(verbose=False, venue_of={})
 
         def fetch(pid, verbose=True):
+            if pid == "0xp0":
+                raise RuntimeError("no tick table found")
             if pid == "0xp1":
                 raise clmm.EmptyPool("empty pool: liquidity 0 and no initialized ticks")
-            return mock.Mock(pool_id=pid)
+            return self._pool(pid, 1e6 * int(pid[-1]))
 
         with mock.patch("lrg.clmm.fetch", side_effect=fetch):
-            pools, chosen = graph.read_legs(self._adj(6), [(self.X, self.Y)],
-                                            book, 4, self.key_of)
-        ids = [k[0] for k in chosen[frozenset((self.X, self.Y))]]
-        self.assertEqual(ids, ["0xp0", "0xp2", "0xp3", "0xp4"])
-        self.assertEqual(len(book.empty), 1)
-        self.assertEqual(len(book.failed), 0)
+            pools, readable = graph.read_legs(self._adj(7), [(self.X, self.Y)], book, self.key_of)
+        keys = readable[frozenset((self.X, self.Y))]
+        self.assertEqual([k[0] for k in keys], ["0xp2", "0xp3", "0xp4", "0xp5", "0xp6"])
+        self.assertEqual((len(book.failed), len(book.empty)), (1, 1))
+        prices = {graph.norm_type(self.X): 1.0, graph.norm_type(self.Y): 1.0}
+        top = graph.choose_pools(pools, keys, self.X, prices, 4)
+        # deepest first, by USD out at the reference size, not by list order
+        self.assertEqual([k[0] for k in top], ["0xp6", "0xp5", "0xp4", "0xp3"])
 
 
 if __name__ == "__main__":
