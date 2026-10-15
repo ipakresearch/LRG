@@ -22,6 +22,11 @@ summary.json also carries each collateral's adequacy status and the live Navi
 parameters, read from the Storage object on chain, with their differences from
 lrg/protocols/navi.py. The matrix is built with the live parameters.
 
+Prices are Navi's on-chain oracle prices (lrg/protocols/navi_oracle.py), each
+decoded with its own decimal. Tokens with no oracle price, such as route
+intermediates Navi does not list, keep the price derived from pool spot rates;
+coverage.json records each token's price_source ("oracle" or "derived").
+
 Status, per pair and per collateral (worst pair):
     red    Q_now > Q*            current positions already exceed the routes
     amber  Q_now <= Q* < Q_cap   fine now, not at the caps
@@ -59,15 +64,17 @@ import subprocess
 import sys
 import tempfile
 import traceback
+from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 
 from lrg import matrix                      # noqa: E402
 from lrg.book import PoolBook               # noqa: E402
-from lrg.clmm import gql, Q_FIELDS, Q_OBJECT  # noqa: E402
+from lrg.clmm import gql, Q_DECIMALS, Q_FIELDS, Q_OBJECT  # noqa: E402
 from lrg.curves import GRID_HI              # noqa: E402
 from lrg.protocols import navi              # noqa: E402
+from lrg.protocols import navi_oracle       # noqa: E402
 import positions as navi_positions          # noqa: E402
 
 POOLS_CSV = os.path.join(ROOT, "data", "navi_pools.csv")
@@ -254,11 +261,53 @@ def alias_prices(M, book) -> dict:
     return used
 
 
+def oracle_prices() -> tuple:
+    """
+    Navi's oracle prices keyed the way lrg's pools name coins.
+
+    CLMM pools name a coin by its on-chain metadata symbol (ETH, WBTC, USDT),
+    DeepBook and Aftermath by navi.py's symbol (suiETH, WBTC.lz, suiUSDT), so
+    each price is supplied under both names. Where two priced coin types share
+    a metadata symbol (USDC: native and wUSDC; USDT: suiUSDT and Wormhole),
+    the key goes to the coin with more pool TVL in POOLS_CSV, and the
+    collision is recorded.
+
+    Returns (prices {key: USD}, info {key: {...}}, collisions [...]).
+    """
+    q = navi_oracle.quotes()
+    with ThreadPoolExecutor(4) as ex:
+        meta = dict(zip(q, ex.map(lambda ct: (gql(Q_DECIMALS, {"t": ct})["coinMetadata"]
+                                              or {}).get("symbol"), q)))
+    tvl = {}
+    for row in csv.DictReader(open(POOLS_CSV)):
+        for side in ("a", "b"):
+            ct = norm_type(row[f"coin_type_{side}"])
+            tvl[ct] = tvl.get(ct, 0.0) + float(row["tvl_usd"] or 0)
+    by_meta = {}
+    for ct, s in meta.items():
+        if s:
+            by_meta.setdefault(s, []).append(ct)
+    prices, info, collisions = {}, {}, []
+    for s, cts in sorted(by_meta.items()):
+        cts.sort(key=lambda ct: -tvl.get(ct, 0.0))
+        if len(cts) > 1:
+            collisions.append({"symbol": s, "used": cts[0], "dropped": cts[1:],
+                               "prices": {ct: q[ct]["price"] for ct in cts}})
+        prices[s] = q[cts[0]]["price"]
+        info[s] = {"coin_type": cts[0], "age_s": q[cts[0]]["age_s"], "key": "metadata"}
+    for ct, v in q.items():
+        if v["symbol"] and v["symbol"] not in prices:
+            prices[v["symbol"]] = v["price"]
+            info[v["symbol"]] = {"coin_type": ct, "age_s": v["age_s"], "key": "navi"}
+    return prices, info, collisions
+
+
 def compute():
     live = fetch_navi_live()
     cf = next(iter(live["assets"].values()))["close_factor"]
+    oracle, oracle_info, oracle_collisions = oracle_prices()
     params = matrix.Params(close_factor=cf, beta=1.0,
-                           platform_share=navi.PLATFORM_SHARE)
+                           platform_share=navi.PLATFORM_SHARE, prices=oracle)
     _RecordingBook.instances.clear()
     original, matrix.PoolBook = matrix.PoolBook, _RecordingBook
     try:
@@ -297,6 +346,7 @@ def compute():
     navi_positions.refresh_prices(state)      # stress at prices from after the read
     pos["hf_check"] = check_health_factors(state, pos["positions"])
     pos["state"] = state
+    live["oracle"] = {"info": oracle_info, "collisions": oracle_collisions}
     return params, M, book, live, pos
 
 
@@ -672,6 +722,17 @@ def write(params, M, book, live, pos, out_dir: str):
                 "pools_read": len(book.pools), "pools_failed": len(book.failed),
                 "failed": failed,
                 "untracked_navi_reserves": live["untracked"],
+                "prices": {
+                    "tokens": {s: {"price_source": "oracle" if M.price_source.get(s) == "supplied"
+                                   else "derived",
+                                   "price": M.prices[s],
+                                   "derived_price": M.derived_prices.get(s),
+                                   **({"oracle_age_s": live["oracle"]["info"][s]["age_s"],
+                                       "coin_type": live["oracle"]["info"][s]["coin_type"]}
+                                      if s in live["oracle"]["info"] else {})}
+                               for s in sorted(M.prices)},
+                    "derived": sorted(s for s in M.prices if M.price_source.get(s) != "supplied"),
+                    "collisions": live["oracle"]["collisions"]},
                 "positions": {**pos["stats"], "hf_check": pos["hf_check"],
                               "market": pos["state"]["market"],
                               "emode_users": len(pos["state"]["user_emode"]),

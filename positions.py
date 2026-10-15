@@ -29,6 +29,7 @@ from typing import Dict, List, Optional
 import requests
 
 from lrg.clmm import GRAPHQL, gql, Q_FIELDS, Q_OBJECT
+from lrg.protocols import navi_oracle
 
 STORAGE = "0xbb4e2f4b6205c2e2a2db47aeb4f830796ec7c005f88537ee775986639bc442fe"
 PRICE_ORACLE = "0x1568865ed9a0b5ec414220e8f79b3d04c77acc82358f6e5ae4635687392ffbef"
@@ -67,24 +68,42 @@ class PageError(RuntimeError):
     """GraphQL answered but returned no page, e.g. an expired cursor."""
 
 
-def _page(table: str, after: Optional[str]) -> dict:
-    """One page of a table's dynamic fields. Unlike lrg.clmm.gql, which keeps
-    only `data`, this raises PageError with the server's message when the
-    page comes back empty, and retries network errors with backoff."""
+def _post(query: str, variables: dict, complete) -> dict:
+    """
+    POST a query and return its data, insisting on a complete answer.
+
+    lrg.clmm.gql keeps `data` and drops `errors`, so a partial answer (a null
+    entry beside an error) reads as an absent value. Here any error, or data
+    that `complete(data)` rejects, is retried with backoff, as are network
+    errors; after PAGE_RETRIES it raises PageError with the server's messages.
+    """
+    msgs = "no attempt"
     for i in range(PAGE_RETRIES):
         try:
-            j = requests.post(GRAPHQL, timeout=45, json={
-                "query": Q_FIELDS, "variables": {"a": table, "n": 50, "after": after}}).json()
-        except requests.RequestException:
-            if i == PAGE_RETRIES - 1:
-                raise
+            j = requests.post(GRAPHQL, timeout=45,
+                              json={"query": query, "variables": variables}).json()
+            data, errors = j.get("data"), j.get("errors")
+            if not errors and data is not None and complete(data):
+                return data
+            msgs = "; ".join(e.get("message", "") for e in errors or []) or "incomplete data"
+        except (requests.RequestException, ValueError) as e:
+            msgs = str(e)
+        if i < PAGE_RETRIES - 1:
             time.sleep(min(240, 2 ** (i + 1)))
-            continue
-        page = ((j.get("data") or {}).get("address") or {}).get("dynamicFields")
-        if page is None:
-            msgs = "; ".join(e.get("message", "") for e in j.get("errors", [])) or "no data"
-            raise PageError(f"{table[:12]}… after {after and after[:16]}: {msgs}")
-        return page
+    raise PageError(msgs)
+
+
+def _page(table: str, after: Optional[str]) -> dict:
+    """One page of a table's dynamic fields, every entry with a name and value."""
+    def complete(d):
+        page = (d.get("address") or {}).get("dynamicFields")
+        return page is not None and all(n.get("name") and n.get("value") is not None
+                                        for n in page["nodes"])
+    try:
+        d = _post(Q_FIELDS, {"a": table, "n": 50, "after": after}, complete)
+    except PageError as e:
+        raise PageError(f"{table[:12]}… after {after and after[:16]}: {e}") from None
+    return d["address"]["dynamicFields"]
 
 
 def page_all(table: str) -> list:
@@ -113,8 +132,9 @@ def multi_get(keys: List[tuple]) -> list:
         k = [{"parent": p, "name": {"type": "address",
                                     "bcs": base64.b64encode(_addr_bcs(u)).decode()}}
              for p, u in batch]
-        return [x["value"]["json"] if x else None
-                for x in gql(Q_MULTI, {"k": k})["multiGetDynamicFields"]]
+        d = _post(Q_MULTI, {"k": k},
+                  lambda d: len(d.get("multiGetDynamicFields") or []) == len(k))
+        return [x["value"]["json"] if x else None for x in d["multiGetDynamicFields"]]
 
     with ThreadPoolExecutor(STREAMS) as ex:
         return [v for part in ex.map(one, batches) for v in part]
@@ -127,13 +147,13 @@ def multi_get(keys: List[tuple]) -> list:
 def _prices(reserves: dict, nodes: list) -> tuple:
     """reserve id -> USD price and its oracle timestamp (ms), from the nodes of
     the oracle's price table."""
-    raw = {int(n["name"]["json"]): n["value"]["json"] for n in nodes}
+    table = navi_oracle.entries(nodes)          # per-entry decimals
     prices, price_ms = {}, {}
     for rid, r in reserves.items():
-        o = raw.get(r["oracle_id"])
-        if o:
-            prices[rid] = int(o["value"]) / 10 ** int(o["decimal"])
-            price_ms[rid] = int(o["timestamp"])
+        e = table.get(r["oracle_id"])
+        if e:
+            prices[rid] = e["price"]
+            price_ms[rid] = e["timestamp_ms"]
     return prices, price_ms
 
 

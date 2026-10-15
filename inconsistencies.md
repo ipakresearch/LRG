@@ -147,3 +147,61 @@ Whichever pool is priced first sets the price for both tokens. That price is the
 ## Current workaround
 
 `run.py` (`alias_prices`) maps each Navi symbol to its price key by coin type, using the pools `build()` read, and adds the Navi names to `M.prices` without overwriting existing keys. This fixes problem 2 for `run.py` only. Problem 1 is not fixed: the fix belongs in `lrg/`, keying prices (and `_out_usd` lookups) by normalized coin type.
+
+# Oracle prices (2026-10-15)
+
+`run.py` now prices tokens with Navi's on-chain oracle (`lrg/protocols/navi_oracle.py`, passed through `Params(prices=...)`). Run: `data/navi/2026-10-15/`, exit 0.
+
+## Code changes (uncommitted)
+
+- `lrg/protocols/navi_oracle.py` (new): reads the PriceOracle price table (`0x1568865e…fbef`, 38 entries `{value, decimal, timestamp}`) and maps each reserve to its entry through `oracle_id`. Price = value / 10**decimal, with the decimal taken from each entry (6, 8 and 9 all occur).
+- `lrg/matrix.py`: `build()` merges supplied prices over derived ones and records `price_source` (`supplied`/`derived`) and `derived_prices` on `Matrix`.
+- `run.py`: `oracle_prices()` keys oracle prices by both on-chain and Navi symbol. Where two coins share a symbol, the coin with the larger pool TVL wins. `coverage.json` gets a `prices` block with per token: `price_source` (oracle/derived), price, derived price, oracle age, coin type, plus collisions.
+- `positions.py`: uses `navi_oracle.entries`. Page reads now retry on partial GraphQL errors (`_post`, `PageError`).
+
+## Verification
+
+**(b) Decimals: 20 recent liquidations.** The implied bonus is `collateral × P_c / (debt × P_d) − 1`, with each price decoded using its own decimal. All 20 fall within 0.2 pp of the configured bonus: 19 exactly at 10% or 8%, and one at 14.95% against 15%. Per-asset decimals are correct.
+
+**(a) Oracle vs derived vs CoinGecko.**
+
+| asset | oracle | derived | CoinGecko | oracle vs derived | oracle vs CoinGecko |
+|---|---|---|---|---|---|
+| SUI | 0.9896 | 0.9803 | 0.9833 | +0.9% | +0.6% |
+| vSUI | 0.9885 | 1.0484 | 1.050 | −5.7% | −5.9% |
+| haSUI | 0.9878 | 1.0613 | 1.065 | −6.9% | −7.2% |
+| stSUI | 0.9937 | 1.0230 | 1.022 | −2.9% | −2.8% |
+| SOL | 102.41 | 101.44 | 102.37 | +1.0% | +0.0% |
+| suiETH | 2,368.07 | 2,352.76 | 2,365.09 | +0.7% | +0.1% |
+| xBTC / wBTC / WBTC.lz | 81,109.99 | 80,696–80,807 | 80,899–81,068 | +0.4–0.5% | +0.1–0.3% |
+| LBTC | 81,208.29 | 80,958.20 | 81,167 | +0.3% | +0.1% |
+| MBTC | 81,183.65 | 79,902.26 | 52,978 | +1.6% | +53% (CoinGecko quote looks stale) |
+| enzoBTC | 81,183.65 | 80,803.86 | 83,503 | +0.5% | −2.8% |
+| XAUm | 4,178.56 | 4,121.97 | 4,122.23 | +1.4% | +1.4% |
+| WAL | 0.05228 | 0.05149 | 0.05183 | +1.5% | +0.9% |
+| DEEP | 0.02229 | 0.02182 | 0.02220 | +2.1% | +0.4% |
+| NAVX | 0.01049 | 0.01040 | 0.01049 | +0.9% | 0.0% |
+| stables (USDC, suiUSDT, suiUSDe, USDSUI, FDUSD, BUCK, wUSDC) | 0.997–1.000 | 0.998–1.000 | 0.998–1.000 | within 0.1% | within 0.2% |
+| USDY | 1.1491 | 1.1482 | 1.150 | +0.1% | −0.1% |
+
+Oracle prices were 3–46 minutes old at read time. Apart from the liquid-staking tokens and MBTC's CoinGecko quote, the oracle is within about 1.4% of CoinGecko.
+
+**Fallbacks.** MMT, MUSIC and USDB have no oracle entry, so they use the derived price (`price_source="derived"`). Symbol collisions: USDC (native vs Wormhole), USDT (suiUSDT vs Wormhole) and WBTC (WBTC.lz vs Wormhole). In each pair the oracle prices differ by under 0.1%.
+
+**Health factors.** 5 sampled positions, one of them e-mode, match Navi's own health factor to within 5e-7.
+
+## Effect on Q* (vs 2026-10-13)
+
+`Q_star` is 0 for every collateral in both runs, mostly because MBTC debt has no capacity. The comparison below uses `Q_star_ex_zero`.
+
+- Liquid-staking collateral rose: stSUI +137% (732 → 1,737), haSUI +66% (6,030 → 10,016), vSUI +57% (5,931 → 9,339). The oracle values the seized collateral below its sale price, so liquidating it looks cheaper.
+- haSUI as debt dropped to zero for DEEP, NAVX, USDC, USDSUI, USDY and suiUSDT, and NAVX→vSUI dropped to zero as well. These pairs had up to $1.46M of capacity before. A liquidator pays about 7% more for haSUI than Navi credits, which uses up most of the 10% bonus.
+- Other changes: SOL −46%, FDUSD −31%, DEEP −17%. Most other collaterals moved within ±7%.
+- Per pair (455 pairs with capacity > 0 in both runs): median −16.9%, 10th percentile −56%, 90th +34%. Not decomposed yet. A likely contributor is that the oracle prices most tokens 0.5–2% above the derived prices.
+- Adequacy status: red for every collateral in both runs.
+
+## Findings (not changed)
+
+1. **`platform_share` understates the liquidator's bonus.** In all 20 liquidations the liquidator received the full bonus, and the treasury amount was paid on top of it (55–85% of the bonus, matching `treasury_factor`). `Params.platform_share = 0.10` therefore understates what liquidators earn.
+2. **The oracle prices vSUI and haSUI at the SUI price** (stSUI is about 3% under market). The one vSUI liquidation among the 20 was priced at the oracle value, so this is how Navi actually liquidates. It now drives the zero haSUI-debt cells and the higher liquid-staking collateral capacity.
+3. **Inconsistent symbol naming persists** (see "Prices keyed by on-chain symbol" above). `run.py` works around it by keying oracle prices under both names.

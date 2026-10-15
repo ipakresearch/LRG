@@ -38,7 +38,7 @@ class Params:
     platform_share: float = 0.10
     flash_fee: float = 0.0009
     lb_max: float = 0.15
-    prices: Optional[Dict[str, float]] = None
+    prices: Optional[Dict[str, float]] = None    # override derived prices, by pool symbol
     venues: Optional[set] = None
     max_hops: int = 4
     max_pools_per_leg: int = 4
@@ -119,6 +119,8 @@ class Matrix:
     dead_leg: Dict[Tuple[str, str], Optional[str]] = field(default_factory=dict)
     pools_read: int = 0
     pools_failed: int = 0
+    derived_prices: Dict[str, float] = field(default_factory=dict)
+    price_source: Dict[str, str] = field(default_factory=dict)   # "supplied" | "derived"
 
     # ---- collateral side -------------------------------------------------
 
@@ -315,6 +317,7 @@ class Matrix:
             "params": {k: v for k, v in asdict(self.params).items()
                        if k not in ("venues",)},
             "prices": self.prices,
+            "price_source": self.price_source,
             "cells": {f"{b}|{a}": v for (b, a), v in self.cells.items()},
             "paths": {f"{b}|{a}": p for (b, a), p in self.paths.items()},
             "unreachable": [f"{b}|{a}" for b, a in self.unreachable],
@@ -420,7 +423,11 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         q = book.get(pid, coin_a=ca, coin_b=cb)
         if q:
             pools[pid] = q
-    prices = p.prices or _graph.derive_prices(pools)
+    # Supplied prices win; any token they do not cover keeps its derived
+    # price, so routes through unpriced intermediates stay usable.
+    derived = _graph.derive_prices(pools)
+    prices = {**derived, **(p.prices or {})}
+    price_source = {s: "supplied" if s in (p.prices or {}) else "derived" for s in prices}
     if verbose:
         print(f"{len(pools)} readable, {len(book.failed)} failed; "
               f"prices for {len(prices)} tokens")
@@ -479,4 +486,5 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
     return Matrix(params=p, assets=A, prices=prices, cells=cells, paths=paths,
                   curves=curves, candidates=candidates,
                   unreachable=unreachable, dead_leg=dead_leg,
-                  pools_read=len(pools), pools_failed=len(book.failed))
+                  pools_read=len(pools), pools_failed=len(book.failed),
+                  derived_prices=derived, price_source=price_source)

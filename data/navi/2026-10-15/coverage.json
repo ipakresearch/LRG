@@ -1,0 +1,783 @@
+{
+ "pools_needed": 117,
+ "pools_read": 96,
+ "pools_failed": 21,
+ "failed": [
+  {
+   "pool_id": "0x022db7c3d497c194a5457b9307530a39b8379b09f836d64fd24f93fbe20fa626",
+   "venue": "turbos-finance",
+   "pair": "haSUI/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x022db7c3d4\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x0df4f02d0e210169cb6d5aabd03c3058328c06f2c4dbb0804faa041159c78443",
+   "venue": "turbos-finance",
+   "pair": "USDC/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x0df4f02d0e\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x102d08049c737f8cef0d8a108deefd4aa4404db53c572d02821fb0432ecd6709",
+   "venue": "turbos-finance",
+   "pair": "BUCK/USDC",
+   "kind": "parse_error",
+   "reason": "ticks parsed but no ranges built \u2014 check sign convention"
+  },
+  {
+   "pool_id": "0x198af6ff81028c6577e94465d534c4e2cfcbbab06a95724ece7011c55a9d1f5a",
+   "venue": "turbos-finance",
+   "pair": "DEEP/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x198af6ff81\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x2ce764106ace913ff43f3c1fd6a91454898a42710464cd60d220130eb78ca5ca",
+   "venue": "turbos-finance",
+   "pair": "USDT/wUSDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x2ce764106a\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x2de1a48b8b2047718b320c1f4e76ee3cfb31f046b835b599818b87aed34b7825",
+   "venue": "bluefin",
+   "pair": "WBTC.lz/USDSUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0x40ceeed02e2e82d4f58e88b9524b33c362e00e17368037f4a47c3cf4c5f1df94",
+   "venue": "cetus",
+   "pair": "BUCK/USDY",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0x5eb2dfcdd1b15d2021328258f6d5ec081e9a0cdcfa9e13a0eaeb9b5f7505ca78",
+   "venue": "turbos-finance",
+   "pair": "SUI/wUSDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x5eb2dfcdd1\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x62d398584d1c5909ee1225fbb846d049175cc3b95fbefba4e0191cee45f1663e",
+   "venue": "cetus",
+   "pair": "FDUSD/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0x74915fb0491fe1ed6ebe6f89111073a72f6d026e040822d65e5de66064ffea9c",
+   "venue": "turbos-finance",
+   "pair": "vSUI/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x74915fb049\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x7db7a7279c6e28cb6c5ac06d81c0f3770621b3215a4c37c4f5fa18f09d10c0bd",
+   "venue": "turbos-finance",
+   "pair": "FDUSD/USDC",
+   "kind": "parse_error",
+   "reason": "ticks parsed but no ranges built \u2014 check sign convention"
+  },
+  {
+   "pool_id": "0x835effa94dba86cf354ced62e33ce59ce6754cd0e57e7ee84a6ede2f7d7f8056",
+   "venue": "turbos-finance",
+   "pair": "USDSUI/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x835effa94d\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x8989fbbd6114a5d768eb551e8e6609ac39c91e7c30813c5c8771158ccf2f73d3",
+   "venue": "cetus",
+   "pair": "BUCK/USDT",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0x9490a13351e13b133bd8a9c309c47568d6fcbfcbfe7aac0e228b710053583081",
+   "venue": "turbos-finance",
+   "pair": "WAL/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x9490a13351\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x97bde23c85fa25513f1c4140ba81ddcecf69f6cea5964e4ee28212776082c850",
+   "venue": "cetus",
+   "pair": "BUCK/WAL",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0xaad89a13dee194eb1043e5a34d8f070897d787473c2034647def9d4f43879b60",
+   "venue": "turbos-finance",
+   "pair": "LBTC/wBTC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0xaad89a13de\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0xacf163d7e76641381bcf026ddb7cb4e4876eb03fff183dd4de0fc15f5000d650",
+   "venue": "bluefin",
+   "pair": "xBTC/USDSUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0xb9ddcf85a857dadd255a784d2838c8ffb21046d21e908e87b5ce0c1a2af6878b",
+   "venue": "bluefin",
+   "pair": "XAUm/WBTC.lz",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0xd2a3915f5a8d81032fc5472cbda5899627431a4ce204a80a913f4f7b8f8190b6",
+   "venue": "turbos-finance",
+   "pair": "LBTC/wBTC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0xd2a3915f5a\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0xd97d8b73e82b1bf12bc5d22a3df75801751300b828f7911d92521fef329bb31a",
+   "venue": "bluefin",
+   "pair": "XAUm/LBTC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0xe9750931401fd6e9592d489760d8ad264cdc0bb41e4ce7b334cd66fbacdd04d6",
+   "venue": "turbos-finance",
+   "pair": "USDSUI/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0xe975093140\u2026 \u2014 this venue stores its liquidity elsewhere"
+  }
+ ],
+ "untracked_navi_reserves": [
+  {
+   "reserve_id": 2,
+   "coin_type": "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 3,
+   "coin_type": "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 4,
+   "coin_type": "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 8,
+   "coin_type": "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 9,
+   "coin_type": "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 13,
+   "coin_type": "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 14,
+   "coin_type": "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 17,
+   "coin_type": "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 25,
+   "coin_type": "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 27,
+   "coin_type": "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 30,
+   "coin_type": "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  }
+ ],
+ "prices": {
+  "tokens": {
+   "AUSD": {
+    "price_source": "oracle",
+    "price": 0.999772,
+    "derived_price": null,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD"
+   },
+   "BLUE": {
+    "price_source": "oracle",
+    "price": 0.00953094,
+    "derived_price": null,
+    "oracle_age_s": 233.28810596466064,
+    "coin_type": "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE"
+   },
+   "BUCK": {
+    "price_source": "oracle",
+    "price": 0.99908723,
+    "derived_price": 0.9984121466370746,
+    "oracle_age_s": 180.13010597229004,
+    "coin_type": "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK"
+   },
+   "CETUS": {
+    "price_source": "oracle",
+    "price": 0.0231985,
+    "derived_price": 0.023017597860551593,
+    "oracle_age_s": 233.28810596466064,
+    "coin_type": "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS"
+   },
+   "DEEP": {
+    "price_source": "oracle",
+    "price": 0.022287,
+    "derived_price": 0.021820481656001534,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP"
+   },
+   "ETH": {
+    "price_source": "oracle",
+    "price": 2368.06634785,
+    "derived_price": 2352.757676860761,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH"
+   },
+   "FDUSD": {
+    "price_source": "oracle",
+    "price": 0.996882,
+    "derived_price": 0.9977306776295974,
+    "oracle_age_s": 477.8131060600281,
+    "coin_type": "0xf16e6b723f242ec745dfd7634ad072c42d5c1d9ac9d62a39c381303eaa57693a::fdusd::FDUSD"
+   },
+   "HAEDAL": {
+    "price_source": "oracle",
+    "price": 0.017895,
+    "derived_price": 0.01778953471044906,
+    "oracle_age_s": 233.28810596466064,
+    "coin_type": "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL"
+   },
+   "IKA": {
+    "price_source": "oracle",
+    "price": 0.00177936,
+    "derived_price": null,
+    "oracle_age_s": 2717.8731060028076,
+    "coin_type": "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA"
+   },
+   "LBTC": {
+    "price_source": "oracle",
+    "price": 81208.28609875,
+    "derived_price": 80958.19742337699,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040::lbtc::LBTC"
+   },
+   "MBTC": {
+    "price_source": "oracle",
+    "price": 81183.65299693,
+    "derived_price": 79902.26080472635,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0xd1a91b46bd6d966b62686263609074ad16cfdffc63c31a4775870a2d54d20c6b::mbtc::MBTC"
+   },
+   "MMT": {
+    "price_source": "derived",
+    "price": 0.1424781146110279,
+    "derived_price": 0.1424781146110279
+   },
+   "MUSIC": {
+    "price_source": "derived",
+    "price": 0.32602706897447103,
+    "derived_price": 0.32602706897447103
+   },
+   "NAVX": {
+    "price_source": "oracle",
+    "price": 0.01048995,
+    "derived_price": 0.010396843584808465,
+    "oracle_age_s": 180.13010597229004,
+    "coin_type": "0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX"
+   },
+   "NS": {
+    "price_source": "oracle",
+    "price": 0.013054,
+    "derived_price": null,
+    "oracle_age_s": 630.3781061172485,
+    "coin_type": "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS"
+   },
+   "SOL": {
+    "price_source": "oracle",
+    "price": 102.40784971,
+    "derived_price": 101.44000886856891,
+    "oracle_age_s": 180.13010597229004,
+    "coin_type": "0xb7844e289a8410e50fb3ca48d69eb9cf29e27d223ef90353fe1bd8e27ff8f3f8::coin::COIN"
+   },
+   "SUI": {
+    "price_source": "oracle",
+    "price": 0.98958051,
+    "derived_price": 0.9802877596246478,
+    "oracle_age_s": 180.13010597229004,
+    "coin_type": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+   },
+   "USDB": {
+    "price_source": "derived",
+    "price": 0.9942664148684229,
+    "derived_price": 0.9942664148684229
+   },
+   "USDC": {
+    "price_source": "oracle",
+    "price": 0.999893,
+    "derived_price": 1.0,
+    "oracle_age_s": 233.28810596466064,
+    "coin_type": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC"
+   },
+   "USDSUI": {
+    "price_source": "oracle",
+    "price": 0.999885,
+    "derived_price": 0.9998924687133205,
+    "oracle_age_s": 645.744106054306,
+    "coin_type": "0x44f838219cf67b058f3b37907b655f226153c18e33dfcd0da559a844fea9b1c1::usdsui::USDSUI"
+   },
+   "USDT": {
+    "price_source": "oracle",
+    "price": 0.998693,
+    "derived_price": 0.9988962111874008,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT"
+   },
+   "USDY": {
+    "price_source": "oracle",
+    "price": 1.149135,
+    "derived_price": 1.1482177453105489,
+    "oracle_age_s": 617.0261061191559,
+    "coin_type": "0x960b531667636f39e85867775f52f6b1f220a058c4de786905bdf761e06a56bb::usdy::USDY"
+   },
+   "WAL": {
+    "price_source": "oracle",
+    "price": 0.052275,
+    "derived_price": 0.05149342623463809,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0x356a26eb9e012a68958082340d4c4116e7f55615cf27affcff209cf0ae544f59::wal::WAL"
+   },
+   "WBTC": {
+    "price_source": "oracle",
+    "price": 81109.98584133,
+    "derived_price": 80699.60413784142,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC"
+   },
+   "WBTC.lz": {
+    "price_source": "oracle",
+    "price": 81109.98584133,
+    "derived_price": null,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC"
+   },
+   "WETH": {
+    "price_source": "oracle",
+    "price": 2368.06634785,
+    "derived_price": 2367.193238848952,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN"
+   },
+   "XAUM": {
+    "price_source": "oracle",
+    "price": 4178.559,
+    "derived_price": 4121.974316761507,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM"
+   },
+   "XAUm": {
+    "price_source": "oracle",
+    "price": 4178.559,
+    "derived_price": null,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM"
+   },
+   "YBTC.B": {
+    "price_source": "oracle",
+    "price": 81109.98584133,
+    "derived_price": null,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC"
+   },
+   "enzoBTC": {
+    "price_source": "oracle",
+    "price": 81183.65299693,
+    "derived_price": 80803.86019686835,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x8f2b5eb696ed88b71fea398d330bccfa52f6e2a5a8e1ac6180fcb25c6de42ebc::coin::COIN"
+   },
+   "haSUI": {
+    "price_source": "oracle",
+    "price": 0.98783507,
+    "derived_price": 1.0613029737434772,
+    "oracle_age_s": 630.3781061172485,
+    "coin_type": "0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI"
+   },
+   "stBTC": {
+    "price_source": "oracle",
+    "price": 81183.65299693,
+    "derived_price": null,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN"
+   },
+   "stSUI": {
+    "price_source": "oracle",
+    "price": 0.99365108,
+    "derived_price": 1.0229658656745853,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI"
+   },
+   "suiETH": {
+    "price_source": "oracle",
+    "price": 2368.06634785,
+    "derived_price": null,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH"
+   },
+   "suiUSDT": {
+    "price_source": "oracle",
+    "price": 0.998693,
+    "derived_price": null,
+    "oracle_age_s": 2747.7531061172485,
+    "coin_type": "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT"
+   },
+   "suiUSDe": {
+    "price_source": "oracle",
+    "price": 0.999885,
+    "derived_price": 0.9997091489725217,
+    "oracle_age_s": 645.744106054306,
+    "coin_type": "0x41d587e5336f1c86cad50d38a7136db99333bb9bda91cea4ba69115defeb1402::sui_usde::SUI_USDE"
+   },
+   "vSUI": {
+    "price_source": "oracle",
+    "price": 0.98850624,
+    "derived_price": 1.0484022777032396,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT"
+   },
+   "wBTC": {
+    "price_source": "oracle",
+    "price": 81109.98584133,
+    "derived_price": 80695.96890908304,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0xaafb102dd0902f5055cadecd687fb5b71ca82ef0e0285d90afde828ec58ca96b::btc::BTC"
+   },
+   "wUSDC": {
+    "price_source": "oracle",
+    "price": 0.999916,
+    "derived_price": null,
+    "oracle_age_s": 180.13010597229004,
+    "coin_type": "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN"
+   },
+   "xBTC": {
+    "price_source": "oracle",
+    "price": 81109.98584133,
+    "derived_price": 80806.6754533459,
+    "oracle_age_s": 173.34810614585876,
+    "coin_type": "0x876a4b7bce8aeaef60464c11f4026903e9afacab79b9b142686158aa86560b50::xbtc::XBTC"
+   }
+  },
+  "derived": [
+   "MMT",
+   "MUSIC",
+   "USDB"
+  ],
+  "collisions": [
+   {
+    "symbol": "USDC",
+    "used": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+    "dropped": [
+     "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN"
+    ],
+    "prices": {
+     "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC": 0.999893,
+     "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN": 0.999916
+    }
+   },
+   {
+    "symbol": "USDT",
+    "used": "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT",
+    "dropped": [
+     "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN"
+    ],
+    "prices": {
+     "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT": 0.998693,
+     "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN": 0.998765
+    }
+   },
+   {
+    "symbol": "WBTC",
+    "used": "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC",
+    "dropped": [
+     "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN"
+    ],
+    "prices": {
+     "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC": 81109.98584133,
+     "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN": 81183.65299693
+    }
+   }
+  ]
+ },
+ "positions": {
+  "borrowers": 77169,
+  "positions": 9733,
+  "dust_borrowers": 67436,
+  "dust_debt_usd": 4070.0810454067027,
+  "debt_usd": 67160761.19717783,
+  "min_debt_usd": 1.0,
+  "requests": {
+   "borrow_pages": 5362,
+   "lookup_batches": 1449
+  },
+  "seconds": 1683.9,
+  "checkpoint_start": 334266209,
+  "checkpoint_end": 334271885,
+  "emode_positions": 62,
+  "protected_positions": 5,
+  "hf_check": {
+   "tolerance": 1e-06,
+   "min_debt_usd": 1000.0,
+   "positions": [
+    {
+     "user": "0xa8e45477ac8cf0c5b7e114cee30110a122cb5c2a91104b3ac455f7e7d15b50e9",
+     "emode": 1,
+     "navi_hf": 1.0399862959645967,
+     "computed_hf": 1.0399863013445194,
+     "rel_diff": 5.173070789881462e-09
+    },
+    {
+     "user": "0xd1724d8ca8bf8b663645898db606201cb7b2a63fa1dde4230f80109faaa96c3e",
+     "emode": null,
+     "navi_hf": 2.032679451734528,
+     "computed_hf": 2.0326785252143202,
+     "rel_diff": 4.5581225651506753e-07
+    },
+    {
+     "user": "0x0bb9892affe3df6eaf850b30ba661f5a8a9211c49a5bd2559f3eb12f87531622",
+     "emode": null,
+     "navi_hf": 0.9313675998861927,
+     "computed_hf": 0.9313676466847959,
+     "rel_diff": 5.024718835033557e-08
+    },
+    {
+     "user": "0x45993871c3afd865bc4e14be6606bfede8aa006ea187d212e61849eba5677c07",
+     "emode": null,
+     "navi_hf": 1.6593704200166095,
+     "computed_hf": 1.6593705332852315,
+     "rel_diff": 6.825999829271182e-08
+    },
+    {
+     "user": "0xb4075887a5e7f7b541ee0d4c4f9d1a75a4fc2db16d67823d51e6b1d96223622d",
+     "emode": null,
+     "navi_hf": 1.6846724342846204,
+     "computed_hf": 1.6846723872892095,
+     "rel_diff": 2.789587455682487e-08
+    }
+   ]
+  },
+  "market": {
+   "market_id": "0",
+   "last_market_id": "10",
+   "is_main_market": true
+  },
+  "emode_users": 263,
+  "protected_users": 6,
+  "stress_scenarios": 57,
+  "price_groups": {
+   "SUI": {
+    "reserve": 0,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "wUSDC": {
+    "reserve": 1,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "r2": {
+    "reserve": 2,
+    "group": "stable (unshocked)",
+    "why": "price 0.9988 within 2% of $1: stable"
+   },
+   "r3": {
+    "reserve": 3,
+    "group": "r3",
+    "why": "untracked, alone"
+   },
+   "CETUS": {
+    "reserve": 4,
+    "group": "CETUS",
+    "why": "untracked, alone"
+   },
+   "vSUI": {
+    "reserve": 5,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "haSUI": {
+    "reserve": 6,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "NAVX": {
+    "reserve": 7,
+    "group": "NAVX",
+    "why": "listed, alone"
+   },
+   "r8": {
+    "reserve": 8,
+    "group": "BTC family",
+    "why": "price 80,914.40 within 10% of wBTC"
+   },
+   "AUSD": {
+    "reserve": 9,
+    "group": "stable (unshocked)",
+    "why": "price 0.9999 within 2% of $1: stable"
+   },
+   "USDC": {
+    "reserve": 10,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "suiETH": {
+    "reserve": 11,
+    "group": "suiETH",
+    "why": "listed, alone"
+   },
+   "USDY": {
+    "reserve": 12,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "NS": {
+    "reserve": 13,
+    "group": "NS",
+    "why": "untracked, alone"
+   },
+   "r14": {
+    "reserve": 14,
+    "group": "BTC family",
+    "why": "price 80,914.40 within 10% of wBTC"
+   },
+   "DEEP": {
+    "reserve": 15,
+    "group": "DEEP",
+    "why": "listed, alone"
+   },
+   "FDUSD": {
+    "reserve": 16,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "BLUE": {
+    "reserve": 17,
+    "group": "BLUE",
+    "why": "untracked, alone"
+   },
+   "BUCK": {
+    "reserve": 18,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "suiUSDT": {
+    "reserve": 19,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "stSUI": {
+    "reserve": 20,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "wBTC": {
+    "reserve": 21,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "SOL": {
+    "reserve": 22,
+    "group": "SOL",
+    "why": "listed, alone"
+   },
+   "LBTC": {
+    "reserve": 23,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "WAL": {
+    "reserve": 24,
+    "group": "WAL",
+    "why": "listed, alone"
+   },
+   "HAEDAL": {
+    "reserve": 25,
+    "group": "HAEDAL",
+    "why": "untracked, alone"
+   },
+   "xBTC": {
+    "reserve": 26,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "IKA": {
+    "reserve": 27,
+    "group": "IKA",
+    "why": "untracked, alone"
+   },
+   "enzoBTC": {
+    "reserve": 28,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "MBTC": {
+    "reserve": 29,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "YBTC": {
+    "reserve": 30,
+    "group": "BTC family",
+    "why": "price 80,914.40 within 10% of wBTC"
+   },
+   "XAUm": {
+    "reserve": 31,
+    "group": "XAUm",
+    "why": "listed, alone"
+   },
+   "WBTC.lz": {
+    "reserve": 32,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "suiUSDe": {
+    "reserve": 33,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "USDSUI": {
+    "reserve": 34,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   }
+  }
+ }
+}
