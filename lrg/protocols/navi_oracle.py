@@ -20,18 +20,11 @@ import time
 from typing import Dict
 
 from ..clmm import gql, Q_FIELDS, Q_OBJECT
+from ..coins import norm_type  # re-exported
 from .navi import COIN_TYPES
 
 STORAGE = "0xbb4e2f4b6205c2e2a2db47aeb4f830796ec7c005f88537ee775986639bc442fe"
 PRICE_ORACLE = "0x1568865ed9a0b5ec414220e8f79b3d04c77acc82358f6e5ae4635687392ffbef"
-
-
-def norm_type(coin_type: str) -> str:
-    """Coin type with the address zero-padded to 64 hex digits."""
-    addr, rest = coin_type.split("::", 1)
-    addr = addr.lower()
-    addr = addr[2:] if addr.startswith("0x") else addr
-    return "0x" + addr.rjust(64, "0") + "::" + rest
 
 
 def decode(value, decimal) -> float:

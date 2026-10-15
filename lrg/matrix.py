@@ -24,6 +24,7 @@ from dataclasses import dataclass, field, asdict
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from . import clmm
+from .coins import norm_type
 from .book import PoolBook
 from .curves import LegCurve, route_capacity
 from . import graph as _graph
@@ -45,7 +46,7 @@ class Params:
     treasury_share: Optional[float] = None
     flash_fee: float = 0.0009
     lb_max: float = 0.15
-    prices: Optional[Dict[str, float]] = None    # override derived prices, by pool symbol
+    prices: Optional[Dict[str, float]] = None    # override derived prices, by coin type
     venues: Optional[set] = None
     max_hops: int = 4
     max_pools_per_leg: int = 4
@@ -124,7 +125,7 @@ def load_assets(table: Dict[str, tuple],
 class Matrix:
     params: Params
     assets: Dict[str, Asset]
-    prices: Dict[str, float]
+    prices: Dict[str, float]                           # normalized coin type -> USD
     cells: Dict[Tuple[str, str], Optional[float]]      # (B, A) -> capacity USD
     paths: Dict[Tuple[str, str], Optional[List[str]]]
     curves: Dict[Tuple[str, str], object] = field(default_factory=dict)
@@ -135,6 +136,13 @@ class Matrix:
     pools_failed: int = 0
     derived_prices: Dict[str, float] = field(default_factory=dict)
     price_source: Dict[str, str] = field(default_factory=dict)   # "supplied" | "derived"
+    tokens: Dict[str, str] = field(default_factory=dict)        # symbol -> normalized coin type
+    skipped_pools: List[str] = field(default_factory=list)      # pools not holding a leg's coin
+
+    def price(self, symbol: str) -> Optional[float]:
+        """USD price of the asset named `symbol`, looked up by its coin type."""
+        t = self.tokens.get(symbol)
+        return self.prices.get(t) if t else None
 
     # ---- collateral side -------------------------------------------------
 
@@ -185,7 +193,7 @@ class Matrix:
         if not a.is_collateral:
             return None
         S = a.supply_cap if at == "cap" else (a.supplied or 0.0)
-        px = self.prices.get(B)
+        px = self.price(B)
         if px is None:
             return None
         return (p.beta * p.close_factor * p.seized_factor(a.lb, p.tf(B))
@@ -206,7 +214,7 @@ class Matrix:
         """Largest supply cap, in tokens, adequate at (ltv, lb)."""
         a, p = self.assets[B], self.params
         qs = self.q_star(B, lb)
-        px = self.prices.get(B)
+        px = self.price(B)
         if qs is None or not px or ltv <= 0:
             return None
         return qs / (p.beta * p.close_factor * p.seized_factor(lb, p.tf(B)) * ltv * px)
@@ -216,7 +224,7 @@ class Matrix:
         """(LTV, LB) region at a fixed supply cap: required bonus vs ceiling."""
         a, p = self.assets[B], self.params
         S = S if S is not None else a.supply_cap
-        px = self.prices.get(B) or 0.0
+        px = self.price(B) or 0.0
         ltvs = ltvs or [i / 100 for i in range(5, 86, 5)]
         delta = a.lt - (a.ltv or a.lt)
         out = []
@@ -332,6 +340,7 @@ class Matrix:
                        if k not in ("venues",)},
             "prices": self.prices,
             "price_source": self.price_source,
+            "tokens": self.tokens,
             "cells": {f"{b}|{a}": v for (b, a), v in self.cells.items()},
             "paths": {f"{b}|{a}": p for (b, a), p in self.paths.items()},
             "unreachable": [f"{b}|{a}" for b, a in self.unreachable],
@@ -388,7 +397,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
     adj = _graph.build_adjacency(rows)
     vol_of = {r["pool_id"]: float(r["volume_24h"] or 0) for r in rows}
     tvl_of = {r["pool_id"]: float(r["tvl_usd"] or 0) for r in rows}
-    name = dict(tokens)
+    name = {s: norm_type(t) for s, t in tokens.items()}
     tname = {v: k for k, v in name.items()}
     for r in rows:
         tname.setdefault(r["coin_type_a"], r["symbol_a"])
@@ -407,8 +416,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
 
     # candidate paths, same selection as the network build
     def leg_ids(x, y):
-        return [(c["pool_id"], "a" if c["coin_type_a"] == x else "b")
-                for c in adj[x][y][:p.max_pools_per_leg]]
+        return [c["pool_id"] for c in adj[x][y][:p.max_pools_per_leg]]
 
     def bottleneck(path):
         return min(float(adj[path[i]][path[i + 1]][0]["tvl_usd"])
@@ -424,7 +432,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
             cands[(B, D)] = ps[:p.max_candidates]
 
     need = sorted({pid for ps in cands.values() for path in ps
-                   for i in range(len(path) - 1) for pid, _ in leg_ids(path[i], path[i + 1])})
+                   for i in range(len(path) - 1) for pid in leg_ids(path[i], path[i + 1])})
     venue_of = {r["pool_id"]: r["venue"] for r in rows}
     type_of = {r["pool_id"]: (r["coin_type_a"], r["coin_type_b"]) for r in rows}
     book = PoolBook(cache=cache, verbose=verbose, venue_of=venue_of,
@@ -437,20 +445,22 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         q = book.get(pid, coin_a=ca, coin_b=cb)
         if q:
             pools[pid] = q
-    # Supplied prices win; any token they do not cover keeps its derived
+    # Supplied prices win; any coin they do not cover keeps its derived
     # price, so routes through unpriced intermediates stay usable.
     derived = _graph.derive_prices(pools)
-    prices = {**derived, **(p.prices or {})}
-    price_source = {s: "supplied" if s in (p.prices or {}) else "derived" for s in prices}
+    supplied = {norm_type(t): v for t, v in (p.prices or {}).items()}
+    prices = {**derived, **supplied}
+    price_source = {t: "supplied" if t in supplied else "derived" for t in prices}
     if verbose:
         print(f"{len(pools)} readable, {len(book.failed)} failed; "
               f"prices for {len(prices)} tokens")
 
     curve_cache: Dict[Tuple[str, str], object] = {}
+    skipped: List[str] = []
 
     def curve(x, y):
         if (x, y) not in curve_cache:
-            lp = [(pools[pid], sd) for pid, sd in leg_ids(x, y) if pid in pools]
+            lp = _graph.leg_pools(pools, leg_ids(x, y), x, skipped)
             curve_cache[(x, y)] = (LegCurve(lp, prices, pick=p.pick)
                                    if lp else None)
         return curve_cache[(x, y)]
@@ -461,7 +471,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
 
     def leg_volume(x, y):
         """Total 24h volume across the pools used on this leg."""
-        return sum(vol_of.get(pid, 0.0) for pid, _ in leg_ids(x, y))
+        return sum(vol_of.get(pid, 0.0) for pid in leg_ids(x, y))
     for (B, D), ps in cands.items():
         tau = p.budget(A[B].lb, p.tf(B))
         priced = []
@@ -501,4 +511,5 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
                   curves=curves, candidates=candidates,
                   unreachable=unreachable, dead_leg=dead_leg,
                   pools_read=len(pools), pools_failed=len(book.failed),
-                  derived_prices=derived, price_source=price_source)
+                  derived_prices=derived, price_source=price_source,
+                  tokens=name, skipped_pools=sorted(set(skipped)))

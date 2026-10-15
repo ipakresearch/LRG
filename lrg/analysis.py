@@ -37,7 +37,7 @@ def to_frame(M) -> pd.DataFrame:
             "lb": a.lb, "budget": M.params.budget(a.lb, M.params.tf(B)),
             "ltv": a.ltv, "lt": a.lt,
             "supply_cap_tokens": a.supply_cap,
-            "price": M.prices.get(B),
+            "price": M.price(B),
         })
     df = pd.DataFrame(rows)
     df["supply_cap_usd"] = df["supply_cap_tokens"] * df["price"]
@@ -68,6 +68,9 @@ class LoadedMatrix:
             d = json.load(fh)
         self.raw = d
         self.prices: Dict[str, float] = d.get("prices", {})
+        # symbol -> coin type; files written before prices were keyed by coin
+        # type have no tokens and keep their symbol keys (see price()).
+        self.tokens: Dict[str, str] = d.get("tokens", {})
         self.cells = {tuple(k.split("|")): v for k, v in d["cells"].items()}
         self.paths = {tuple(k.split("|")): v for k, v in d.get("paths", {}).items()}
         self.unreachable = [tuple(k.split("|")) for k in d.get("unreachable", [])]
@@ -90,6 +93,12 @@ class LoadedMatrix:
                                        and k not in ("prices", "venues")})
 
     # ---- same interface as navi_matrix.Matrix ---------------------------
+
+    def price(self, symbol):
+        if self.tokens:
+            t = self.tokens.get(symbol)
+            return self.prices.get(t) if t else None
+        return self.prices.get(symbol)
 
     def row(self, B):
         return {A: v for (b, A), v in self.cells.items() if b == B}
@@ -123,7 +132,7 @@ class LoadedMatrix:
         if a is None or not a.is_collateral:
             return None
         S = a.supply_cap if at == "cap" else (a.supplied or 0.0)
-        px = self.prices.get(B)
+        px = self.price(B)
         if px is None:
             return None
         return (p.beta * p.close_factor * p.seized_factor(a.lb, p.tf(B))
@@ -214,7 +223,7 @@ def collateral_view(M, at: str = "cap", flag_low: float = 1.0,
             "ltv": a.ltv, "lt": a.lt, "lb": a.lb,
             "budget": M.params.budget(a.lb, M.params.tf(B)),
             "supply_cap_tokens": a.supply_cap,
-            "price": M.prices.get(B),
+            "price": M.price(B),
             "Q_usd": q, "Q_star_usd": qs,
             "ratio": r["ratio"], "car_usd": r["car"],
             "binding_debt": r["binding"],
@@ -228,7 +237,7 @@ def collateral_view(M, at: str = "cap", flag_low: float = 1.0,
             "second_worst": vals[1] if len(vals) > 1 else None,
             "implied_cap_tokens": (qs / (M.params.beta * M.params.close_factor *
                                          M.params.seized_factor(a.lb, M.params.tf(B)) * a.ltv *
-                                         (M.prices.get(B) or 1))
+                                         (M.price(B) or 1))
                                    if qs and a.ltv else None),
             "routes_priced": sum(1 for v in row.values() if v),
             "routes_none": sum(1 for v in row.values() if v == 0.0),

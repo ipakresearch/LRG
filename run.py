@@ -23,9 +23,10 @@ parameters, read from the Storage object on chain, with their differences from
 lrg/protocols/navi.py. The matrix is built with the live parameters.
 
 Prices are Navi's on-chain oracle prices (lrg/protocols/navi_oracle.py), each
-decoded with its own decimal. Tokens with no oracle price, such as route
-intermediates Navi does not list, keep the price derived from pool spot rates;
-coverage.json records each token's price_source ("oracle" or "derived").
+decoded with its own decimal, keyed by normalized coin type. Coins with no
+oracle price, such as route intermediates Navi does not list, keep the price
+derived from pool spot rates; coverage.json records each coin's price_source
+("oracle" or "derived"). Symbols are display labels only.
 
 Status, per pair and per collateral (worst pair):
     red    Q_now > Q*            current positions already exceed the routes
@@ -64,14 +65,14 @@ import subprocess
 import sys
 import tempfile
 import traceback
-from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 
 from lrg import matrix                      # noqa: E402
 from lrg.book import PoolBook               # noqa: E402
-from lrg.clmm import gql, Q_DECIMALS, Q_FIELDS, Q_OBJECT  # noqa: E402
+from lrg.clmm import gql, Q_FIELDS, Q_OBJECT  # noqa: E402
+from lrg.coins import norm_type            # noqa: E402
 from lrg.curves import GRID_HI              # noqa: E402
 from lrg.protocols import navi              # noqa: E402
 from lrg.protocols import navi_oracle       # noqa: E402
@@ -136,15 +137,6 @@ def git_state() -> dict:
     status = git("status", "--porcelain", "lrg")
     return {"commit": git("rev-parse", "HEAD"),
             "lrg_dirty": bool(status) if status is not None else None}
-
-
-def norm_type(coin_type: str) -> str:
-    """Coin type with the address zero-padded to 64 hex digits, so 0x2::sui::SUI
-    and 0x000…02::sui::SUI compare equal."""
-    addr, rest = coin_type.split("::", 1)
-    addr = addr.lower()
-    addr = addr[2:] if addr.startswith("0x") else addr
-    return "0x" + addr.rjust(64, "0") + "::" + rest
 
 
 def fetch_navi_live() -> dict:
@@ -240,77 +232,33 @@ def param_diffs(live: dict) -> list:
     return out
 
 
-def alias_prices(M, book) -> dict:
-    """
-    Make M.prices answer to Navi's symbols.
-
-    lrg keys prices by the on-chain coin symbol (ETH, WBTC, XAUM, USDT, ...),
-    while Matrix.demand looks them up by Navi symbol. Map each Navi symbol to
-    its price key by coin type, from the pools build() read, and add the
-    missing names. Existing keys are never overwritten. Returns
-    {navi symbol: price key used}.
-    """
-    key_of = {}
-    for p in book.pools.values():
-        for ct, sym in ((getattr(p, "coin_a", None), p.sym_a),
-                        (getattr(p, "coin_b", None), p.sym_b)):
-            if ct:
-                key_of.setdefault(norm_type(ct), sym)
-    used = {}
-    for s, t in navi.COIN_TYPES.items():
-        k = key_of.get(norm_type(t))
-        if k is None or k not in M.prices:
-            continue
-        used[s] = k
-        M.prices.setdefault(s, M.prices[k])
-    return used
-
-
 def oracle_prices() -> tuple:
     """
-    Navi's oracle prices keyed the way lrg's pools name coins.
-
-    CLMM pools name a coin by its on-chain metadata symbol (ETH, WBTC, USDT),
-    DeepBook and Aftermath by navi.py's symbol (suiETH, WBTC.lz, suiUSDT), so
-    each price is supplied under both names. Where two priced coin types share
-    a metadata symbol (USDC: native and wUSDC; USDT: suiUSDT and Wormhole),
-    the key goes to the coin with more pool TVL in POOLS_CSV, and the
-    collision is recorded.
-
-    Returns (prices {key: USD}, info {key: {...}}, collisions [...]).
+    Navi's oracle prices for every reserve, keyed by normalized coin type.
+    Returns (prices {coin type: USD}, info {coin type: {symbol, reserve, age_s}}).
     """
     q = navi_oracle.quotes()
-    with ThreadPoolExecutor(4) as ex:
-        meta = dict(zip(q, ex.map(lambda ct: (gql(Q_DECIMALS, {"t": ct})["coinMetadata"]
-                                              or {}).get("symbol"), q)))
-    tvl = {}
-    for row in csv.DictReader(open(POOLS_CSV)):
-        for side in ("a", "b"):
-            ct = norm_type(row[f"coin_type_{side}"])
-            tvl[ct] = tvl.get(ct, 0.0) + float(row["tvl_usd"] or 0)
-    by_meta = {}
-    for ct, s in meta.items():
-        if s:
-            by_meta.setdefault(s, []).append(ct)
-    prices, info, collisions = {}, {}, []
-    for s, cts in sorted(by_meta.items()):
-        cts.sort(key=lambda ct: -tvl.get(ct, 0.0))
-        if len(cts) > 1:
-            collisions.append({"symbol": s, "used": cts[0], "dropped": cts[1:],
-                               "prices": {ct: q[ct]["price"] for ct in cts}})
-        prices[s] = q[cts[0]]["price"]
-        info[s] = {"coin_type": cts[0], "age_s": q[cts[0]]["age_s"], "key": "metadata"}
-    for ct, v in q.items():
-        if v["symbol"] and v["symbol"] not in prices:
-            prices[v["symbol"]] = v["price"]
-            info[v["symbol"]] = {"coin_type": ct, "age_s": v["age_s"], "key": "navi"}
-    return prices, info, collisions
+    prices = {ct: v["price"] for ct, v in q.items()}
+    info = {ct: {"symbol": v["symbol"], "reserve": v["reserve"], "age_s": v["age_s"]}
+            for ct, v in q.items()}
+    return prices, info
+
+
+def price_labels(M, book) -> dict:
+    """coin type -> display label: navi.py's symbol where there is one, else
+    the pool's on-chain symbol. Labels can repeat; keys never do."""
+    out = {}
+    for p in book.pools.values():
+        for ct, sym in ((p.coin_a, p.sym_a), (p.coin_b, p.sym_b)):
+            out.setdefault(norm_type(ct), sym)
+    out.update({t: s for s, t in M.tokens.items()})
+    return out
 
 
 def compute():
     live = fetch_navi_live()
     cf = next(iter(live["assets"].values()))["close_factor"]
-    oracle, oracle_info, oracle_collisions = oracle_prices()
+    oracle, oracle_info = oracle_prices()
     params = matrix.Params(close_factor=cf, beta=1.0, prices=oracle,
                            treasury_factors={s: a["treasury_factor"]
                                              for s, a in live["assets"].items()})
@@ -352,7 +300,7 @@ def compute():
     navi_positions.refresh_prices(state)      # stress at prices from after the read
     pos["hf_check"] = check_health_factors(state, pos["positions"])
     pos["state"] = state
-    live["oracle"] = {"info": oracle_info, "collisions": oracle_collisions}
+    live["oracle"] = {"info": oracle_info}
     return params, M, book, live, pos
 
 
@@ -424,7 +372,7 @@ def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
         for (b, A), qs in sorted(M.cells.items()):
             if b != B:
                 continue
-            pA = M.prices.get(A)
+            pA = M.price(A)
             la = a_live[A]
             b_A = borrowed.get(A, 0.0)
             maxdebt = max(b_A, la["borrow_cap_ratio"] * la["supply_cap"])
@@ -480,7 +428,7 @@ def s_max_debt_bounded(params, M, borrowed: dict, B: str):
     borrowing in each debt asset. A pair whose debt-side limit is already
     within its capacity puts no bound on B's cap. None means no pair binds.
     """
-    a, pB = M.assets[B], M.prices.get(B)
+    a, pB = M.assets[B], M.price(B)
     if not a.ltv or not pB:
         return None
     k = params.beta * params.close_factor * params.seized_factor(a.lb, params.tf(B))
@@ -488,7 +436,7 @@ def s_max_debt_bounded(params, M, borrowed: dict, B: str):
     for (b, A), qs in M.cells.items():
         if b != B:
             continue
-        pA = M.prices.get(A)
+        pA = M.price(A)
         debt_lim = k * borrowed.get(A, 0.0) * pA if pA else float("inf")
         if debt_lim > qs:
             bounds.append(qs / (k * a.ltv * pB))
@@ -645,13 +593,13 @@ def write(params, M, book, live, pos, out_dir: str):
 
     # token pairs with a failed pool, named as build() names path tokens:
     # Navi's symbol where the coin type is a Navi asset, else the CSV symbol
-    navi_name = {v: k for k, v in navi.COIN_TYPES.items()}
+    navi_name = {norm_type(v): k for k, v in navi.COIN_TYPES.items()}
     failed_legs = set()
     for pid in book.failed:
         r = meta.get(pid)
         if r:
-            a = navi_name.get(r["coin_type_a"], r["symbol_a"])
-            b = navi_name.get(r["coin_type_b"], r["symbol_b"])
+            a = navi_name.get(norm_type(r["coin_type_a"]), r["symbol_a"])
+            b = navi_name.get(norm_type(r["coin_type_b"]), r["symbol_b"])
             failed_legs.add(frozenset((a, b)))
 
     def unverified(path) -> bool:
@@ -666,7 +614,6 @@ def write(params, M, book, live, pos, out_dir: str):
             w.writerow([B, D, cap, " → ".join(path) if path else "",
                         str(unverified(path)).lower()])
 
-    price_keys = alias_prices(M, book)
     sym = reserve_symbols(pos["state"])
     borrowed = {sym[rid]: t for rid, t in pos["debt_tokens_all"].items()}
     pairs, per_coll = adequacy(params, M, live, unverified, borrowed)
@@ -718,28 +665,32 @@ def write(params, M, book, live, pos, out_dir: str):
         a["borrowed_in_positions"] = borrowed.get(s_, 0.0)
     navi_live = {"storage": NAVI_STORAGE, "assets": live["assets"],
                  "diffs_from_navi_py": param_diffs(live),
-                 "price_keys": price_keys,
-                 "unpriced": sorted(s for s in navi.COIN_TYPES if s not in price_keys),
+                 "unpriced": sorted(s for s in navi.COIN_TYPES if M.price(s) is None),
                  "anomalies": anomalies}
     with open(os.path.join(out_dir, "summary.json"), "w") as fh:
         json.dump({"run": run, "navi_live": navi_live, "collaterals": collaterals},
                   fh, indent=1)
 
+    labels = price_labels(M, book)
     coverage = {"pools_needed": len(book.pools) + len(book.failed),
                 "pools_read": len(book.pools), "pools_failed": len(book.failed),
                 "failed": failed,
                 "untracked_navi_reserves": live["untracked"],
                 "prices": {
-                    "tokens": {s: {"price_source": "oracle" if M.price_source.get(s) == "supplied"
-                                   else "derived",
-                                   "price": M.prices[s],
-                                   "derived_price": M.derived_prices.get(s),
-                                   **({"oracle_age_s": live["oracle"]["info"][s]["age_s"],
-                                       "coin_type": live["oracle"]["info"][s]["coin_type"]}
-                                      if s in live["oracle"]["info"] else {})}
-                               for s in sorted(M.prices)},
-                    "derived": sorted(s for s in M.prices if M.price_source.get(s) != "supplied"),
-                    "collisions": live["oracle"]["collisions"]},
+                    # keyed by normalized coin type; label is for display only
+                    "tokens": {ct: {"label": labels.get(ct, ct.rsplit("::", 1)[-1]),
+                                    "price_source": "oracle" if M.price_source.get(ct) == "supplied"
+                                    else "derived",
+                                    "price": M.prices[ct],
+                                    "derived_price": M.derived_prices.get(ct),
+                                    **({"oracle_age_s": live["oracle"]["info"][ct]["age_s"],
+                                        "navi_reserve": live["oracle"]["info"][ct]["reserve"]}
+                                       if ct in live["oracle"]["info"] else {})}
+                               for ct in sorted(M.prices)},
+                    "navi_assets": {s: M.tokens.get(s) for s in sorted(navi.COIN_TYPES)},
+                    "derived": sorted(labels.get(ct, ct) for ct in M.prices
+                                      if M.price_source.get(ct) != "supplied"),
+                    "skipped_pools": M.skipped_pools},
                 "positions": {**pos["stats"], "hf_check": pos["hf_check"],
                               "market": pos["state"]["market"],
                               "emode_users": len(pos["state"]["user_emode"]),

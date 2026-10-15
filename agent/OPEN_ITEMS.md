@@ -12,14 +12,14 @@
 ## Review 2026-10-15 (see agent/REVIEW_2026-10-15.md, agent/FIX_PROMPTS.md)
 
 - [x] 9. Liquidation bonus split (per-reserve treasury_factor; the premise of finding 1 was reversed, see inconsistencies.md)
-- [ ] 10. Coin-type keying
-- [ ] 11. Swap direction
+- [x] 10. Coin-type keying
+- [x] 11. Swap direction
 - [ ] 12. Pool universe (DeepBook, Aftermath, discovery)
 - [ ] 13. Turbos reader
 - [ ] 14. Empty pools
 - [ ] 15. Read robustness
 - [ ] 16. Curve interpolation
-- [ ] 17. Path ranking
+- [ ] 17. Path ranking (CSV TVL is stale for some pools: rank by on-chain depth/output)
 - [ ] 18. Matrix completeness and borrowable debts (+ close factor applies to collateral value, see inconsistencies.md)
 - [ ] 19. Coverage flag
 - [ ] 20. Stress corrections

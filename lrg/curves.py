@@ -16,18 +16,33 @@ import bisect
 import math
 from typing import Dict, List, Optional
 
+from .coins import norm_type
+
 GRID_LO, GRID_HI, GRID_N = 50.0, 5e7, 70
 
 
 def _out_usd(p, side: str, usd_in: float, prices) -> float:
-    sym_i = p.sym_a if side == "a" else p.sym_b
+    """USD out of pool p for usd_in of its side-`side` coin. prices are keyed
+    by normalized coin type."""
+    coin_i = p.coin_a if side == "a" else p.coin_b
     dec_i = p.dec_a if side == "a" else p.dec_b
-    sym_o = p.sym_b if side == "a" else p.sym_a
+    coin_o = p.coin_b if side == "a" else p.coin_a
     dec_o = p.dec_b if side == "a" else p.dec_a
-    px_i, px_o = prices.get(sym_i), prices.get(sym_o)
+    px_i, px_o = prices.get(norm_type(coin_i)), prices.get(norm_type(coin_o))
     if not px_i or not px_o or usd_in <= 0:
         return 0.0
     return p.out(usd_in / px_i * 10 ** dec_i, side) / 10 ** dec_o * px_o
+
+
+def side_of(p, coin_in: str) -> str:
+    """Which of pool p's sides is coin_in, from the pool's own coin order.
+    Raises if p does not hold coin_in."""
+    t = norm_type(coin_in)
+    if norm_type(p.coin_a) == t:
+        return "a"
+    if norm_type(p.coin_b) == t:
+        return "b"
+    raise ValueError(f"pool {p.pool_id} holds {p.coin_a} / {p.coin_b}, not {coin_in}")
 
 
 def allocate(leg_pools, q_usd, prices, chunks: int = 32):

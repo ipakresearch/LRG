@@ -22,8 +22,9 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Sequence, Tuple
 
 from . import clmm
+from .coins import norm_type, USDC
 from .book import PoolBook
-from .curves import LegCurve, allocate, route_capacity, route_cost
+from .curves import LegCurve, allocate, route_capacity, route_cost, side_of
 
 SLIPPAGES = [0.02, 0.05, 0.07, 0.10]
 MAX_POOLS_PER_LEG = 4
@@ -35,9 +36,33 @@ MAX_CANDIDATES = 20
 # ---------------------------------------------------------------------------
 
 def load_pool_rows(csv_path: str, venues) -> List[dict]:
+    """Pool rows for the given venues, with coin types normalized. The CSV's
+    a/b order is the listing's, not necessarily the pool's: never take a swap
+    side from it (see leg_pools)."""
     with open(csv_path) as fh:
-        return [r for r in csv.DictReader(fh)
+        rows = [r for r in csv.DictReader(fh)
                 if r["venue"] in venues and float(r["tvl_usd"] or 0) > 0]
+    for r in rows:
+        r["coin_type_a"] = norm_type(r["coin_type_a"])
+        r["coin_type_b"] = norm_type(r["coin_type_b"])
+    return rows
+
+
+def leg_pools(pools, pool_ids, coin_in: str, skipped: Optional[list] = None):
+    """[(pool, side)] for the fetched pools among pool_ids, with each side
+    taken from the pool's own coin order. A pool that does not hold coin_in
+    is left out and recorded in `skipped`."""
+    out = []
+    for pid in pool_ids:
+        p = pools.get(pid)
+        if p is None:
+            continue
+        try:
+            out.append((p, side_of(p, coin_in)))
+        except ValueError as e:
+            if skipped is not None:
+                skipped.append(str(e))
+    return out
 
 
 def build_adjacency(rows):
@@ -70,22 +95,24 @@ def all_paths(adj, s: str, d: str, max_hops: int) -> List[List[str]]:
     return out
 
 
-def derive_prices(pools, anchor="USDC") -> Dict[str, float]:
-    """USD per symbol, propagated from the anchor through pool spot prices.
-    Deeper pools are used first, so a thin mispriced pool cannot poison a chain
-    that a deep pool can price."""
+def derive_prices(pools, anchor: str = USDC) -> Dict[str, float]:
+    """USD per normalized coin type, propagated from the anchor (native USDC)
+    through pool spot prices. Deeper pools are used first, so a thin
+    mispriced pool cannot poison a chain that a deep pool can price."""
+    anchor = norm_type(anchor)
     prices = {anchor: 1.0}
     ordered = sorted(pools.values(), key=lambda p: -getattr(p, "liquidity", 0) or 0)
     for _ in range(8):
         changed = False
         for p in ordered:
-            pa, pb, px = prices.get(p.sym_a), prices.get(p.sym_b), p.price()
+            ta, tb = norm_type(p.coin_a), norm_type(p.coin_b)
+            pa, pb, px = prices.get(ta), prices.get(tb), p.price()
             if px <= 0:
                 continue
             if pa is not None and pb is None:
-                prices[p.sym_b] = pa / px; changed = True
+                prices[tb] = pa / px; changed = True
             elif pb is not None and pa is None:
-                prices[p.sym_a] = pb * px; changed = True
+                prices[ta] = pb * px; changed = True
         if not changed:
             break
     return prices
@@ -106,21 +133,20 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
     rows = load_pool_rows(csv_path, venues)
     adj = build_adjacency(rows)
     vol_of = {r["pool_id"]: float(r["volume_24h"] or 0) for r in rows}
-    name = dict(tokens)
+    name = {s: norm_type(t) for s, t in tokens.items()}
     tname = {v: k for k, v in name.items()}
     for r in rows:
         tname.setdefault(r["coin_type_a"], r["symbol_a"])
         tname.setdefault(r["coin_type_b"], r["symbol_b"])
 
-    assets = [s for s in tokens if tokens[s] in adj]
-    absent = [s for s in tokens if s not in assets]
+    assets = [s for s in name if name[s] in adj]
+    absent = [s for s in name if s not in assets]
 
     def leg_ids(x, y):
-        return [(c["pool_id"], "a" if c["coin_type_a"] == x else "b")
-                for c in adj[x][y][:max_pools_per_leg]]
+        return [c["pool_id"] for c in adj[x][y][:max_pools_per_leg]]
 
     def leg_volume(x, y):
-        return sum(vol_of.get(pid, 0.0) for pid, _ in leg_ids(x, y))
+        return sum(vol_of.get(pid, 0.0) for pid in leg_ids(x, y))
 
     def bottleneck(path):
         return min(float(adj[path[i]][path[i + 1]][0]["tvl_usd"])
@@ -143,7 +169,7 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
 
     # ---- pool state -------------------------------------------------------
     need = sorted({pid for ps in cands.values() for p in ps
-                   for i in range(len(p) - 1) for pid, _ in leg_ids(p[i], p[i + 1])})
+                   for i in range(len(p) - 1) for pid in leg_ids(p[i], p[i + 1])})
     venue_of = {r["pool_id"]: r["venue"] for r in rows}
     type_of = {r["pool_id"]: (r["coin_type_a"], r["coin_type_b"]) for r in rows}
     book = PoolBook(cache=cache, verbose=verbose, venue_of=venue_of,
@@ -166,7 +192,7 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
 
     def curve(x, y):
         if (x, y) not in curve_cache:
-            lp = [(pools[pid], sd) for pid, sd in leg_ids(x, y) if pid in pools]
+            lp = leg_pools(pools, leg_ids(x, y), x)
             curve_cache[(x, y)] = LegCurve(lp, prices, pick=pick) if lp else None
         return curve_cache[(x, y)]
 
@@ -214,7 +240,7 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
             for i, c in enumerate(cs):
                 al = c.alloc_at(v)
                 for pid, amt in al.items():
-                    sd = next(sd for pid2, sd in leg_ids(p[i], p[i + 1]) if pid2 == pid)
+                    sd = side_of(pools[pid], p[i])
                     pressure[pid][f"{key}:{sd}"] += amt
                 lv = leg_volume(p[i], p[i + 1])
                 legs.append({
@@ -246,7 +272,8 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
         nodes.append({
             "id": pid, "venue": p.venue, "sym_a": p.sym_a, "sym_b": p.sym_b,
             "label": f"{p.sym_a}/{p.sym_b}", "fee": p.fee,
-            "tvl": round(p.tvl(prices.get(p.sym_a, 0), prices.get(p.sym_b, 0)), 0),
+            "tvl": round(p.tvl(prices.get(norm_type(p.coin_a), 0),
+                               prices.get(norm_type(p.coin_b), 0)), 0),
             "volume_24h": round(vol, 0), "dead": vol <= 0,
             "cap": {f"{s:.2f}": {sd: round(LegCurve([(p, sd)], prices,
                                                     pick="best").capacity(s), 2)
@@ -276,7 +303,8 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
         "routes": routes_out,
         "no_route": sorted(no_route), "dead_routes": sorted(dead_routes),
         "absent_assets": absent,
-        "prices": {k: round(v, 6) for k, v in prices.items()},
+        "prices": {k: round(v, 6) for k, v in prices.items()},   # by coin type
+        "labels": {k: tname.get(k, k.rsplit("::", 1)[-1]) for k in prices},
     }
     with open(template) as fh:
         html = fh.read()

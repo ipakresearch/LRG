@@ -13,6 +13,7 @@ import os
 from typing import Dict, Optional, Sequence
 
 from . import clmm, venues
+from .coins import norm_type
 
 
 class PoolBook:
@@ -71,7 +72,8 @@ class PoolBook:
             cands = self._extra.get(v, {}).get(pool_id, [])
             pick = None
             for p in cands:
-                if coin_a is None or {p.coin_a, p.coin_b} == {coin_a, coin_b}:
+                if coin_a is None or ({norm_type(p.coin_a), norm_type(p.coin_b)}
+                                      == {norm_type(coin_a), norm_type(coin_b)}):
                     pick = p; break
             if pick is None and cands:
                 pick = cands[0]

@@ -259,3 +259,61 @@ Not rerun: budgets roughly halve, so Q* will fall across the matrix. Step 13 mea
 ## Close factor applies to collateral value (not changed)
 
 Navi caps the base at close factor × the borrower's **collateral value** in that asset (then at the loan value). `Q = CF·(1+b)·LTV·S·P` applies it to debt instead. At the liquidation threshold this understates Q by about 1/LTV (about 1.3× at LTV 0.75). Repeated calls can also liquidate further while the health factor stays below 1. The stress Q (`CF·seized·D`) has the same issue. To be handled with steps 9 and 11.
+
+# Coin-type keying and swap direction (2026-10-15)
+
+## Changes (uncommitted)
+
+- **`lrg/coins.py` (new):** `norm_type` and the native `USDC` anchor. `navi_oracle` re-exports `norm_type`, and `run.py` imports it instead of keeping its own copy.
+- **Prices keyed by normalized coin type throughout:**
+  - `graph.derive_prices` (anchored on native USDC)
+  - `curves._out_usd`
+  - `matrix.build` (`Params.prices`, `M.prices`, `derived_prices`, `price_source`)
+  - `graph.build` (TVL; the HTML gets `labels` for display)
+- **Symbol lookups go through the coin type:**
+  - `Matrix` gains `tokens` (symbol → type) and `price(symbol)`, which `demand`, `s_max` and `feasible` use.
+  - `save()` writes `tokens`.
+  - `LoadedMatrix.price()` falls back to symbol keys for files saved before this change.
+- **Swap side from the pool, not the CSV:**
+  - `leg_ids` returns pool ids only.
+  - `graph.leg_pools` takes each side from the fetched pool's own `coin_a`/`coin_b` (`curves.side_of`).
+  - A pool holding neither coin is skipped and listed in `Matrix.skipped_pools`.
+  - CSV coin types are normalized on load.
+  - `book.py` matches DeepBook/Aftermath pairs on normalized types.
+- **`run.py`:**
+  - `alias_prices` and the dual-keyed, collision-resolving `oracle_prices` are removed. `oracle_prices()` returns `{coin type: price}` for all 35 reserves.
+  - `coverage.json` prices are keyed by coin type with a display `label`, plus `navi_assets` (symbol → type) and `skipped_pools`. The `collisions` field is gone.
+- **Not changed:** `venues.aftermath_pools`/`to_csv_rows` still use symbol-keyed prices for discovery-time TVL. Step 3 rewrites that path.
+
+## Verification
+
+1. **Coin order (D1)**, CSV vs chain, across the routed venues (Cetus, Bluefin, Momentum, Turbos): 18 rows reversed, about $5.3M of CSV TVL. Another 8 reversed rows sit on unrouted venues, plus 5 "other" (Steamm, FlowX), whose types match neither. The largest routed ones:
+   - Turbos USDC/SUI $1.20M
+   - Cetus USDSUI/USDC $1.20M
+   - Cetus HAEDAL/USDC $599k
+   - Momentum MBTC/wBTC $593k
+   - Cetus suiUSDe/USDC $501k
+   - Cetus suiUSDT/USDC $371k
+   - Cetus SUI/wUSDC $205k
+   - Cetus WBTC.lz/USDC $181k
+2. **Output with the CSV side (old) vs the chain side (new):**
+   - Cetus USDSUI→USDC: at $1M the cost is 45.01% with the CSV side vs 46.16% with the chain side, and the reverse leg mirrors it. Before the fix, each direction used the other direction's depth.
+   - MBTC/wBTC and suiUSDe/USDC are near-empty on chain: reserves of about $12 and $3.2k, against $593k and $501k of CSV TVL. Their output is about $10 and $1.7k either way.
+3. **Full run** (`data/navi/2026-10-15`, exit 0):
+   - All 24 Navi assets are priced under their coin type, all from the oracle.
+   - USDC 0.999888 vs wUSDC 0.999883; suiUSDT 0.998823 vs Wormhole USDT 0.998768; WBTC.lz 80,101.61 vs wBTC 80,165.88. Each coin now carries its own price.
+   - Derived prices: MMT, MUSIC, USDB. No pools skipped.
+
+## Q* vs the previous 2026-10-15 run
+
+The previous run predates step 1, so these changes combine the bonus-split fix (budgets roughly halved) with this step. `Q_star_ex_zero` fell for every collateral:
+- −47% for SUI
+- −69% to −75% for the BTC assets, suiETH and stSUI
+- −84% to −87% for the stables and enzoBTC (binding now stSUI)
+- −22% to −29% for DEEP, WAL, haSUI and vSUI
+
+New zero-capacity debts: vSUI for 17 collaterals, haSUI for 12, stSUI for 5. The oracle values the LSTs at about the SUI price while the market charges 3–7% more, and that premium now exceeds the 3.3–4.2% budgets. Step 12 (the mint exit) addresses this.
+
+## New finding: CSV TVL is stale for some pools
+
+GeckoTerminal TVL in `data/navi_pools.csv` can be far from on-chain reserves: Momentum MBTC/wBTC lists $593k and holds about $12; Cetus suiUSDe/USDC lists $501k and holds about $3.2k. Pool selection (top 4 per leg) and path ranking both use CSV TVL, so an empty pool can take a slot from a live one. Relevant to steps 3, 6 and 8: rank by on-chain depth or by output at a reference size.
