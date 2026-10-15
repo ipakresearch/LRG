@@ -17,7 +17,7 @@
 - [x] 12. Pool universe (DeepBook, Aftermath, discovery; TVL now on chain)
 - [x] 13. Turbos reader (tick_map bitmap + keyed reads)
 - [x] 14. Empty pools (EmptyPool status; zero depth, not failed)
-- [ ] 15. Read robustness (SUI→USDC top-4 misses DeepBook)
+- [x] 15. Read robustness (strict gql, truncation checks + re-read, reserve cap, leg slots; tests/)
 - [ ] 16. Curve interpolation
 - [ ] 17. Path ranking (CSV TVL is stale for some pools: rank by on-chain depth/output)
 - [ ] 18. Matrix completeness and borrowable debts (+ close factor applies to collateral value, see inconsistencies.md)

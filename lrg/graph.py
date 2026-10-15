@@ -76,6 +76,33 @@ def build_adjacency(rows):
     return adj
 
 
+def read_legs(adj, legs, book, n: int, key_of) -> tuple:
+    """
+    Read pools leg by leg, down each leg's ranked list, until the leg has n
+    readable pools or the list runs out. A failed or empty pool does not use
+    up a slot: the next one in the ranking takes it. Returns (pools by key,
+    {frozenset(leg): [keys of the readable pools chosen, in rank order]}).
+    """
+    pools, chosen = {}, {}
+    for x, y in legs:
+        leg = frozenset((x, y))
+        if leg in chosen:
+            continue
+        got = []
+        for r in adj[x][y]:
+            if len(got) >= n:
+                break
+            key = key_of(r)
+            if key not in pools:
+                q = book.get(key[0], coin_a=key[1], coin_b=key[2])
+                if q is None:
+                    continue
+                pools[key] = q
+            got.append(key)
+        chosen[leg] = got
+    return pools, chosen
+
+
 def all_paths(adj, s: str, d: str, max_hops: int) -> List[List[str]]:
     out = []
 
@@ -157,8 +184,11 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
     assets = [s for s in name if name[s] in adj]
     absent = [s for s in name if s not in assets]
 
+    chosen: Dict[frozenset, list] = {}       # filled by read_legs below
+
     def leg_ids(x, y):
-        return [key_of(c) for c in adj[x][y][:max_pools_per_leg]]
+        """The leg's readable pools, best-ranked first (after the read)."""
+        return chosen.get(frozenset((x, y)), [])
 
     def leg_volume(x, y):
         return sum(vol_of.get(pid, 0.0) for pid in leg_ids(x, y))
@@ -183,19 +213,15 @@ def build(csv_path: str, tokens: Dict[str, str], venues,
               f"{empty} pairs with no path at all")
 
     # ---- pool state -------------------------------------------------------
-    need = sorted({k for ps in cands.values() for p in ps
-                   for i in range(len(p) - 1) for k in leg_ids(p[i], p[i + 1])})
+    legs = sorted({(p[i], p[i + 1]) for ps in cands.values() for p in ps
+                   for i in range(len(p) - 1)})
     venue_of = {r["pool_id"]: r["venue"] for r in rows}
     book = PoolBook(cache=cache, verbose=verbose, venue_of=venue_of,
                     tokens=tokens)
     if verbose:
-        print(f"reading {len(need)} pools…")
-    pools = {}
-    for key in need:
-        pid, ca, cb = key
-        q = book.get(pid, coin_a=ca, coin_b=cb)
-        if q:
-            pools[key] = q
+        print(f"reading pools for {len(legs)} legs…")
+    pools, legs_read = read_legs(adj, legs, book, max_pools_per_leg, key_of)
+    chosen.update(legs_read)
     prices = derive_prices(pools)
     if verbose:
         print(f"{len(pools)} readable, {len(book.failed)} unreadable · "

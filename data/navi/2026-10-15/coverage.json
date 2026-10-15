@@ -1,107 +1,18 @@
 {
- "pools_needed": 129,
- "pools_read": 115,
- "pools_failed": 14,
+ "pools_needed": 130,
+ "pools_read": 129,
+ "pools_failed": 1,
+ "pools_empty": 0,
  "failed": [
   {
-   "pool_id": "0x022db7c3d497c194a5457b9307530a39b8379b09f836d64fd24f93fbe20fa626",
-   "venue": "turbos-finance",
-   "pair": "haSUI/SUI",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x022db7c3d4\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x0df4f02d0e210169cb6d5aabd03c3058328c06f2c4dbb0804faa041159c78443",
-   "venue": "turbos-finance",
+   "pool_id": "0x51e883ba7c0b566a26cbc8a94cd33eb0abd418a77cc1e60ad22fd9b1f29cd2ab",
+   "venue": "cetus",
    "pair": "USDC/SUI",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x0df4f02d0e\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x198af6ff81028c6577e94465d534c4e2cfcbbab06a95724ece7011c55a9d1f5a",
-   "venue": "turbos-finance",
-   "pair": "DEEP/USDC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x198af6ff81\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x2ce764106ace913ff43f3c1fd6a91454898a42710464cd60d220130eb78ca5ca",
-   "venue": "turbos-finance",
-   "pair": "USDT/wUSDC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x2ce764106a\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x5eb2dfcdd1b15d2021328258f6d5ec081e9a0cdcfa9e13a0eaeb9b5f7505ca78",
-   "venue": "turbos-finance",
-   "pair": "SUI/wUSDC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x5eb2dfcdd1\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x74915fb0491fe1ed6ebe6f89111073a72f6d026e040822d65e5de66064ffea9c",
-   "venue": "turbos-finance",
-   "pair": "vSUI/SUI",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x74915fb049\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x770010854059edf1dd3d49a97f3054c39b870ec708fe2f408e30a8ef4724caef",
-   "venue": "turbos-finance",
-   "pair": "USDC/USDT",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x7700108540\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x82542c0eac82dac0a6c078ceebd219e7389fcde48834e2b57065ed5dabed366f",
-   "venue": "turbos-finance",
-   "pair": "WBTC/wUSDC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x82542c0eac\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x835effa94dba86cf354ced62e33ce59ce6754cd0e57e7ee84a6ede2f7d7f8056",
-   "venue": "turbos-finance",
-   "pair": "USDSUI/SUI",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x835effa94d\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x86ed41e9b4c6cce36de4970cfd4ae3e98d6281f13a1b16aa31fc73ec90079c3d",
-   "venue": "turbos-finance",
-   "pair": "USDT/SUI",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x86ed41e9b4\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0x9490a13351e13b133bd8a9c309c47568d6fcbfcbfe7aac0e228b710053583081",
-   "venue": "turbos-finance",
-   "pair": "WAL/USDC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0x9490a13351\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0xaad89a13dee194eb1043e5a34d8f070897d787473c2034647def9d4f43879b60",
-   "venue": "turbos-finance",
-   "pair": "LBTC/wBTC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0xaad89a13de\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0xd2a3915f5a8d81032fc5472cbda5899627431a4ce204a80a913f4f7b8f8190b6",
-   "venue": "turbos-finance",
-   "pair": "LBTC/wBTC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0xd2a3915f5a\u2026 \u2014 this venue stores its liquidity elsewhere"
-  },
-  {
-   "pool_id": "0xe9750931401fd6e9592d489760d8ad264cdc0bb41e4ce7b334cd66fbacdd04d6",
-   "venue": "turbos-finance",
-   "pair": "USDSUI/USDC",
-   "kind": "tick_table_not_found",
-   "reason": "no ticks in the first 100 dynamic fields under 0xe975093140\u2026 \u2014 this venue stores its liquidity elsewhere"
+   "kind": "truncated",
+   "reason": "truncated: read 700 of 702 fields in tick table 0x7f07284d6d\u2026"
   }
  ],
+ "empty": [],
  "untracked_navi_reserves": [
   {
    "reserve_id": 2,
@@ -175,261 +86,261 @@
    "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI": {
     "label": "SUI",
     "price_source": "oracle",
-    "price": 1.01937007,
-    "oracle_age_s": 113.38283491134644,
+    "price": 1.03483197,
+    "oracle_age_s": 514.4614911079407,
     "navi_reserve": 0
    },
    "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC": {
     "label": "WBTC.lz",
     "price_source": "oracle",
-    "price": 82247.61191814,
-    "oracle_age_s": 606.6198348999023,
+    "price": 82238.44734973,
+    "oracle_age_s": 701.2364909648895,
     "navi_reserve": 32
    },
    "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN": {
     "label": "WBTC",
     "price_source": "oracle",
-    "price": 82406.27709049,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 82021.16268465,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 8
    },
    "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS": {
     "label": "CETUS",
     "price_source": "oracle",
-    "price": 0.0241904,
-    "oracle_age_s": 1108.2958347797394,
+    "price": 0.02409582,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 4
    },
    "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD": {
     "label": "AUSD",
     "price_source": "oracle",
-    "price": 0.999984,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 0.999921,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 9
    },
    "0x35169bc93e1fddfcf3a82a9eae726d349689ed59e4b065369af8789fe59f8608::mmt::MMT": {
     "label": "MMT",
     "price_source": "derived",
-    "price": 0.1493354442623563
+    "price": 0.14753957748724028
    },
    "0x356a26eb9e012a68958082340d4c4116e7f55615cf27affcff209cf0ae544f59::wal::WAL": {
     "label": "WAL",
     "price_source": "oracle",
-    "price": 0.05191503,
-    "oracle_age_s": 90.09183478355408,
+    "price": 0.05093996,
+    "oracle_age_s": 514.4614911079407,
     "navi_reserve": 24
    },
    "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT": {
     "label": "suiUSDT",
     "price_source": "oracle",
-    "price": 0.998995,
-    "oracle_age_s": 1250.7528347969055,
+    "price": 0.998921,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 19
    },
    "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL": {
     "label": "HAEDAL",
     "price_source": "oracle",
-    "price": 0.01835605,
-    "oracle_age_s": 2651.5738348960876,
+    "price": 0.01848325,
+    "oracle_age_s": 1482.6984910964966,
     "navi_reserve": 25
    },
    "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040::lbtc::LBTC": {
     "label": "LBTC",
     "price_source": "oracle",
-    "price": 82520.18173296,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 82342.67450077,
+    "oracle_age_s": 701.2364909648895,
     "navi_reserve": 23
    },
    "0x41d587e5336f1c86cad50d38a7136db99333bb9bda91cea4ba69115defeb1402::sui_usde::SUI_USDE": {
     "label": "suiUSDe",
     "price_source": "oracle",
-    "price": 0.999879,
-    "oracle_age_s": 211.22883486747742,
+    "price": 0.99985,
+    "oracle_age_s": 304.3504910469055,
     "navi_reserve": 33
    },
    "0x44f838219cf67b058f3b37907b655f226153c18e33dfcd0da559a844fea9b1c1::usdsui::USDSUI": {
     "label": "USDSUI",
     "price_source": "oracle",
-    "price": 0.999889,
-    "oracle_age_s": 226.16583490371704,
+    "price": 0.999875,
+    "oracle_age_s": 687.4254910945892,
     "navi_reserve": 34
    },
    "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS": {
     "label": "NS",
     "price_source": "oracle",
-    "price": 0.013074,
-    "oracle_age_s": 1574.8038349151611,
+    "price": 0.013083,
+    "oracle_age_s": 1222.0174911022186,
     "navi_reserve": 13
    },
    "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT": {
     "label": "vSUI",
     "price_source": "oracle",
-    "price": 1.01937007,
-    "oracle_age_s": 113.38283491134644,
+    "price": 1.03503963,
+    "oracle_age_s": 701.2364909648895,
     "navi_reserve": 5
    },
    "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN": {
     "label": "wUSDC",
     "price_source": "oracle",
-    "price": 0.999873,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 0.999874,
+    "oracle_age_s": 1222.0174911022186,
     "navi_reserve": 1
    },
    "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN": {
     "label": "COIN",
     "price_source": "oracle",
-    "price": 82406.27709049,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 82021.16268465,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 14
    },
    "0x7016aae72cfc67f2fadf55769c0a7dd54291a583b63051a5ed71081cce836ac6::sca::SCA": {
     "label": "SCA",
     "price_source": "derived",
-    "price": 0.006079296935650306
+    "price": 0.006084482684435007
    },
    "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA": {
     "label": "IKA",
     "price_source": "oracle",
-    "price": 0.00168046,
-    "oracle_age_s": 1657.1938347816467,
+    "price": 0.00167219,
+    "oracle_age_s": 1896.7394909858704,
     "navi_reserve": 27
    },
    "0x876a4b7bce8aeaef60464c11f4026903e9afacab79b9b142686158aa86560b50::xbtc::XBTC": {
     "label": "xBTC",
     "price_source": "oracle",
-    "price": 82247.61191814,
-    "oracle_age_s": 606.6198348999023,
+    "price": 82021.16268465,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 26
    },
    "0x8f2b5eb696ed88b71fea398d330bccfa52f6e2a5a8e1ac6180fcb25c6de42ebc::coin::COIN": {
     "label": "enzoBTC",
     "price_source": "oracle",
-    "price": 82406.27709049,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 82021.16268465,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 28
    },
    "0x960b531667636f39e85867775f52f6b1f220a058c4de786905bdf761e06a56bb::usdy::USDY": {
     "label": "USDY",
     "price_source": "oracle",
-    "price": 1.14855,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 1.1495,
+    "oracle_age_s": 701.2364909648895,
     "navi_reserve": 12
    },
    "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM": {
     "label": "XAUm",
     "price_source": "oracle",
-    "price": 4167.57,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 4175.938,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 31
    },
    "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC": {
     "label": "YBTC",
     "price_source": "oracle",
-    "price": 82247.61191814,
-    "oracle_age_s": 606.6198348999023,
+    "price": 82021.16268465,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 30
    },
    "0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX": {
     "label": "NAVX",
     "price_source": "oracle",
-    "price": 0.01094312,
-    "oracle_age_s": 799.6198348999023,
+    "price": 0.0109516,
+    "oracle_age_s": 1482.6984910964966,
     "navi_reserve": 7
    },
    "0xaafb102dd0902f5055cadecd687fb5b71ca82ef0e0285d90afde828ec58ca96b::btc::BTC": {
     "label": "wBTC",
     "price_source": "oracle",
-    "price": 82247.61191814,
-    "oracle_age_s": 606.6198348999023,
+    "price": 82021.16268465,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 21
    },
    "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN": {
     "label": "COIN",
     "price_source": "oracle",
-    "price": 2441.54663988,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 2435.28425467,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 3
    },
    "0xb7844e289a8410e50fb3ca48d69eb9cf29e27d223ef90353fe1bd8e27ff8f3f8::coin::COIN": {
     "label": "SOL",
     "price_source": "oracle",
-    "price": 105.92302398,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 105.26172437,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 22
    },
    "0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI": {
     "label": "haSUI",
     "price_source": "oracle",
-    "price": 1.01862475,
-    "oracle_age_s": 90.09183478355408,
+    "price": 1.03503963,
+    "oracle_age_s": 701.2364909648895,
     "navi_reserve": 6
    },
    "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN": {
     "label": "USDT",
     "price_source": "oracle",
-    "price": 0.998995,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 0.998873,
+    "oracle_age_s": 1795.6914908885956,
     "navi_reserve": 2
    },
    "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK": {
     "label": "BUCK",
     "price_source": "oracle",
-    "price": 1.001378325,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 0.99834524,
+    "oracle_age_s": 701.2364909648895,
     "navi_reserve": 18
    },
    "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH": {
     "label": "suiETH",
     "price_source": "oracle",
-    "price": 2441.54663988,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 2435.28425467,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 11
    },
    "0xd1a91b46bd6d966b62686263609074ad16cfdffc63c31a4775870a2d54d20c6b::mbtc::MBTC": {
     "label": "MBTC",
     "price_source": "oracle",
-    "price": 82406.27709049,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 82021.16268465,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 29
    },
    "0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI": {
     "label": "stSUI",
     "price_source": "oracle",
-    "price": 1.03128382,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 1.03329601,
+    "oracle_age_s": 964.522490978241,
     "navi_reserve": 20
    },
    "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC": {
     "label": "USDC",
     "price_source": "oracle",
-    "price": 0.999889,
-    "oracle_age_s": 226.16583490371704,
+    "price": 0.99985,
+    "oracle_age_s": 304.3504910469055,
     "navi_reserve": 10
    },
    "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP": {
     "label": "DEEP",
     "price_source": "oracle",
-    "price": 0.023317,
-    "oracle_age_s": 90.09183478355408,
+    "price": 0.023296,
+    "oracle_age_s": 1054.1134910583496,
     "navi_reserve": 15
    },
    "0xe14726c336e81b32328e92afc37345d159f5b550b09fa92bd43640cfdd0a0cfd::usdb::USDB": {
     "label": "USDB",
     "price_source": "derived",
-    "price": 1.0013808058475469
+    "price": 0.9983477265588125
    },
    "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE": {
     "label": "BLUE",
     "price_source": "oracle",
-    "price": 0.00975526,
-    "oracle_age_s": 8182.024834871292,
+    "price": 0.0097,
+    "oracle_age_s": 1482.6984910964966,
     "navi_reserve": 17
    },
    "0xf16e6b723f242ec745dfd7634ad072c42d5c1d9ac9d62a39c381303eaa57693a::fdusd::FDUSD": {
     "label": "FDUSD",
     "price_source": "oracle",
-    "price": 0.99795,
-    "oracle_age_s": 1259.3148348331451,
+    "price": 0.997976,
+    "oracle_age_s": 2318.950490951538,
     "navi_reserve": 16
    }
   },
@@ -467,59 +378,59 @@
   "skipped_pools": []
  },
  "positions": {
-  "borrowers": 77168,
-  "positions": 9852,
-  "dust_borrowers": 67316,
-  "dust_debt_usd": 4023.2766884920356,
-  "debt_usd": 68462508.17543867,
+  "borrowers": 77167,
+  "positions": 9853,
+  "dust_borrowers": 67314,
+  "dust_debt_usd": 4025.6907843651156,
+  "debt_usd": 68567505.60892071,
   "min_debt_usd": 1.0,
   "requests": {
    "borrow_pages": 5362,
    "lookup_batches": 1462
   },
-  "seconds": 1524.9,
-  "checkpoint_start": 334369667,
-  "checkpoint_end": 334375072,
-  "emode_positions": 63,
+  "seconds": 1557.6,
+  "checkpoint_start": 334387703,
+  "checkpoint_end": 334393302,
+  "emode_positions": 62,
   "protected_positions": 5,
   "hf_check": {
    "tolerance": 1e-06,
    "min_debt_usd": 1000.0,
    "positions": [
     {
-     "user": "0x72feb2bed86128c9325c04dbe6dc579b56422e0c9a0ffff10f9b3b6f62da5636",
+     "user": "0x88bc2c273a52129ca9f9aa270b9cfe969dbd562abe130b74fe5bef6da1987850",
      "emode": 1,
-     "navi_hf": 1.0433153977702463,
-     "computed_hf": 1.0433153977704777,
-     "rel_diff": 2.2176465412699092e-13
+     "navi_hf": 1.0400450147617368,
+     "computed_hf": 1.0400450147618336,
+     "rel_diff": 9.308390153621583e-14
     },
     {
-     "user": "0x8af2ff5f54ba28ba1bc4148e7e6c0c03405fd242598324e2597e23813ed7f332",
+     "user": "0x4358a951e855e353219400158f9f98a02f49db8142324b0325f41a4879ce3f8d",
      "emode": null,
-     "navi_hf": 1.2954650621793486,
-     "computed_hf": 1.2954650660550007,
-     "rel_diff": 2.9917070978467146e-09
+     "navi_hf": 2.67546438681803,
+     "computed_hf": 2.6754643868183496,
+     "rel_diff": 1.1950980647225945e-13
     },
     {
-     "user": "0x4a77eb87e04f35434bab913d2dbcb26c2828626f140788e98973ad04328b2ff5",
+     "user": "0x15806544cb4191e825db382d464d45eaf26e90e311451a5dbee8d31462a5da3b",
      "emode": null,
-     "navi_hf": 1.245623334307457,
-     "computed_hf": 1.245623335030182,
-     "rel_diff": 5.802115062066725e-10
+     "navi_hf": 2.5854793818507256,
+     "computed_hf": 2.5854793803848817,
+     "rel_diff": 5.669524580250512e-10
     },
     {
-     "user": "0xdf63f4e00db8cda592f6e4bafe5a6f953b988c43e904b89f6bb878b5dc23db76",
+     "user": "0xbaee359f8e0c392c0aa3aa940631f7fd2842079c0314987ae0999b971e77220f",
      "emode": null,
-     "navi_hf": 1.7737482051033557,
-     "computed_hf": 1.7737482051036524,
-     "rel_diff": 1.6724560528170122e-13
+     "navi_hf": 0.9288677458929379,
+     "computed_hf": 0.9288677458930535,
+     "rel_diff": 1.2454436024660425e-13
     },
     {
-     "user": "0xc15cdd4508a7b9a2b5b280604db598c2519fd5449ce3eff2f8847a6c8fb12e18",
+     "user": "0x58eb5610fb4193f52ba1fb1c1a5f498c9c945472769fac86f20c3614ec9282c4",
      "emode": null,
-     "navi_hf": 1.172813676954222,
-     "computed_hf": 1.1728136769542425,
-     "rel_diff": 1.7607356278156656e-14
+     "navi_hf": 3.1484133661025417,
+     "computed_hf": 3.1484133658930986,
+     "rel_diff": 6.652338976873233e-11
     }
    ]
   },
@@ -685,7 +596,7 @@
    "YBTC": {
     "reserve": 30,
     "group": "BTC family",
-    "why": "price 82,021.16 within 10% of wBTC"
+    "why": "price 82,424.92 within 10% of wBTC"
    },
    "XAUm": {
     "reserve": 31,

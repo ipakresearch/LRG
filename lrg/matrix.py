@@ -417,8 +417,11 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
             print(f"absent from the pool set: {', '.join(absent)}")
 
     # candidate paths, same selection as the network build
+    chosen: Dict[frozenset, list] = {}       # filled by read_legs below
+
     def leg_ids(x, y):
-        return [key_of(c) for c in adj[x][y][:p.max_pools_per_leg]]
+        """The leg's readable pools, best-ranked first (after the read)."""
+        return chosen.get(frozenset((x, y)), [])
 
     def bottleneck(path):
         return min(float(adj[path[i]][path[i + 1]][0]["tvl_usd"])
@@ -433,19 +436,19 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
             ps.sort(key=lambda x: (-bottleneck(x), len(x)))
             cands[(B, D)] = ps[:p.max_candidates]
 
-    need = sorted({pid for ps in cands.values() for path in ps
-                   for i in range(len(path) - 1) for pid in leg_ids(path[i], path[i + 1])})
+    legs = sorted({(path[i], path[i + 1]) for ps in cands.values() for path in ps
+                   for i in range(len(path) - 1)})
     venue_of = {r["pool_id"]: r["venue"] for r in rows}
     book = PoolBook(cache=cache, verbose=verbose, venue_of=venue_of,
                     tokens=tokens)
     if verbose:
-        print(f"reading {len(need)} pools…")
-    pools = {}
-    for key in need:
-        pid, ca, cb = key
-        q = book.get(pid, coin_a=ca, coin_b=cb)
-        if q:
-            pools[key] = q
+        print(f"reading pools for {len(legs)} legs…")
+    # failed and empty pools do not take a slot: each leg reads down its
+    # ranking until it has max_pools_per_leg readable pools
+    pools, legs_read = _graph.read_legs(adj, legs, book, p.max_pools_per_leg, key_of)
+    chosen.update(legs_read)
+    if verbose:
+        print(f"largest tick table read: {clmm.max_ticks_seen} ticks")
     # Supplied prices win; coins they do not cover get a price derived from
     # pool spot rates, seeded with the supplied ones, so routes through
     # unpriced intermediates stay usable.

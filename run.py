@@ -120,9 +120,14 @@ NETWORK_MARKERS = ("NameResolutionError", "Max retries exceeded", "ConnectionErr
 def failure_kind(reason: str) -> str:
     if any(m in reason for m in NETWORK_MARKERS):
         return "network"
-    if "first 100 dynamic fields" in reason or "not where expected" in reason:
+    if reason.startswith("truncated"):
+        return "truncated"
+    if "GraphQL error" in reason:
+        return "graphql_error"
+    if "no tick table found" in reason or "not this pool's tick table" in reason:
         return "tick_table_not_found"
-    if "no ranges built" in reason:
+    if ("no ranges built" in reason or "none parsed as a tick" in reason
+            or "did not read" in reason or "tick table is empty but liquidity" in reason):
         return "parse_error"
     return "other"
 
@@ -283,6 +288,10 @@ def compute():
     if net:
         # a transient outage, not missing liquidity: publishing would understate Q*
         raise Unusable(f"{len(net)} pools failed with network errors; rerun")
+    trunc = [key for key, why in book.failed.items() if failure_kind(why) == "truncated"]
+    if trunc:
+        print(f"WARNING: {len(trunc)} pools truncated (counted as failed): "
+              f"{', '.join(k[0][:12] for k in trunc)}", file=sys.stderr)
     if not M.pools_read:
         raise Unusable("no pools read")
     if not M.prices:

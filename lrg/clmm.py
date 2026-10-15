@@ -43,19 +43,29 @@ I128 = 1 << 128
 # GraphQL
 # ---------------------------------------------------------------------------
 
-def gql(query: str, variables: dict = None, url: str = GRAPHQL, retries: int = 3):
+def gql(query: str, variables: dict = None, url: str = GRAPHQL, retries: int = 4):
+    """
+    POST a query and return its data. Any GraphQL error fails the call, even
+    when partial data came back: a dropped error would otherwise surface as a
+    missing field, and a missing tick page reads as "no ticks". Transport
+    errors and GraphQL errors are retried with backoff; the final error keeps
+    the original message, so a timeout is still recognisable as one.
+    """
+    err = None
     for i in range(retries):
         try:
             r = requests.post(url, json={"query": query, "variables": variables or {}},
                               timeout=45)
             j = r.json()
-            if "errors" in j and j.get("data") is None:
-                raise RuntimeError(j["errors"][0]["message"])
+            if j.get("errors") or j.get("data") is None:
+                raise RuntimeError("GraphQL error: " + str(
+                    (j.get("errors") or [{}])[0].get("message", "no data")))
             return j["data"]
-        except Exception:
-            if i == retries - 1:
-                raise
-            time.sleep(2 * (i + 1))
+        except Exception as e:
+            err = e
+            if i < retries - 1:
+                time.sleep(2 * (i + 1))
+    raise RuntimeError(f"GraphQL failed after {retries} attempts: {err}") from err
 
 
 Q_OBJECT = """query($a: SuiAddress!) {
@@ -94,22 +104,7 @@ class EmptyPool(RuntimeError):
     no initialized ticks. Zero depth, not a failed read."""
 
 
-def gql_strict(query: str, variables: dict = None, url: str = GRAPHQL, retries: int = 4):
-    """Like gql, but any GraphQL error fails the call (after retries), even
-    when partial data came back."""
-    err = None
-    for i in range(retries):
-        try:
-            r = requests.post(url, json={"query": query, "variables": variables or {}},
-                              timeout=45)
-            j = r.json()
-            if j.get("errors") or j.get("data") is None:
-                raise RuntimeError((j.get("errors") or [{}])[0].get("message", "no data"))
-            return j["data"]
-        except Exception as e:
-            err = e
-            time.sleep(2 * (i + 1))
-    raise RuntimeError(f"GraphQL failed after {retries} attempts: {err}")
+gql_strict = gql      # kept for callers written before gql became strict
 
 
 def as_i32(v) -> int:
@@ -211,7 +206,13 @@ class ClmmPool:
         self.ranges = sorted(r for r in out if r[2] > 0 and r[1] > r[0])
 
     def out(self, q: float, src: str = "a") -> float:
-        """Raw-unit input -> raw-unit output. src is 'a' or 'b'."""
+        """Raw-unit input -> raw-unit output, never more than the pool holds of
+        the output coin (when that balance is known). src is 'a' or 'b'."""
+        o = self._out_ranges(q, src)
+        held = self.bal_b if src == "a" else self.bal_a
+        return min(o, held) if held and held > 0 else o
+
+    def _out_ranges(self, q: float, src: str = "a") -> float:
         if q <= 0:
             return 0.0
         qn, sp, total = q * (1 - self.fee), self.sqrtP, 0.0
@@ -340,24 +341,35 @@ def _find_key(d: dict, *candidates, contains: str = None):
     return None
 
 
-def _find_ticks_uid(j: dict) -> Optional[str]:
+def _find_ticks_table(j: dict) -> Tuple[Optional[str], Optional[int]]:
     """
-    Locate the tick table's UID. Cetus: tick_manager.ticks.id (skip list).
-    Bluefin: ticks_manager.ticks.id (Table). Generic: any nested dict whose
-    key contains 'tick' and which holds a 'ticks' dict with an 'id'.
+    Locate the tick table: (UID, size if the table records one). Cetus:
+    tick_manager.ticks (skip list). Bluefin: ticks_manager.ticks (Table).
+    Momentum: ticks (Table). Generic: any nested dict whose key contains
+    'tick' and which holds a 'ticks' dict with an 'id'.
     """
+    def size(t):
+        try:
+            return int(t["size"]) if "size" in t else None
+        except (TypeError, ValueError):
+            return None
+
     for k, v in j.items():
         if "tick" not in k.lower() or not isinstance(v, dict):
             continue
         t = v.get("ticks")
         if isinstance(t, dict) and "id" in t:
-            return t["id"]
+            return t["id"], size(t)
     for k, v in j.items():                     # second pass: any tick-ish UID
         if "tick" not in k.lower() or not isinstance(v, dict):
             continue
         if "id" in v and not any(x in k.lower() for x in ("bitmap", "map")):
-            return v["id"]
-    return None
+            return v["id"], size(v)
+    return None, None
+
+
+def _find_ticks_uid(j: dict) -> Optional[str]:
+    return _find_ticks_table(j)[0]
 
 
 MAX_TICK = 443636
@@ -468,17 +480,31 @@ def fetch_ticks_bitmap(pool_id: str, tick_map_id: str, spacing: int,
     return sorted(ticks)
 
 
+MAX_TICK_PAGES = 200     # 10,000 fields; reaching it with more pages left is truncation
+max_ticks_seen = 0       # largest tick count read in this process, for run logs
+
+
+class TruncatedRead(RuntimeError):
+    """A tick table was only partly read. Treated as a failed read."""
+
+
 def fetch_ticks(uid: str, page: int = 50, verbose: bool = True,
-                max_pages: int = 80) -> List[Tuple[int, float]]:
+                max_pages: int = MAX_TICK_PAGES,
+                expected: Optional[int] = None) -> List[Tuple[int, float]]:
     """
     Page the tick table's dynamic fields. Works for skip list and Table alike.
     Bails out after two empty pages: if the UID does not hold ticks, paging on
     would walk thousands of unrelated objects (positions, bins) for nothing.
+    With `expected` (the table's own size), the count of fields read must
+    match it; reaching max_pages with pages left also raises TruncatedRead.
     """
+    global max_ticks_seen
     ticks, cursor, n, seen = [], None, 0, 0
     while True:
         d = gql(Q_FIELDS, {"a": uid, "n": page, "after": cursor})
-        df = (d.get("address") or {}).get("dynamicFields") or {}
+        if not (d.get("address") or {}).get("dynamicFields"):
+            raise RuntimeError(f"no dynamic-field page returned for {uid[:12]}…")
+        df = d["address"]["dynamicFields"]
         nodes = df.get("nodes", [])
         seen += len(nodes)
         for node in nodes:
@@ -491,24 +517,49 @@ def fetch_ticks(uid: str, page: int = 50, verbose: bool = True,
             raise RuntimeError(
                 f"no ticks in the first {seen} dynamic fields under {uid[:12]}… "
                 "— not this pool's tick table")
-        if seen and not ticks and not df.get("pageInfo", {}).get("hasNextPage"):
+        info = df.get("pageInfo") or {}
+        if seen and not ticks and not info.get("hasNextPage"):
             raise RuntimeError(
                 f"{seen} dynamic fields under {uid[:12]}… but none parsed as a tick "
                 "— reader bug for this layout")
-        info = df.get("pageInfo") or {}
-        if not info.get("hasNextPage") or n >= max_pages:
+        if not info.get("hasNextPage"):
             break
+        if n >= max_pages:
+            raise TruncatedRead(f"truncated: tick table {uid[:12]}… has more than "
+                                f"{max_pages} pages ({seen} fields read)")
         cursor = info.get("endCursor")
         if verbose and n % 5 == 0:
             print(f"    …{len(ticks)} ticks", flush=True)
+    if expected is not None and seen != expected:
+        raise TruncatedRead(f"truncated: read {seen} of {expected} fields "
+                            f"in tick table {uid[:12]}…")
+    max_ticks_seen = max(max_ticks_seen, len(ticks))
     return sorted(ticks)
 
 
-def fetch(pool_id: str, venue: str = None, verbose: bool = True) -> ClmmPool:
+def fetch(pool_id: str, venue: str = None, verbose: bool = True,
+          attempts: int = 3) -> ClmmPool:
     """
     Read any Cetus- or Bluefin-style CLMM pool. Fields are located structurally,
     so a venue argument is only used as a label.
+
+    Each GraphQL page is served at the latest checkpoint, so a busy pool's
+    tick table can change between reading the pool and finishing its pages;
+    the size check then raises TruncatedRead. The whole pool is re-read up to
+    `attempts` times before the error stands.
     """
+    for i in range(attempts):
+        try:
+            return _fetch_once(pool_id, venue, verbose)
+        except TruncatedRead:
+            if i == attempts - 1:
+                raise
+            if verbose:
+                print(f"  tick table changed during the read; re-reading {pool_id[:12]}…",
+                      flush=True)
+
+
+def _fetch_once(pool_id: str, venue: str = None, verbose: bool = True) -> ClmmPool:
     d = gql(Q_OBJECT, {"a": pool_id})
     mo = (d.get("object") or {}).get("asMoveObject")
     if not mo:
@@ -561,10 +612,10 @@ def fetch(pool_id: str, venue: str = None, verbose: bool = True) -> ClmmPool:
         ticks = fetch_ticks_bitmap(pool_id, tick_map["id"], int(spacing or 0),
                                    verbose=verbose)
     else:
-        uid = _find_ticks_uid(j)
+        uid, size = _find_ticks_table(j)
         if uid is None:
             raise RuntimeError(f"no tick table found (struct keys: {list(j)})")
-        ticks = fetch_ticks(uid, verbose=verbose)
+        ticks = fetch_ticks(uid, verbose=verbose, expected=size)
 
     p = ClmmPool(pool_id=pool_id, venue=venue, coin_a=ca, coin_b=cb,
                  sym_a=sym_a, sym_b=sym_b, dec_a=dec_a, dec_b=dec_b,

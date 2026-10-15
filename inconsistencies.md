@@ -477,3 +477,41 @@ The 8 Cetus and Bluefin pools that failed with "no ticks parsed — tick table n
 
 - **The 8 pools via `PoolBook`:** 8 empty, 0 failed.
 - **Two-pool matrix:** a temp CSV puts empty Cetus FDUSD/USDC (`0x62d39858`, forced to the top TVL rank) and live Cetus FDUSD/USDC (`0x43d4c9ad`) on the same leg. Result: read 1, failed 0, empty 1. FDUSD→USDC = $1,301 and USDC→FDUSD = $31,372, both priced from the live pool.
+
+# Read robustness (2026-10-15)
+
+## Changes (uncommitted)
+
+- **`clmm.gql` is strict:**
+  - any GraphQL `errors` entry fails the call even with partial data (4 attempts, with backoff)
+  - the final error keeps the original message, so a timeout is still classed as network
+  - `gql_strict` is now an alias
+  - this covers every pool, oracle, Storage and discovery read; `positions._post` already did this
+- **`fetch_ticks`:**
+  - a missing page raises instead of reading as "no ticks"
+  - the page cap rises from 80 to 200, and hitting it with pages left raises `TruncatedRead`
+  - the fields read must equal the table's own `size` (Cetus, Bluefin, Momentum), else `TruncatedRead`
+  - `clmm.max_ticks_seen` is logged by `build()`
+- **`clmm.fetch` re-reads the whole pool** up to 3 times on `TruncatedRead`. Pages are served at the latest checkpoint, so a busy pool's table can change mid-read.
+- **`ClmmPool.out`** returns at most the pool's balance of the output coin, when that balance is known.
+- **`graph.read_legs`**, used by `matrix.build` and `graph.build`, reads each leg down its TVL ranking until it has `max_pools_per_leg` readable pools. Failed and empty pools no longer take a slot.
+- **`run.py`:**
+  - `failure_kind` gains `truncated` and `graphql_error`
+  - the tick-table and parse kinds match the new messages
+  - truncated pools are warned about and counted as failed
+- **`tests/test_read_robustness.py`:** 13 `unittest` cases on mocked responses, covering:
+  - partial error, retry then success
+  - timeout classed as network, not "no ticks"
+  - size mismatch, size match, page cap, missing page
+  - re-read succeeds, re-read keeps failing
+  - output capped at reserves, unknown balance not capped
+  - failed top pool replaced, empty pool takes no slot
+  - all pass
+
+## Live run (`data/navi/2026-10-15`, exit 0, before the re-read was added)
+
+- **Pools:** 131 legs; 130 pools needed, 129 read, 1 failed, 0 empty, 0 network errors.
+- **Largest tick table read:** 3,534 ticks (Bluefin xBTC/SUI).
+- **The one failure:** Cetus USDC/SUI `0x51e883ba…` ($862k), "truncated: read 700 of 702 fields". Read again later, the table had 705 entries and read 705 of 705 three times. The table was changing during the read, and the size check caught an inconsistent snapshot. The pool is now re-read up to 3 times. The leg-slot change put the next-ranked pool in its place, so SUI→USDC still had 4 readable pools.
+- **`Q_star_ex_zero` vs the step 3 run:** BTC assets up 83–172%; stables, suiETH and suiUSDe down 20–33%; LSTs down 11–14%; the rest within ±5%. This mixes a market move of several hours with the changes here, and isn't attributed further.
+- **DeepBook is still not on the matrix's SUI → USDC leg.** It ranks 6th by TVL and every pool above it now reads. Step 8 (rank by output) is what brings it in.
