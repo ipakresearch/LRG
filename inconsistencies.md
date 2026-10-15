@@ -515,3 +515,44 @@ The 8 Cetus and Bluefin pools that failed with "no ticks parsed — tick table n
 - **The one failure:** Cetus USDC/SUI `0x51e883ba…` ($862k), "truncated: read 700 of 702 fields". Read again later, the table had 705 entries and read 705 of 705 three times. The table was changing during the read, and the size check caught an inconsistent snapshot. The pool is now re-read up to 3 times. The leg-slot change put the next-ranked pool in its place, so SUI→USDC still had 4 readable pools.
 - **`Q_star_ex_zero` vs the step 3 run:** BTC assets up 83–172%; stables, suiETH and suiUSDe down 20–33%; LSTs down 11–14%; the rest within ±5%. This mixes a market move of several hours with the changes here, and isn't attributed further.
 - **DeepBook is still not on the matrix's SUI → USDC leg.** It ranks 6th by TVL and every pool above it now reads. Step 8 (rank by output) is what brings it in.
+
+# Curve interpolation (2026-10-16)
+
+## Changes (uncommitted)
+
+- **`curves.LegCurve.out`:** interpolates cost (1 − out/in) linearly in log size instead of USD out. Below the grid it uses the first grid point's cost. Above `GRID_HI` it computes exactly with `allocate()` and never extrapolates.
+- **`curves.route_capacity`:** takes the grid answer (`grid_capacity`, now bisecting in log size), then brackets and bisects 20 steps on `exact_route_cost`, where each leg's `allocate()` feeds the next. The returned size's exact cost is within the budget. "Exact" means exact for our 32-chunk greedy split.
+- **`matrix._best_route`:** ranks candidate paths on the grid and refines every path within 10% of the grid best, so a near tie can't pick the wrong path.
+- **Saturation:**
+  - `curves.is_saturated` marks a capacity at the top of the grid; `Matrix.saturated` lists those pairs and is saved
+  - `run.py`: new `saturated` column in `matrix.csv`; `Q_star_saturated` in `stress.csv` and `summary.json`, alongside `adequacy.csv`
+  - `_fmt` prints "≥50M"
+- **`ClmmPool.out`** walks its already-sorted ranges instead of re-sorting on every call, which keeps the extra exact evaluations cheap. `clmm.load` sorts ranges on load.
+- **`tests/test_curves.py`:** a closed-form constant-product pool, a two-hop route against exact bisection, saturation, and no extrapolation. All 4 pass, and so do the 13 read-robustness tests.
+
+## Tests: capacity, old method vs refined (constant-product pools)
+
+| route | budget | exact | old (USD-out interpolation) | refined | old error | refined error |
+|---|---|---|---|---|---|---|
+| single, 0.25% fee | 1.00% | 75,947 | 115,947 | 75,947 | +52.7% | 0.000% |
+| | 2.00% | 179,019 | 213,637 | 179,019 | +19.3% | 0.000% |
+| | 5.00% | 501,253 | 545,709 | 501,253 | +8.9% | 0.000% |
+| | 8.17% | 864,625 | 885,119 | 864,625 | +2.4% | 0.000% |
+| | 10.00% | 1,086,048 | 1,096,977 | 1,086,048 | +1.0% | 0.000% |
+| two-hop | 1.00% | 15,474 | 24,259 | 15,474 | +56.8% | 0.000% |
+| | 2.00% | 37,959 | 52,865 | 37,959 | +39.3% | 0.000% |
+| | 5.00% | 108,255 | 119,750 | 108,255 | +10.6% | 0.000% |
+| | 8.17% | 187,526 | 207,129 | 187,526 | +10.5% | 0.000% |
+| | 10.00% | 235,830 | 254,741 | 235,830 | +8.0% | 0.000% |
+
+The old method's overstatement grows as the budget shrinks. After step 1, Navi budgets are 2.1–4.2%, which is the range where the old error was largest.
+
+## Live, same snapshot (one matrix build, old method emulated on the same curves)
+
+- **Build time:** 811 s, matrix only. No pair is saturated.
+- **414 pairs positive both ways:** median 0.0%, 10th percentile −29%, 90th percentile +5%, range −90% to +10%.
+- **8 pairs went from positive to 0**, all with stSUI as debt: WBTC.lz, suiUSDT, SOL, USDSUI, USDC, xBTC, SUI and USDY. The old method gave up to $13k.
+- **Largest drops:** WAL→stSUI $13,530 → $1,341; BUCK→stSUI $770 → $106; NAVX→enzoBTC −60%; NAVX→DEEP −59%; wBTC→SOL −55%.
+- **10 largest pairs move little,** −3.9% to +6.9%. For example haSUI→SUI is +0.9%, USDSUI→USDC +1.3%, USDSUI→BUCK +6.9% and USDSUI→SUI −3.9%. Deep single-hop legs were already near-linear between grid points.
+- **Row minimum excluding zeros:** most collaterals fall 20–58%. Examples: USDC 2,641 → 2,114, LBTC 2,115 → 1,099, wBTC 2,088 → 943, WAL 3,227 → 1,341, BUCK 770 → 106.
+  - SUI, SOL, WBTC.lz and xBTC appear to rise (236 → 2,294, for example). That's because their old minimum was a small, overstated stSUI cell that is now exactly 0, and zeros are excluded from this measure.

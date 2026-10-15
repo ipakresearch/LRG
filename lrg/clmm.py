@@ -217,7 +217,7 @@ class ClmmPool:
             return 0.0
         qn, sp, total = q * (1 - self.fee), self.sqrtP, 0.0
         if src == "a":                                   # sell A, price falls
-            for lo, hi, L in sorted(self.ranges, reverse=True):
+            for lo, hi, L in reversed(self.ranges):    # ranges are kept sorted
                 if lo >= sp or L <= 0:
                     continue
                 top = min(hi, sp)
@@ -230,7 +230,7 @@ class ClmmPool:
                 sp = lo
             return total
         else:                                            # sell B, price rises
-            for lo, hi, L in sorted(self.ranges):
+            for lo, hi, L in self.ranges:
                 if hi <= sp or L <= 0:
                     continue
                 bot = max(lo, sp)
@@ -687,7 +687,7 @@ def save(p: ClmmPool, path: str):
 def load(path: str) -> ClmmPool:
     d = json.load(open(path))
     d["ticks"] = [tuple(t) for t in d["ticks"]]
-    d["ranges"] = [tuple(r) for r in d["ranges"]]
+    d["ranges"] = sorted(tuple(r) for r in d["ranges"])
     return ClmmPool(**d)
 
 

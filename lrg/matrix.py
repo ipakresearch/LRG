@@ -26,7 +26,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple
 from . import clmm
 from .coins import norm_type
 from .book import PoolBook, pool_key
-from .curves import LegCurve, route_capacity
+from .curves import LegCurve, grid_capacity, is_saturated, route_capacity
 from . import graph as _graph
 
 
@@ -139,6 +139,7 @@ class Matrix:
     price_source: Dict[str, str] = field(default_factory=dict)   # "supplied" | "derived"
     tokens: Dict[str, str] = field(default_factory=dict)        # symbol -> normalized coin type
     skipped_pools: List[str] = field(default_factory=list)      # pools not holding a leg's coin
+    saturated: List[Tuple[str, str]] = field(default_factory=list)  # capacity >= GRID_HI: "at least"
 
     def price(self, symbol: str) -> Optional[float]:
         """USD price of the asset named `symbol`, looked up by its coin type."""
@@ -348,19 +349,39 @@ class Matrix:
             "dead_leg": {f"{b}|{a}": v for (b, a), v in self.dead_leg.items() if v},
             "pools_read": self.pools_read, "pools_failed": self.pools_failed,
             "pools_empty": self.pools_empty,
+            "saturated": [f"{b}|{a}" for b, a in self.saturated],
         }
         with open(path, "w") as fh:
             json.dump(d, fh, indent=1)
         print(f"saved {path}")
 
 
-def _best_route(cands: Sequence[list], tau: float
+REFINE_WITHIN = 0.10     # refine every path within this share of the grid best
+
+
+def _best_route(cands: Sequence[list], tau: float, refine: bool = True
                 ) -> Tuple[Optional[float], Optional[int]]:
-    """Highest capacity over a pair's candidate paths at budget tau, and the
-    index of the path that achieves it. (None, None) if there are none."""
+    """
+    Highest capacity over a pair's candidate paths at budget tau, and the
+    index of the path that achieves it. (None, None) if there are none.
+    Paths are ranked on the grid; every path within REFINE_WITHIN of the
+    grid best is refined on the exact composition, so a near tie on the grid
+    cannot pick the wrong path.
+    """
+    if not cands:
+        return None, None
+    if tau <= 0:
+        return 0.0, 0
+    grid = [grid_capacity(cs, tau) for cs in cands]
+    if not refine:
+        i = max(range(len(grid)), key=lambda k: grid[k])
+        return grid[i], i
+    top = max(grid)
     best_cap, best_i = None, None
     for i, cs in enumerate(cands):
-        cap = route_capacity(cs, tau) if tau > 0 else 0.0
+        if grid[i] < top * (1 - REFINE_WITHIN):
+            continue
+        cap = route_capacity(cs, tau, start=grid[i])
         if best_cap is None or cap > best_cap:
             best_cap, best_i = cap, i
     return best_cap, best_i
@@ -369,6 +390,8 @@ def _best_route(cands: Sequence[list], tau: float
 def _fmt(v: Optional[float]) -> str:
     if v is None:
         return "—"
+    if is_saturated(v):
+        return "≥50M"
     if v >= 1e9:
         return f"{v/1e9:.2f}B"
     if v >= 1e6:
@@ -519,4 +542,5 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
                   pools_read=len(pools), pools_failed=len(book.failed),
                   pools_empty=len(book.empty),
                   derived_prices=derived, price_source=price_source,
-                  tokens=name, skipped_pools=sorted(set(skipped)))
+                  tokens=name, skipped_pools=sorted(set(skipped)),
+                  saturated=sorted(k for k, v in cells.items() if is_saturated(v)))

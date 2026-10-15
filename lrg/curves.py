@@ -6,6 +6,14 @@ precomputed on a log grid so that route cost composes across hops — the output
 of one leg is the input to the next — rather than being approximated by the
 worst single leg. Route capacity inverts that composition.
 
+Between grid points the curve interpolates cost (1 - out/in) linearly in
+log(size). In the range that matters (cost well under 50%) cost is convex in
+log size, so the chord lies above it and the grid errs toward too much cost.
+route_capacity then refines the grid answer on the exact composition (each
+leg's allocate() feeding the next), so a reported capacity's exact cost is
+within the budget. Nothing is extrapolated past GRID_HI: above it the leg is
+computed exactly, and a capacity at GRID_HI means "at least GRID_HI".
+
 With pick="split" a leg's trade is allocated across its pools by marginal
 value, the way an aggregator routes. With "best" the single deepest pool
 carries it, which is the conservative floor.
@@ -79,41 +87,39 @@ class LegCurve:
             max(leg_pools, key=lambda ps: _out_usd(ps[0], ps[1], REF_USD, prices))]
         self.prices = prices
         self.xs = [lo * (hi / lo) ** (i / (n - 1)) for i in range(n)]
-        self.ys, self.allocs = [], []
+        self.logxs = [math.log(x) for x in self.xs]
+        self.ys, self.cs, self.allocs = [], [], []
         for x in self.xs:
             o, al = allocate(self.pools, x, prices)
             self.ys.append(o)
+            self.cs.append(1 - o / x)
             self.allocs.append(al)
 
+    def exact_out(self, q: float) -> float:
+        """USD out with the leg's split computed for exactly q."""
+        return allocate(self.pools, q, self.prices)[0] if q > 0 else 0.0
+
     def out(self, q: float) -> float:
+        """USD out, from cost interpolated linearly in log size; exact above
+        the grid (never extrapolated)."""
         if q <= 0:
             return 0.0
         if q <= self.xs[0]:
-            return self.ys[0] * q / self.xs[0]
-        if q >= self.xs[-1]:
-            m = (self.ys[-1] - self.ys[-2]) / (self.xs[-1] - self.xs[-2])
-            return self.ys[-1] + m * (q - self.xs[-1])
+            return q * (1 - self.cs[0])
+        if q > self.xs[-1]:
+            return self.exact_out(q)
         i = bisect.bisect_left(self.xs, q)
-        x0, x1, y0, y1 = self.xs[i - 1], self.xs[i], self.ys[i - 1], self.ys[i]
-        t = (math.log(q) - math.log(x0)) / (math.log(x1) - math.log(x0))
-        return y0 + t * (y1 - y0)
+        if self.xs[i] == q:
+            return self.ys[i]
+        t = (math.log(q) - self.logxs[i - 1]) / (self.logxs[i] - self.logxs[i - 1])
+        c = self.cs[i - 1] + t * (self.cs[i] - self.cs[i - 1])
+        return max(0.0, q * (1 - c))
 
     def cost(self, q: float) -> float:
         return 1.0 if q <= 0 or self.out(q) <= 0 else 1 - self.out(q) / q
 
     def capacity(self, slip: float) -> float:
-        if self.cost(self.xs[0]) > slip:
-            return 0.0
-        lo, hi = self.xs[0], self.xs[-1]
-        if self.cost(hi) <= slip:
-            return hi
-        for _ in range(40):
-            mid = 0.5 * (lo + hi)
-            if self.cost(mid) <= slip:
-                lo = mid
-            else:
-                hi = mid
-        return lo
+        return route_capacity([self], slip)
 
     def alloc_at(self, q: float) -> Dict[str, float]:
         i = min(range(len(self.xs)), key=lambda k: abs(self.xs[k] - q))
@@ -122,6 +128,7 @@ class LegCurve:
 
 
 def route_cost(curves: List[LegCurve], q: float) -> float:
+    """Route cost at q from the grid curves."""
     v = q
     for c in curves:
         v = c.out(v)
@@ -130,14 +137,28 @@ def route_cost(curves: List[LegCurve], q: float) -> float:
     return 1 - v / q
 
 
-def route_capacity(curves: List[LegCurve], slip: float,
-                   lo=GRID_LO, hi=GRID_HI) -> float:
+def exact_route_cost(curves: List[LegCurve], q: float) -> float:
+    """Route cost at q with every leg's split computed for its actual input."""
+    v = q
+    for c in curves:
+        v = c.exact_out(v)
+        if v <= 0:
+            return 1.0
+    return 1 - v / q
+
+
+REFINE_STEPS = 20
+
+
+def grid_capacity(curves: List[LegCurve], slip: float,
+                  lo=GRID_LO, hi=GRID_HI) -> float:
+    """Capacity from the grid curves alone (bisection in log size)."""
     if route_cost(curves, lo) > slip:
         return 0.0
     if route_cost(curves, hi) <= slip:
         return hi
     for _ in range(42):
-        mid = 0.5 * (lo + hi)
+        mid = math.sqrt(lo * hi)
         if route_cost(curves, mid) <= slip:
             lo = mid
         else:
@@ -145,3 +166,44 @@ def route_capacity(curves: List[LegCurve], slip: float,
     return lo
 
 
+def route_capacity(curves: List[LegCurve], slip: float, lo=GRID_LO, hi=GRID_HI,
+                   refine: bool = True, start: Optional[float] = None) -> float:
+    """
+    Largest size whose route cost stays within `slip`. The grid gives a first
+    answer; with refine=True it is bracketed and bisected on the exact
+    composition, so the returned size's exact cost is within `slip`. Returns
+    `hi` when even `hi` fits ("at least hi"), 0 when not even `lo` does.
+    """
+    g = grid_capacity(curves, slip, lo, hi) if start is None else start
+    if not refine:
+        return g
+    ok = lambda q: exact_route_cost(curves, q) <= slip
+    # bracket [a, b]: a fits exactly (or is 0), b does not (or is hi and fits)
+    a = g if g > 0 else lo
+    if ok(a):
+        b = min(a * 1.25, hi)
+        while ok(b):
+            if b >= hi:
+                return hi
+            a, b = b, min(b * 1.25, hi)
+    else:
+        b = a
+        a = a / 1.25
+        while a >= lo and not ok(a):
+            b, a = a, a / 1.25
+        if a < lo:
+            if not ok(lo):
+                return 0.0
+            a = lo
+    for _ in range(REFINE_STEPS):
+        mid = math.sqrt(a * b)
+        if ok(mid):
+            a = mid
+        else:
+            b = mid
+    return a
+
+
+def is_saturated(cap: Optional[float], hi: float = GRID_HI) -> bool:
+    """A capacity at the top of the grid: the true value is at least `hi`."""
+    return cap is not None and cap >= hi * (1 - 1e-9)

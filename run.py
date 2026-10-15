@@ -73,7 +73,7 @@ from lrg import matrix                      # noqa: E402
 from lrg.book import PoolBook, pool_key     # noqa: E402
 from lrg.clmm import gql, Q_FIELDS, Q_OBJECT  # noqa: E402
 from lrg.coins import norm_type            # noqa: E402
-from lrg.curves import GRID_HI              # noqa: E402
+from lrg.curves import is_saturated         # noqa: E402
 from lrg.protocols import navi              # noqa: E402
 from lrg.protocols import navi_oracle       # noqa: E402
 import positions as navi_positions          # noqa: E402
@@ -403,7 +403,7 @@ def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
                 status = "green"
             path = M.paths.get((B, A))
             rows.append({"collateral": B, "debt": A, "Q_now": q_now, "Q_cap": q_cap,
-                         "Q_star": qs, "Q_star_saturated": qs >= GRID_HI * (1 - 1e-9),
+                         "Q_star": qs, "Q_star_saturated": is_saturated(qs),
                          "status": status, "unverified": unverified(path),
                          "debt_price_missing": pA is None,
                          "path": " → ".join(path) if path else ""})
@@ -564,6 +564,7 @@ def stress(params, M, pos: dict, unverified) -> tuple:
             path = M.paths.get((B, A))
             rows.append({"scenario": name, "shock": s, "collateral": B, "debt": A,
                          "D_usd": x["D"], "Q": q, "Q_star": qs,
+                         "Q_star_saturated": is_saturated(qs),
                          "fails": (q > qs) if qs is not None else None,
                          "no_capacity_data": qs is None,
                          "n_positions": x["n"], "D_protected_usd": x["D_protected"],
@@ -619,10 +620,11 @@ def write(params, M, book, live, pos, out_dir: str):
 
     with open(os.path.join(out_dir, "matrix.csv"), "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["collateral", "debt", "capacity_usd", "path", "unverified"])
+        w.writerow(["collateral", "debt", "capacity_usd", "saturated", "path", "unverified"])
         for (B, D), cap in sorted(M.cells.items()):
             path = M.paths.get((B, D))
-            w.writerow([B, D, cap, " → ".join(path) if path else "",
+            w.writerow([B, D, cap, str(is_saturated(cap)).lower(),
+                        " → ".join(path) if path else "",
                         str(unverified(path)).lower()])
 
     sym = reserve_symbols(pos["state"])
@@ -630,7 +632,8 @@ def write(params, M, book, live, pos, out_dir: str):
     pairs, per_coll = adequacy(params, M, live, unverified, borrowed)
     sig1 = signal_1(params, M)
     s_rows, s_coll, groups_how, n_scen = stress(params, M, pos, unverified)
-    s_cols = ["scenario", "shock", "collateral", "debt", "D_usd", "Q", "Q_star", "fails",
+    s_cols = ["scenario", "shock", "collateral", "debt", "D_usd", "Q", "Q_star",
+              "Q_star_saturated", "fails",
               "no_capacity_data", "n_positions", "D_protected_usd", "D_emode_usd",
               "unverified", "path"]
     with open(os.path.join(out_dir, "stress.csv"), "w", newline="") as fh:
@@ -656,6 +659,7 @@ def write(params, M, book, live, pos, out_dir: str):
         positive = {D: v for D, v in row.items() if v}
         D_ex = min(positive, key=positive.get) if positive else None
         collaterals[B] = {"Q_star": q, "binding_debt": binding,
+                          "Q_star_saturated": is_saturated(q),
                           "Q_star_ex_zero": positive.get(D_ex),
                           "binding_debt_ex_zero": D_ex,
                           "zero_debts": sorted(D for D, v in row.items() if v == 0),
