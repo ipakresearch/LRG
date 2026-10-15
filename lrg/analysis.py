@@ -126,7 +126,8 @@ class LoadedMatrix:
         px = self.prices.get(B)
         if px is None:
             return None
-        return p.beta * p.close_factor * (1 + a.lb) * a.ltv * S * px
+        return (p.beta * p.close_factor * p.seized_factor(a.lb)
+                * a.ltv * S * px)
 
     def car(self, B, at="cap"):
         q, qs = self.demand(B, at), self.q_star(B)

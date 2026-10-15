@@ -114,6 +114,7 @@ class Matrix:
     cells: Dict[Tuple[str, str], Optional[float]]      # (B, A) -> capacity USD
     paths: Dict[Tuple[str, str], Optional[List[str]]]
     curves: Dict[Tuple[str, str], object] = field(default_factory=dict)
+    candidates: Dict[Tuple[str, str], List[list]] = field(default_factory=dict)
     unreachable: List[Tuple[str, str]] = field(default_factory=list)
     dead_leg: Dict[Tuple[str, str], Optional[str]] = field(default_factory=dict)
     pools_read: int = 0
@@ -139,17 +140,20 @@ class Matrix:
         return c[B], B
 
     def q_star(self, B: str, lb: Optional[float] = None) -> Optional[float]:
-        """Row minimum at an arbitrary bonus, recomputing from the cached curves."""
+        """
+        Row minimum at an arbitrary bonus, recomputing from the cached curves.
+
+        Each pair takes the best of all its candidate paths at the new budget,
+        since the path that wins at one bonus need not win at another. A pair
+        with no priced path counts as zero, as it does in row_min.
+        """
         a = self.assets[B]
         lb = a.lb if lb is None else lb
         tau = self.params.budget(lb)
         if tau <= 0:
             return 0.0
-        vals = []
-        for (b, A), cv in self.curves.items():
-            if b != B or cv is None:
-                continue
-            vals.append(route_capacity(cv, tau))
+        vals = [_best_route(cands, tau)[0] or 0.0
+                for (b, A), cands in self.candidates.items() if b == B]
         return min(vals) if vals else None
 
     def curve(self, B: str, lbs: Sequence[float] = None) -> List[Tuple[float, float]]:
@@ -322,6 +326,18 @@ class Matrix:
         print(f"saved {path}")
 
 
+def _best_route(cands: Sequence[list], tau: float
+                ) -> Tuple[Optional[float], Optional[int]]:
+    """Highest capacity over a pair's candidate paths at budget tau, and the
+    index of the path that achieves it. (None, None) if there are none."""
+    best_cap, best_i = None, None
+    for i, cs in enumerate(cands):
+        cap = route_capacity(cs, tau) if tau > 0 else 0.0
+        if best_cap is None or cap > best_cap:
+            best_cap, best_i = cap, i
+    return best_cap, best_i
+
+
 def _fmt(v: Optional[float]) -> str:
     if v is None:
         return "—"
@@ -419,6 +435,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         return curve_cache[(x, y)]
 
     cells, paths, curves, unreachable = {}, {}, {}, []
+    candidates: Dict[Tuple[str, str], List[list]] = {}
     dead_leg: Dict[Tuple[str, str], Optional[str]] = {}
 
     def leg_volume(x, y):
@@ -426,14 +443,14 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         return sum(vol_of.get(pid, 0.0) for pid, _ in leg_ids(x, y))
     for (B, D), ps in cands.items():
         tau = p.budget(A[B].lb)
-        best_cap, best_path, best_curves = None, None, None
+        priced = []
         for path in ps:
             cs = [curve(path[i], path[i + 1]) for i in range(len(path) - 1)]
-            if not all(cs):
-                continue
-            cap = route_capacity(cs, tau) if tau > 0 else 0.0
-            if best_cap is None or cap > best_cap:
-                best_cap, best_path, best_curves = cap, path, cs
+            if all(cs):
+                priced.append((path, cs))
+        candidates[(B, D)] = [cs for _, cs in priced]
+        best_cap, i = _best_route(candidates[(B, D)], tau)
+        best_path, best_curves = priced[i] if i is not None else (None, None)
         if best_cap is None:
             # No priced path. That is worse than a thin one, so it enters the
             # row minimum as zero rather than being skipped.
@@ -460,5 +477,6 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         print(f"{n} routes have a leg with no 24h volume")
 
     return Matrix(params=p, assets=A, prices=prices, cells=cells, paths=paths,
-                  curves=curves, unreachable=unreachable, dead_leg=dead_leg,
+                  curves=curves, candidates=candidates,
+                  unreachable=unreachable, dead_leg=dead_leg,
                   pools_read=len(pools), pools_failed=len(book.failed))

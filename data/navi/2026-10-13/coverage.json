@@ -1,0 +1,465 @@
+{
+ "pools_needed": 117,
+ "pools_read": 96,
+ "pools_failed": 21,
+ "failed": [
+  {
+   "pool_id": "0x022db7c3d497c194a5457b9307530a39b8379b09f836d64fd24f93fbe20fa626",
+   "venue": "turbos-finance",
+   "pair": "haSUI/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x022db7c3d4\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x0df4f02d0e210169cb6d5aabd03c3058328c06f2c4dbb0804faa041159c78443",
+   "venue": "turbos-finance",
+   "pair": "USDC/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x0df4f02d0e\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x102d08049c737f8cef0d8a108deefd4aa4404db53c572d02821fb0432ecd6709",
+   "venue": "turbos-finance",
+   "pair": "BUCK/USDC",
+   "kind": "parse_error",
+   "reason": "ticks parsed but no ranges built \u2014 check sign convention"
+  },
+  {
+   "pool_id": "0x198af6ff81028c6577e94465d534c4e2cfcbbab06a95724ece7011c55a9d1f5a",
+   "venue": "turbos-finance",
+   "pair": "DEEP/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x198af6ff81\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x2ce764106ace913ff43f3c1fd6a91454898a42710464cd60d220130eb78ca5ca",
+   "venue": "turbos-finance",
+   "pair": "USDT/wUSDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x2ce764106a\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x2de1a48b8b2047718b320c1f4e76ee3cfb31f046b835b599818b87aed34b7825",
+   "venue": "bluefin",
+   "pair": "WBTC.lz/USDSUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0x40ceeed02e2e82d4f58e88b9524b33c362e00e17368037f4a47c3cf4c5f1df94",
+   "venue": "cetus",
+   "pair": "BUCK/USDY",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0x5eb2dfcdd1b15d2021328258f6d5ec081e9a0cdcfa9e13a0eaeb9b5f7505ca78",
+   "venue": "turbos-finance",
+   "pair": "SUI/wUSDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x5eb2dfcdd1\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x62d398584d1c5909ee1225fbb846d049175cc3b95fbefba4e0191cee45f1663e",
+   "venue": "cetus",
+   "pair": "FDUSD/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0x74915fb0491fe1ed6ebe6f89111073a72f6d026e040822d65e5de66064ffea9c",
+   "venue": "turbos-finance",
+   "pair": "vSUI/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x74915fb049\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x7db7a7279c6e28cb6c5ac06d81c0f3770621b3215a4c37c4f5fa18f09d10c0bd",
+   "venue": "turbos-finance",
+   "pair": "FDUSD/USDC",
+   "kind": "parse_error",
+   "reason": "ticks parsed but no ranges built \u2014 check sign convention"
+  },
+  {
+   "pool_id": "0x835effa94dba86cf354ced62e33ce59ce6754cd0e57e7ee84a6ede2f7d7f8056",
+   "venue": "turbos-finance",
+   "pair": "USDSUI/SUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x835effa94d\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x8989fbbd6114a5d768eb551e8e6609ac39c91e7c30813c5c8771158ccf2f73d3",
+   "venue": "cetus",
+   "pair": "BUCK/USDT",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0x9490a13351e13b133bd8a9c309c47568d6fcbfcbfe7aac0e228b710053583081",
+   "venue": "turbos-finance",
+   "pair": "WAL/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0x9490a13351\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0x97bde23c85fa25513f1c4140ba81ddcecf69f6cea5964e4ee28212776082c850",
+   "venue": "cetus",
+   "pair": "BUCK/WAL",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'coin_a', 'coin_b', 'tick_spacing', 'fee_rate', 'liquidity', 'current_sqrt_price', 'current_tick_index', 'fee_growth_global_a', 'fee_growth_global_b', 'fee_protocol_coin_a', 'fee_protocol_coin_b', 'tick_manager', 'rewarder_manager', 'position_manager', 'is_pause', 'index', 'url'])"
+  },
+  {
+   "pool_id": "0xaad89a13dee194eb1043e5a34d8f070897d787473c2034647def9d4f43879b60",
+   "venue": "turbos-finance",
+   "pair": "LBTC/wBTC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0xaad89a13de\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0xacf163d7e76641381bcf026ddb7cb4e4876eb03fff183dd4de0fc15f5000d650",
+   "venue": "bluefin",
+   "pair": "xBTC/USDSUI",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0xb9ddcf85a857dadd255a784d2838c8ffb21046d21e908e87b5ce0c1a2af6878b",
+   "venue": "bluefin",
+   "pair": "XAUm/WBTC.lz",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0xd2a3915f5a8d81032fc5472cbda5899627431a4ce204a80a913f4f7b8f8190b6",
+   "venue": "turbos-finance",
+   "pair": "LBTC/wBTC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0xd2a3915f5a\u2026 \u2014 this venue stores its liquidity elsewhere"
+  },
+  {
+   "pool_id": "0xd97d8b73e82b1bf12bc5d22a3df75801751300b828f7911d92521fef329bb31a",
+   "venue": "bluefin",
+   "pair": "XAUm/LBTC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks parsed \u2014 tick table not where expected for this venue (struct keys: ['id', 'name', 'coin_a', 'coin_b', 'fee_rate', 'protocol_fee_share', 'fee_growth_global_coin_a', 'fee_growth_global_coin_b', 'protocol_fee_coin_a', 'protocol_fee_coin_b', 'ticks_manager', 'observations_manager', 'current_sqrt_price', 'current_tick_index', 'liquidity', 'reward_infos', 'is_paused', 'icon_url', 'position_index', 'sequence_number'])"
+  },
+  {
+   "pool_id": "0xe9750931401fd6e9592d489760d8ad264cdc0bb41e4ce7b334cd66fbacdd04d6",
+   "venue": "turbos-finance",
+   "pair": "USDSUI/USDC",
+   "kind": "tick_table_not_found",
+   "reason": "no ticks in the first 100 dynamic fields under 0xe975093140\u2026 \u2014 this venue stores its liquidity elsewhere"
+  }
+ ],
+ "untracked_navi_reserves": [
+  {
+   "reserve_id": 2,
+   "coin_type": "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 3,
+   "coin_type": "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 4,
+   "coin_type": "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 8,
+   "coin_type": "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 9,
+   "coin_type": "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 13,
+   "coin_type": "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 14,
+   "coin_type": "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 17,
+   "coin_type": "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 25,
+   "coin_type": "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 27,
+   "coin_type": "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  },
+  {
+   "reserve_id": 30,
+   "coin_type": "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC",
+   "ltv": 0.0,
+   "borrow_cap_ratio": 0.0
+  }
+ ],
+ "positions": {
+  "borrowers": 77163,
+  "positions": 9869,
+  "dust_borrowers": 67294,
+  "dust_debt_usd": 4045.089185133722,
+  "debt_usd": 69115341.65060116,
+  "min_debt_usd": 1.0,
+  "requests": {
+   "borrow_pages": 5361,
+   "lookup_batches": 1465
+  },
+  "seconds": 3285.3,
+  "checkpoint_start": 333496190,
+  "checkpoint_end": 333509002,
+  "emode_positions": 63,
+  "protected_positions": 5,
+  "hf_check": {
+   "tolerance": 1e-06,
+   "min_debt_usd": 1000.0,
+   "positions": [
+    {
+     "user": "0x22a5d0f76c68f9123a4e34b52be1cfa4c08bf292e234a50658bfb3ea7e5df783",
+     "emode": 0,
+     "navi_hf": 1.2001843512838422,
+     "computed_hf": 1.2001843512838193,
+     "rel_diff": 1.9055901106203772e-14
+    },
+    {
+     "user": "0x4c824e11bdcbc9000e61ec263db4bdac2f515d0b8103775ed5dbb27a2d568148",
+     "emode": null,
+     "navi_hf": 1.587317289757232,
+     "computed_hf": 1.587317284935466,
+     "rel_diff": 3.0376825910114065e-09
+    },
+    {
+     "user": "0x7f5dad0cbacb135a422ce9b25f40328eae9ccef6033c601cfbe5178f09a21840",
+     "emode": null,
+     "navi_hf": 1.825021016467539,
+     "computed_hf": 1.8250210164686531,
+     "rel_diff": 6.105243816153201e-13
+    },
+    {
+     "user": "0xe0846d690dc58a85b959153575cba9eaa82f1ae70780bf4c0442c2ffc7bad645",
+     "emode": null,
+     "navi_hf": 1.7397266419502304,
+     "computed_hf": 1.7397266419499098,
+     "rel_diff": 1.8430045374962866e-13
+    },
+    {
+     "user": "0x3e320a2d0868ec43b87182e74d2677256a2dcdec39827e4e081412e96249cfe7",
+     "emode": null,
+     "navi_hf": 1.065332782048421,
+     "computed_hf": 1.0653327820484262,
+     "rel_diff": 4.793831560740987e-15
+    }
+   ]
+  },
+  "market": {
+   "market_id": "0",
+   "last_market_id": "10",
+   "is_main_market": true
+  },
+  "emode_users": 263,
+  "protected_users": 6,
+  "stress_scenarios": 57,
+  "price_groups": {
+   "SUI": {
+    "reserve": 0,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "wUSDC": {
+    "reserve": 1,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "r2": {
+    "reserve": 2,
+    "group": "stable (unshocked)",
+    "why": "price 0.9988 within 2% of $1: stable"
+   },
+   "r3": {
+    "reserve": 3,
+    "group": "r3",
+    "why": "untracked, alone"
+   },
+   "CETUS": {
+    "reserve": 4,
+    "group": "CETUS",
+    "why": "untracked, alone"
+   },
+   "vSUI": {
+    "reserve": 5,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "haSUI": {
+    "reserve": 6,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "NAVX": {
+    "reserve": 7,
+    "group": "NAVX",
+    "why": "listed, alone"
+   },
+   "r8": {
+    "reserve": 8,
+    "group": "BTC family",
+    "why": "price 83,426.63 within 10% of wBTC"
+   },
+   "AUSD": {
+    "reserve": 9,
+    "group": "stable (unshocked)",
+    "why": "price 0.9999 within 2% of $1: stable"
+   },
+   "USDC": {
+    "reserve": 10,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "suiETH": {
+    "reserve": 11,
+    "group": "suiETH",
+    "why": "listed, alone"
+   },
+   "USDY": {
+    "reserve": 12,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "NS": {
+    "reserve": 13,
+    "group": "NS",
+    "why": "untracked, alone"
+   },
+   "r14": {
+    "reserve": 14,
+    "group": "BTC family",
+    "why": "price 83,449.78 within 10% of wBTC"
+   },
+   "DEEP": {
+    "reserve": 15,
+    "group": "DEEP",
+    "why": "listed, alone"
+   },
+   "FDUSD": {
+    "reserve": 16,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "BLUE": {
+    "reserve": 17,
+    "group": "BLUE",
+    "why": "untracked, alone"
+   },
+   "BUCK": {
+    "reserve": 18,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "suiUSDT": {
+    "reserve": 19,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "stSUI": {
+    "reserve": 20,
+    "group": "SUI family",
+    "why": "listed"
+   },
+   "wBTC": {
+    "reserve": 21,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "SOL": {
+    "reserve": 22,
+    "group": "SOL",
+    "why": "listed, alone"
+   },
+   "LBTC": {
+    "reserve": 23,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "WAL": {
+    "reserve": 24,
+    "group": "WAL",
+    "why": "listed, alone"
+   },
+   "HAEDAL": {
+    "reserve": 25,
+    "group": "HAEDAL",
+    "why": "untracked, alone"
+   },
+   "xBTC": {
+    "reserve": 26,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "IKA": {
+    "reserve": 27,
+    "group": "IKA",
+    "why": "untracked, alone"
+   },
+   "enzoBTC": {
+    "reserve": 28,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "MBTC": {
+    "reserve": 29,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "YBTC": {
+    "reserve": 30,
+    "group": "BTC family",
+    "why": "price 83,538.78 within 10% of wBTC"
+   },
+   "XAUm": {
+    "reserve": 31,
+    "group": "XAUm",
+    "why": "listed, alone"
+   },
+   "WBTC.lz": {
+    "reserve": 32,
+    "group": "BTC family",
+    "why": "listed"
+   },
+   "suiUSDe": {
+    "reserve": 33,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   },
+   "USDSUI": {
+    "reserve": 34,
+    "group": "stable (unshocked)",
+    "why": "listed stable"
+   }
+  }
+ }
+}
