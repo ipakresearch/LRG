@@ -134,6 +134,7 @@ class Matrix:
     dead_leg: Dict[Tuple[str, str], Optional[str]] = field(default_factory=dict)
     pools_read: int = 0
     pools_failed: int = 0
+    pools_empty: int = 0          # read, but no liquidity: zero depth, not a failure
     derived_prices: Dict[str, float] = field(default_factory=dict)
     price_source: Dict[str, str] = field(default_factory=dict)   # "supplied" | "derived"
     tokens: Dict[str, str] = field(default_factory=dict)        # symbol -> normalized coin type
@@ -346,6 +347,7 @@ class Matrix:
             "unreachable": [f"{b}|{a}" for b, a in self.unreachable],
             "dead_leg": {f"{b}|{a}": v for (b, a), v in self.dead_leg.items() if v},
             "pools_read": self.pools_read, "pools_failed": self.pools_failed,
+            "pools_empty": self.pools_empty,
         }
         with open(path, "w") as fh:
             json.dump(d, fh, indent=1)
@@ -452,7 +454,8 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
     prices = {**derived, **supplied}
     price_source = {t: "supplied" if t in supplied else "derived" for t in prices}
     if verbose:
-        print(f"{len(pools)} readable, {len(book.failed)} failed; "
+        print(f"{len(pools)} readable, {len(book.failed)} failed, "
+              f"{len(book.empty)} empty; "
               f"prices for {len(prices)} tokens")
 
     curve_cache: Dict[Tuple[str, str], object] = {}
@@ -511,5 +514,6 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
                   curves=curves, candidates=candidates,
                   unreachable=unreachable, dead_leg=dead_leg,
                   pools_read=len(pools), pools_failed=len(book.failed),
+                  pools_empty=len(book.empty),
                   derived_prices=derived, price_source=price_source,
                   tokens=name, skipped_pools=sorted(set(skipped)))

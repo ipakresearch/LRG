@@ -89,6 +89,11 @@ Q_MULTI_FIELDS = """query($a: SuiAddress!, $keys: [DynamicFieldName!]!) {
 }"""
 
 
+class EmptyPool(RuntimeError):
+    """The pool exists and was read, but holds no liquidity: liquidity 0 and
+    no initialized ticks. Zero depth, not a failed read."""
+
+
 def gql_strict(query: str, variables: dict = None, url: str = GRAPHQL, retries: int = 4):
     """Like gql, but any GraphQL error fails the call (after retries), even
     when partial data came back."""
@@ -486,6 +491,10 @@ def fetch_ticks(uid: str, page: int = 50, verbose: bool = True,
             raise RuntimeError(
                 f"no ticks in the first {seen} dynamic fields under {uid[:12]}… "
                 "— not this pool's tick table")
+        if seen and not ticks and not df.get("pageInfo", {}).get("hasNextPage"):
+            raise RuntimeError(
+                f"{seen} dynamic fields under {uid[:12]}… but none parsed as a tick "
+                "— reader bug for this layout")
         info = df.get("pageInfo") or {}
         if not info.get("hasNextPage") or n >= max_pages:
             break
@@ -551,8 +560,6 @@ def fetch(pool_id: str, venue: str = None, verbose: bool = True) -> ClmmPool:
         # among its LP positions
         ticks = fetch_ticks_bitmap(pool_id, tick_map["id"], int(spacing or 0),
                                    verbose=verbose)
-        if not ticks and liq == 0:
-            raise RuntimeError("empty pool: liquidity 0 and no initialized ticks")
     else:
         uid = _find_ticks_uid(j)
         if uid is None:
@@ -564,9 +571,11 @@ def fetch(pool_id: str, venue: str = None, verbose: bool = True) -> ClmmPool:
                  fee=fee, sqrtP=sqrtP, liquidity=liq, tick_spacing=int(spacing or 0),
                  bal_a=bal_a, bal_b=bal_b, ticks=ticks, fetched_at=time.time())
     if not ticks:
-        raise RuntimeError(
-            "no ticks parsed — tick table not where expected for this venue "
-            f"(struct keys: {list(j)})")
+        # the tick table was found and is empty (a populated table that parses
+        # to nothing raises inside the readers)
+        if liq == 0:
+            raise EmptyPool("empty pool: liquidity 0 and no initialized ticks")
+        raise RuntimeError(f"tick table is empty but liquidity is {liq:.0f}")
     p.build_ranges()
     if not p.ranges:
         raise RuntimeError("ticks parsed but no ranges built — check sign convention")

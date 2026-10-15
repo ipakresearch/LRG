@@ -16,7 +16,7 @@
 - [x] 11. Swap direction
 - [x] 12. Pool universe (DeepBook, Aftermath, discovery; TVL now on chain)
 - [x] 13. Turbos reader (tick_map bitmap + keyed reads)
-- [ ] 14. Empty pools
+- [x] 14. Empty pools (EmptyPool status; zero depth, not failed)
 - [ ] 15. Read robustness (SUI→USDC top-4 misses DeepBook)
 - [ ] 16. Curve interpolation
 - [ ] 17. Path ranking (CSV TVL is stale for some pools: rank by on-chain depth/output)

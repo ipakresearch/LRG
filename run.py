@@ -674,9 +674,15 @@ def write(params, M, book, live, pos, out_dir: str):
                   fh, indent=1)
 
     labels = price_labels(M, book)
-    coverage = {"pools_needed": len(book.pools) + len(book.failed),
+    empty = [{"pool_id": key[0], "venue": meta.get(key, {}).get("venue"),
+              "pair": (f"{meta[key]['symbol_a']}/{meta[key]['symbol_b']}" if key in meta else None),
+              "reason": reason}
+             for key, reason in sorted(book.empty.items())]
+    coverage = {"pools_needed": len(book.pools) + len(book.failed) + len(book.empty),
                 "pools_read": len(book.pools), "pools_failed": len(book.failed),
+                "pools_empty": len(book.empty),
                 "failed": failed,
+                "empty": empty,     # zero depth; never marks a route unverified
                 "untracked_navi_reserves": live["untracked"],
                 "prices": {
                     # keyed by normalized coin type; label is for display only

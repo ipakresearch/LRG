@@ -441,3 +441,39 @@ Turbos indexes its ticks with `tick_map: Table<I32, u256>`: bit b of word w mark
 | all readable, with DeepBook | 1.90%, of which Turbos USDC/SUI takes 9% |
 | all readable, without DeepBook | 3.25% |
 | matrix's top 4 by TVL | 4.87%, now with no unreadable pool |
+
+# Empty pools (2026-10-15)
+
+## Diagnosis (D3)
+
+The 8 Cetus and Bluefin pools that failed with "no ticks parsed — tick table not where expected" are all empty:
+
+| venue | pair | pool | liquidity | tick table size | reserves |
+|---|---|---|---|---|---|
+| cetus | BUCK/USDT | `0x8989fbbd` | 0 | 0 | $0.00 |
+| cetus | BUCK/USDY | `0x40ceeed0` | 0 | 0 | $4.61 |
+| cetus | BUCK/WAL | `0x97bde23c` | 0 | 0 | $2.19 |
+| cetus | FDUSD/USDC | `0x62d39858` | 0 | 0 | $0.11 |
+| bluefin | WBTC.lz/USDSUI | `0x2de1a48b` | 0 | 0 | $10.57 |
+| bluefin | XAUm/LBTC | `0xd97d8b73` | 0 | 0 | $757.26 |
+| bluefin | XAUm/WBTC.lz | `0xb9ddcf85` | 0 | 0 | $172.49 |
+| bluefin | xBTC/USDSUI | `0xacf163d7` | 0 | 0 | $0.16 |
+
+- The tick table was found in every case; it just had no entries, so the error message was wrong.
+- None of these pools is in the current CSV, because the step 3 floor dropped them.
+- None of the 179 Cetus, Bluefin and Momentum pools in the current CSV fails to read, so there is no read bug with liquidity above 0.
+
+## Changes (uncommitted)
+
+- **`clmm.EmptyPool`:** raised when a pool has liquidity 0 and an empty tick table, on both the paging and the bitmap paths.
+- **Distinct errors:**
+  - "no tick table found" when no tick table id is located
+  - a populated table that parses to nothing raises a reader-bug error
+  - an empty table with liquidity above 0 raises its own error
+- **`PoolBook.empty`:** records empty pools apart from `failed`. They're zero depth: legs go without them, and they never mark a route unverified.
+- **Counts:** `Matrix.pools_empty` and `save()` include them, and `build()` prints them. `coverage.json` gets `pools_empty` and an `empty` list, and `pools_needed` includes them.
+
+## Verification
+
+- **The 8 pools via `PoolBook`:** 8 empty, 0 failed.
+- **Two-pool matrix:** a temp CSV puts empty Cetus FDUSD/USDC (`0x62d39858`, forced to the top TVL rank) and live Cetus FDUSD/USDC (`0x43d4c9ad`) on the same leg. Result: read 1, failed 0, empty 1. FDUSD→USDC = $1,301 and USDC→FDUSD = $31,372, both priced from the live pool.

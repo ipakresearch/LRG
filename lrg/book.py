@@ -39,6 +39,7 @@ class PoolBook:
         adapter instead of being sent through the tick walker."""
         self.pools: Dict[tuple, object] = {}       # pool_key -> pool
         self.failed: Dict[tuple, str] = {}         # pool_key -> reason
+        self.empty: Dict[tuple, str] = {}          # pool_key -> reason; zero depth, not a failure
         self.cache = cache
         self.verbose = verbose
         self.venue_of = dict(venue_of or {})
@@ -77,7 +78,7 @@ class PoolBook:
         key = pool_key(pool_id, coin_a, coin_b)
         if key in self.pools:
             return self.pools[key]
-        if key in self.failed:
+        if key in self.failed or key in self.empty:
             return None
 
         v = venue or self.venue_of.get(pool_id)
@@ -109,6 +110,11 @@ class PoolBook:
             if self.cache:
                 clmm.save(p, self._path(pool_id))
             return p
+        except clmm.EmptyPool as e:
+            self.empty[key] = str(e)
+            if self.verbose:
+                print(f"  EMPTY {pool_id[:12]}…  {e}", flush=True)
+            return None
         except Exception as e:
             self.failed[key] = str(e)
             if self.verbose:
