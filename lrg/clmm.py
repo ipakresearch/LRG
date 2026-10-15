@@ -71,7 +71,40 @@ Q_FIELDS = """query($a: SuiAddress!, $n: Int!, $after: String) {
   }
 }"""
 
+Q_FIELDS_TYPED = """query($a: SuiAddress!, $n: Int!, $after: String) {
+  address(address: $a) {
+    dynamicFields(first: $n, after: $after) {
+      pageInfo { hasNextPage endCursor }
+      nodes { name { type { repr } json } value { ... on MoveValue { json } } }
+    }
+  }
+}"""
+
 Q_DECIMALS = """query($t: String!) { coinMetadata(coinType: $t) { decimals symbol } }"""
+
+Q_MULTI_FIELDS = """query($a: SuiAddress!, $keys: [DynamicFieldName!]!) {
+  address(address: $a) {
+    multiGetDynamicFields(keys: $keys) { name { json } value { ... on MoveValue { json } } }
+  }
+}"""
+
+
+def gql_strict(query: str, variables: dict = None, url: str = GRAPHQL, retries: int = 4):
+    """Like gql, but any GraphQL error fails the call (after retries), even
+    when partial data came back."""
+    err = None
+    for i in range(retries):
+        try:
+            r = requests.post(url, json={"query": query, "variables": variables or {}},
+                              timeout=45)
+            j = r.json()
+            if j.get("errors") or j.get("data") is None:
+                raise RuntimeError((j.get("errors") or [{}])[0].get("message", "no data"))
+            return j["data"]
+        except Exception as e:
+            err = e
+            time.sleep(2 * (i + 1))
+    raise RuntimeError(f"GraphQL failed after {retries} attempts: {err}")
 
 
 def as_i32(v) -> int:
@@ -285,6 +318,8 @@ class ClmmPool:
 PACKAGES = {
     "0x1eabed72c53feb3805120a081dc15963c204dc8d091542592abaf7a35689b2fb": "cetus",
     "0x3492c874c1e3b3e2984e8c41b589e642d4d0a5d6459e5a9cfc2d52fd7c89c267": "bluefin",
+    "0x91bfbc386a41afcfd9b2533058d7e915a1d3829089cc268ff4333d54d6339ca1": "turbos-finance",
+    "0x70285592c97965e811e0c6f98dccc3a9c2b4ad854b3594faab9597ada267b860": "momentum",
 }
 
 
@@ -379,6 +414,55 @@ def _decimals(coin_type: str) -> Tuple[int, str]:
     return int(md.get("decimals", 9)), md.get("symbol") or coin_type.split("::")[-1]
 
 
+TICK_BATCH = 25          # names per multiGetDynamicFields call (5000-byte payload cap)
+
+
+def fetch_ticks_bitmap(pool_id: str, tick_map_id: str, spacing: int,
+                       verbose: bool = True) -> List[Tuple[int, float]]:
+    """
+    Ticks of a pool that indexes them with a bitmap (Turbos): tick_map is a
+    Table<I32, u256> of words, and bit b of word w marks tick
+    (w * 256 + b) * spacing as initialized. Each tick is a dynamic field of
+    the pool keyed by that I32, so it is fetched by key: paging the pool's
+    fields instead would walk every LP position (20,000+ on deep pools)
+    before reaching a tick. Raises if any marked tick is missing.
+    """
+    import base64
+    import struct
+
+    words, after, key_type = [], None, None
+    while True:
+        d = gql_strict(Q_FIELDS_TYPED, {"a": tick_map_id, "n": 50, "after": after})
+        df = d["address"]["dynamicFields"]
+        for n in df["nodes"]:
+            key_type = key_type or n["name"]["type"]["repr"]
+            words.append((as_i32(n["name"]["json"]), int(n["value"]["json"])))
+        if not df["pageInfo"]["hasNextPage"]:
+            break
+        after = df["pageInfo"]["endCursor"]
+    idx = sorted((w * 256 + b) * spacing for w, bm in words
+                 for b in range(256) if bm >> b & 1)
+    if not idx:
+        return []
+
+    ticks = []
+    for i in range(0, len(idx), TICK_BATCH):
+        chunk = idx[i:i + TICK_BATCH]
+        keys = [{"type": key_type,
+                 "bcs": base64.b64encode(struct.pack("<I", t & 0xFFFFFFFF)).decode()}
+                for t in chunk]
+        got = gql_strict(Q_MULTI_FIELDS, {"a": pool_id, "keys": keys})
+        nodes = got["address"]["multiGetDynamicFields"]
+        for t, node in zip(chunk, nodes):
+            parsed = _tick_from_json(((node or {}).get("value") or {}).get("json"), t)
+            if parsed is None:
+                raise RuntimeError(f"tick {t} is marked in tick_map but did not read")
+            ticks.append(parsed)
+        if verbose and (i // TICK_BATCH) % 10 == 9:
+            print(f"    …{len(ticks)}/{len(idx)} ticks", flush=True)
+    return sorted(ticks)
+
+
 def fetch_ticks(uid: str, page: int = 50, verbose: bool = True,
                 max_pages: int = 80) -> List[Tuple[int, float]]:
     """
@@ -401,7 +485,7 @@ def fetch_ticks(uid: str, page: int = 50, verbose: bool = True,
         if n >= 2 and not ticks:
             raise RuntimeError(
                 f"no ticks in the first {seen} dynamic fields under {uid[:12]}… "
-                "— this venue stores its liquidity elsewhere")
+                "— not this pool's tick table")
         info = df.get("pageInfo") or {}
         if not info.get("hasNextPage") or n >= max_pages:
             break
@@ -456,14 +540,24 @@ def fetch(pool_id: str, venue: str = None, verbose: bool = True) -> ClmmPool:
     bal_a = _bal("coin_a", "reserve_x", "reserve_a", "balance_x", "balance_a")
     bal_b = _bal("coin_b", "reserve_y", "reserve_b", "balance_y", "balance_b")
 
-    uid = _find_ticks_uid(j) or pool_id     # Turbos: ticks hang off the pool itself
-
     dec_a, sym_a = _decimals(ca)
     dec_b, sym_b = _decimals(cb)
 
     if verbose:
         print(f"  {venue}  {sym_a}/{sym_b}  fee {fee*100:.4f}%  fetching ticks…", flush=True)
-    ticks = fetch_ticks(uid, verbose=verbose)
+    tick_map = j.get("tick_map")
+    if isinstance(tick_map, dict) and "id" in tick_map:
+        # Turbos: a bitmap indexes the ticks, which sit on the pool's own UID
+        # among its LP positions
+        ticks = fetch_ticks_bitmap(pool_id, tick_map["id"], int(spacing or 0),
+                                   verbose=verbose)
+        if not ticks and liq == 0:
+            raise RuntimeError("empty pool: liquidity 0 and no initialized ticks")
+    else:
+        uid = _find_ticks_uid(j)
+        if uid is None:
+            raise RuntimeError(f"no tick table found (struct keys: {list(j)})")
+        ticks = fetch_ticks(uid, verbose=verbose)
 
     p = ClmmPool(pool_id=pool_id, venue=venue, coin_a=ca, coin_b=cb,
                  sym_a=sym_a, sym_b=sym_b, dec_a=dec_a, dec_b=dec_b,

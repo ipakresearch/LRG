@@ -404,3 +404,40 @@ Also seen: the Momentum package is missing from `clmm.PACKAGES`, so those pools 
 vSUI and haSUI are no longer zero-capacity debts for any collateral; stSUI still is for most.
 
 **MBTC silently dropped out of the matrix.** Its only pool, Momentum MBTC/wBTC, has $13 of reserves and fell below the floor. `build()` then treats MBTC as "absent from the pool set" and leaves it out of every row and column: 462 cells instead of 506. MBTC is missing from `summary.json` and `adequacy.csv`, and appears in `stress.csv` only through positions. Before, MBTC had zero capacity everywhere and failed. Now it doesn't appear at all, which reads better than it is. Step 9 is required before these numbers are quoted: an asset with no pool must get capacity 0, not be absent.
+
+# Turbos reader (2026-10-15)
+
+## Diagnosis
+
+Review finding A2 guessed that Turbos ticks are dynamic **object** fields, which `Q_FIELDS` doesn't select. That's wrong. The ticks are ordinary dynamic fields (`MoveValue`, type `pool::Tick`, key `i32::I32`). The pool's UID also carries every LP `Position` as a dynamic object field. On USDC/SUI (`0x0df4f02d…`), the first 20,000 fields (400 pages, 6.5 minutes) were all positions, with no ticks among them. The reader stopped after 2 pages, and even a full walk would be impractical.
+
+Turbos indexes its ticks with `tick_map: Table<I32, u256>`: bit b of word w marks tick (w·256 + b)·spacing. On USDC/SUI that's 182 words and 1,098 ticks, from −443,630 to 443,630. Each tick can be fetched by key with `multiGetDynamicFields`.
+
+## Changes (uncommitted)
+
+- **`clmm.fetch_ticks_bitmap`:**
+  - pages `tick_map`, decodes the words, and fetches ticks by key in batches of 25
+  - takes the I32 key type from the words' names, with no hard-coded package
+  - raises if any tick marked in the bitmap doesn't read
+- **`clmm.gql_strict`:** any GraphQL error fails the call after retries, even with partial data. Used for the tick reads.
+- **`clmm.fetch`:**
+  - takes the bitmap path when the pool has a `tick_map` table
+  - no longer pages the pool's own fields as a fallback
+  - reports an empty pool as "empty pool: liquidity 0 and no initialized ticks"
+  - the paging reader's error now says the id isn't the pool's tick table
+- **`clmm.PACKAGES`:** labels Turbos and Momentum, which were shown by package prefix.
+
+## Verification
+
+- **Turbos pools in the CSV:** 35 of 35 read; all of them failed before.
+- **Liquidity check:** the summed `liquidity_net` for ticks at or below the pool's `tick_current_index` equals its `liquidity` field.
+  - DEEP/USDC first showed a mismatch from my float comparison against `sqrtP`. Against the pool's tick index the two match exactly (17,065,455,667,241).
+- **Sanity check against the oracle:** passes for every priced pool except vSUI/SUI and haSUI/SUI. That is the known oracle issue (vSUI and haSUI priced at about the SUI price, while these pools trade them about 6% higher), not a read error.
+- **The two "no ranges built" pools** (BUCK/USDC `0x102d0804…`, FDUSD/USDC `0x7db7a727…`) have `liquidity` 0 and an empty bitmap. They're empty, not a sign bug, and the step 3 floor already dropped them from the CSV.
+- **SUI → USDC leg, same snapshot** (costs differ from the step 3 table because the market moved):
+
+| pools used | cost at $1M |
+|---|---|
+| all readable, with DeepBook | 1.90%, of which Turbos USDC/SUI takes 9% |
+| all readable, without DeepBook | 3.25% |
+| matrix's top 4 by TVL | 4.87%, now with no unreadable pool |

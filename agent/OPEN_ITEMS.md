@@ -15,9 +15,9 @@
 - [x] 10. Coin-type keying
 - [x] 11. Swap direction
 - [x] 12. Pool universe (DeepBook, Aftermath, discovery; TVL now on chain)
-- [ ] 13. Turbos reader
+- [x] 13. Turbos reader (tick_map bitmap + keyed reads)
 - [ ] 14. Empty pools
-- [ ] 15. Read robustness (SUI→USDC top-4 still holds a failing Turbos pool and misses DeepBook)
+- [ ] 15. Read robustness (SUI→USDC top-4 misses DeepBook)
 - [ ] 16. Curve interpolation
 - [ ] 17. Path ranking (CSV TVL is stale for some pools: rank by on-chain depth/output)
 - [ ] 18. Matrix completeness and borrowable debts (+ close factor applies to collateral value, see inconsistencies.md)
