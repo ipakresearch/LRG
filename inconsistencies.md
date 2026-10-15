@@ -202,6 +202,60 @@ Oracle prices were 3–46 minutes old at read time. Apart from the liquid-stakin
 
 ## Findings (not changed)
 
-1. **`platform_share` understates the liquidator's bonus.** In all 20 liquidations the liquidator received the full bonus, and the treasury amount was paid on top of it (55–85% of the bonus, matching `treasury_factor`). `Params.platform_share = 0.10` therefore understates what liquidators earn.
+1. **`platform_share` overstates the liquidator's bonus. Corrected 2026-10-15; see "Liquidation bonus split" below.** This entry originally said the liquidator gets the full bonus with the treasury paid on top. That was wrong: the event's `collateral_amount` is gross, and the treasury's cut comes out of the bonus.
 2. **The oracle prices vSUI and haSUI at the SUI price** (stSUI is about 3% under market). The one vSUI liquidation among the 20 was priced at the oracle value, so this is how Navi actually liquidates. It now drives the zero haSUI-debt cells and the higher liquid-staking collateral capacity.
 3. **Inconsistent symbol naming persists** (see "Prices keyed by on-chain symbol" above). `run.py` works around it by keying oracle prices under both names.
+
+# Liquidation bonus split (2026-10-15)
+
+Finding 1 above was wrong, and the error went the other way. Navi's bytecode (package `0x1e4a13a0…59cb`) settles it:
+
+- `logic::calculate_liquidation`:
+  - base = min(amount offered, close factor × the borrower's collateral value in that asset, loan value)
+  - bonus = base × LB (the e-mode bonus for e-mode users)
+  - treasury = bonus × `treasury_factor` of the **collateral** reserve
+  - the liquidator receives base + bonus − treasury
+- `lending::base_liquidation_call` deposits the treasury amount into the pool's treasury, so it is never sold. It emits `collateral_amount = to_liquidator + treasury`, which is the **gross** amount.
+
+The old 20-event check read `collateral_amount` as the liquidator's take. The same events show gross bonus = LB and treasury ÷ bonus = the collateral's `treasury_factor` exactly.
+
+**Treasury factors (chain, 2026-10-15):**
+
+| collateral | LB | treasury_factor | liquidator's bonus | budget (was, 10% share) | budget (now) |
+|---|---|---|---|---|---|
+| SUI, vSUI, haSUI | 10% | 0.65 | 3.50% | 8.17% | 3.29% |
+| stSUI, SOL, MBTC, DEEP, WAL, enzoBTC, FDUSD, BUCK, suiUSDe | 10% | 0.55 | 4.50% | 8.17% | 4.22% |
+| USDC, suiUSDT, USDSUI, USDY | 8% | 0.55 | 3.60% | 6.54% | 3.39% |
+| WBTC.lz, xBTC | 15% | 0.80 | 3.00% | 11.98% | 2.83% |
+| LBTC, wBTC, suiETH | 15% | 0.85 | 2.25% | 11.98% | 2.11% |
+| NAVX | 5% | 0.55 | 2.25% | 3.59% | 2.11% |
+
+## Code changes (uncommitted)
+
+- `lrg/matrix.py`:
+  - `Params.platform_share` is replaced by `treasury_factors` (per collateral symbol), with an optional `treasury_share` fallback.
+  - `Params.tf(symbol)` raises when neither is set.
+  - `budget(lb, tf)` and `seized_factor(lb, tf)` take the factor explicitly, with b = (1 − tf)·LB.
+  - All call sites are updated: `q_star`, `demand`, `s_max`, `feasible`, the printed tables and `build`.
+  - The factors are saved with the params, so `analysis.load` picks them up.
+- `lrg/analysis.py`: the same calls, updated.
+- `lrg/protocols/navi.py`: `PLATFORM_SHARE` is replaced by `TREASURY_FACTORS` (the static fallback above, with sources).
+- `run.py`:
+  - `fetch_navi_live` reads `treasury_factor` per reserve, and `summary.json` records it under `navi_live`.
+  - `param_diffs` flags drift against `navi.py`.
+  - Adequacy, `s_max_debt_bounded` and stress Q use the collateral's factor.
+- `positions.py`: `read_state` reads `treasury_factor`.
+- `README.md`: formula section and `Params` example.
+
+## Verification
+
+- **`budget()` against hand values:** (5%, 0.55) → 2.11%; (8%, 0.55) → 3.39%; (10%, 0.65) → 3.29%; (10%, 0.55) → 4.22%; (15%, 0.80) → 2.83%; (15%, 0.85) → 2.11%. All match.
+- **Latest 20 liquidations (a newer window than the first check):** 20 of 20 have gross bonus = LB and net bonus `(collateral_amount − treasury)·P_c / (debt·P_d) − 1` = LB·(1 − tf), within 0.2 pp.
+- **Live factors vs `navi.TREASURY_FACTORS`:** no differences.
+- **Reloaded matrix:** a saved matrix reloads with its factors, and `demand(SUI)` = 0.35 × 1.035 × 0.75 × 55M, as expected.
+
+Not rerun: budgets roughly halve, so Q* will fall across the matrix. Step 13 measures it.
+
+## Close factor applies to collateral value (not changed)
+
+Navi caps the base at close factor × the borrower's **collateral value** in that asset (then at the loan value). `Q = CF·(1+b)·LTV·S·P` applies it to debt instead. At the liquidation threshold this understates Q by about 1/LTV (about 1.3× at LTV 0.75). Repeated calls can also liquidate further while the health factor stays below 1. The stress Q (`CF·seized·D`) has the same issue. To be handled with steps 9 and 11.

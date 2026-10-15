@@ -10,11 +10,11 @@ The reference instance is [Navi Protocol](https://naviprotocol.io) on Sui — 24
 
 ## The condition
 
-A liquidator repays debt `D` and receives collateral worth `(1 + b)·D`, where `b` is the bonus net of whatever share the protocol retains. They sell that collateral at a total cost `c` — swap fees plus price impact, referenced to the oracle rate — and must end with at least `(1 + φ)·D` to cover the repayment and the flash-loan fee:
+A liquidator repays debt `D` and receives collateral worth `(1 + b)·D`, where `b = (1 − tf)·LB` is the bonus net of the protocol's cut. On Navi, `tf` is the collateral reserve's `treasury_factor` (0.55–0.85): the protocol takes `tf` of the bonus out of the seized collateral and keeps it in the pool, so that part is neither earned nor sold by the liquidator. They sell that collateral at a total cost `c` — swap fees plus price impact, referenced to the oracle rate — and must end with at least `(1 + φ)·D` to cover the repayment and the flash-loan fee:
 
     (1 + b) * (1 - c) >= 1 + phi      which is      c <= 1 - (1 + phi) / (1 + b)
 
-The right-hand side is the **cost budget**. The familiar first-order form `b − φ` overstates it by roughly `b` squared, because it measures the loss against the pre-bonus base while the quantity being sold is the post-bonus amount. At a 10% bonus with a 10% protocol share the exact budget is **8.17%**, not 8.91%; at a 15% bonus the gap is 1.6 percentage points. LRG uses the exact form.
+The right-hand side is the **cost budget**. The familiar first-order form `b − φ` overstates it by roughly `b` squared, because it measures the loss against the pre-bonus base while the quantity being sold is the post-bonus amount. For SUI collateral on Navi (LB 10%, treasury factor 0.65, so `b` = 3.5%) the exact budget is **3.29%**, not 3.41%; the gap grows with `b`, to 1.6 percentage points at `b` = 15%. LRG uses the exact form.
 
 The quantity that has to clear is the collateral a full liquidation would put on the market:
 
@@ -50,7 +50,7 @@ data = graph.build("data/navi_pools.csv", navi.COIN_TYPES, navi.VENUES,
 
 # the capacity matrix
 p = matrix.Params(close_factor=navi.CLOSE_FACTOR, beta=1.0,
-                  platform_share=navi.PLATFORM_SHARE)
+                  treasury_factors=navi.TREASURY_FACTORS)
 M = matrix.build("data/navi_pools.csv", navi.COIN_TYPES, navi.ASSETS,
                  navi.VENUES, params=p)
 
@@ -106,7 +106,7 @@ The row minimum is the adversarial capacity — the worst debt asset a liquidati
 A saved run can be reopened without refetching:
 
 ```python
-M = analysis.load("navi_matrix.json", asset_table=navi.ASSETS)
+M = analysis.load("navi_matrix.json", asset_table=navi.ASSETS)   # params, treasury factors included, come from the file
 ```
 
 ---

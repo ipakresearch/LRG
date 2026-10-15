@@ -7,7 +7,9 @@ LB, supply cap; column minima govern the debt side — borrow cap.
 
 The budget is the exact profitability condition rather than its first-order
 approximation. A liquidator repaying D receives (1+b)D of collateral, where
-b = (1 - platform_share)*LB, sells it at cost c, and must end with (1+phi)D:
+b = (1 - tf)*LB and tf is the collateral's treasury factor (the protocol's cut
+of the bonus, kept in the pool and never sold), sells it at cost c, and must
+end with (1+phi)D:
 
     (1 + b)(1 - c) >= 1 + phi      ->      c <= 1 - (1 + phi)/(1 + b)
 
@@ -35,7 +37,12 @@ from . import graph as _graph
 class Params:
     close_factor: float = 0.35
     beta: float = 1.00
-    platform_share: float = 0.10
+    # Protocol's cut of the liquidation bonus, per collateral symbol. It is
+    # taken from the seized collateral and kept, so the liquidator neither
+    # earns nor sells it. treasury_share is the fallback for an asset with no
+    # entry; with neither, tf() raises rather than assume a split.
+    treasury_factors: Optional[Dict[str, float]] = None
+    treasury_share: Optional[float] = None
     flash_fee: float = 0.0009
     lb_max: float = 0.15
     prices: Optional[Dict[str, float]] = None    # override derived prices, by pool symbol
@@ -45,17 +52,24 @@ class Params:
     max_candidates: int = 20
     pick: str = "split"
 
-    def bonus_to_liquidator(self, lb: float) -> float:
-        """The share of the bonus the liquidator keeps, after the protocol's cut."""
-        return (1 - self.platform_share) * lb
+    def tf(self, symbol: str) -> float:
+        """The treasury factor for collateral `symbol`."""
+        tf = (self.treasury_factors or {}).get(symbol, self.treasury_share)
+        if tf is None:
+            raise ValueError(f"no treasury factor for {symbol} and no treasury_share fallback")
+        return tf
 
-    def budget(self, lb: float, exact: bool = True) -> float:
+    def bonus_to_liquidator(self, lb: float, tf: float) -> float:
+        """The share of the bonus the liquidator keeps, after the treasury's cut."""
+        return (1 - tf) * lb
+
+    def budget(self, lb: float, tf: float, exact: bool = True) -> float:
         """
         Largest total route cost a liquidation can bear.
 
         The liquidator repays D, receives (1 + b)·D of collateral where
-        b = (1 - platform_share)·LB, sells it at cost c, and must end with at
-        least (1 + phi)·D:
+        b = (1 - tf)·LB, sells it at cost c, and must end with at least
+        (1 + phi)·D:
 
             (1 + b)(1 - c) >= 1 + phi      ->      c <= 1 - (1 + phi)/(1 + b)
 
@@ -63,15 +77,15 @@ class Params:
         measures the loss against the pre-bonus base while the quantity sold is
         the post-bonus one. Pass exact=False to use it.
         """
-        b = self.bonus_to_liquidator(lb)
+        b = self.bonus_to_liquidator(lb, tf)
         if not exact:
             return b - self.flash_fee
         return 1 - (1 + self.flash_fee) / (1 + b)
 
-    def seized_factor(self, lb: float) -> float:
-        """Collateral reaching the DEX per unit of debt repaid. The protocol's
-        share of the incentive is retained, not sold."""
-        return 1 + self.bonus_to_liquidator(lb)
+    def seized_factor(self, lb: float, tf: float) -> float:
+        """Collateral reaching the DEX per unit of debt repaid. The treasury's
+        cut of the bonus is retained in the pool, not sold."""
+        return 1 + self.bonus_to_liquidator(lb, tf)
 
 
 @dataclass
@@ -151,7 +165,7 @@ class Matrix:
         """
         a = self.assets[B]
         lb = a.lb if lb is None else lb
-        tau = self.params.budget(lb)
+        tau = self.params.budget(lb, self.params.tf(B))
         if tau <= 0:
             return 0.0
         vals = [_best_route(cands, tau)[0] or 0.0
@@ -174,7 +188,7 @@ class Matrix:
         px = self.prices.get(B)
         if px is None:
             return None
-        return (p.beta * p.close_factor * p.seized_factor(a.lb)
+        return (p.beta * p.close_factor * p.seized_factor(a.lb, p.tf(B))
                 * a.ltv * S * px)
 
     def car(self, B: str, at: str = "cap") -> Optional[dict]:
@@ -195,7 +209,7 @@ class Matrix:
         px = self.prices.get(B)
         if qs is None or not px or ltv <= 0:
             return None
-        return qs / (p.beta * p.close_factor * p.seized_factor(lb) * ltv * px)
+        return qs / (p.beta * p.close_factor * p.seized_factor(lb, p.tf(B)) * ltv * px)
 
     def feasible(self, B: str, ltvs: Sequence[float] = None,
                  S: Optional[float] = None) -> List[dict]:
@@ -211,7 +225,7 @@ class Matrix:
             need = None
             for _ in range(40):
                 mid = 0.5 * (lo + hi)
-                q = (p.beta * p.close_factor * p.seized_factor(mid)
+                q = (p.beta * p.close_factor * p.seized_factor(mid, p.tf(B))
                      * ltv * S * px)
                 qs = self.q_star(B, mid)
                 if qs is None:
@@ -233,7 +247,7 @@ class Matrix:
         debts = syms or sorted({A for (_, A) in self.cells})
         print(f"capacity matrix C[B][A], USD, each row at its own budget "
               f"(CF={self.params.close_factor}, β={self.params.beta}, "
-              f"platform share={self.params.platform_share:.0%})\n")
+              f"bonus net of each collateral's treasury factor)\n")
         label = "coll \\ debt"
         print(f"{label:<11}" + "".join(f"{d[:8]:>{width}}" for d in debts))
         for B in colls:
@@ -260,7 +274,7 @@ class Matrix:
         p = self.params
         print(f"capacity at risk, demand at {at}  "
               f"(CF={p.close_factor}, β={p.beta}, LB_eff = "
-              f"{1-p.platform_share:.0%}·LB − {p.flash_fee:.2%})\n")
+              f"(1 − tf)·LB, φ = {p.flash_fee:.2%})\n")
         print(f"  {'asset':<10}{'LB':>5}{'budget':>8}{'Q':>13}{'Q*':>13}"
               f"{'ratio':>8}{'binding':>9}")
         rows = []
@@ -271,7 +285,7 @@ class Matrix:
         for a, r in sorted(rows, key=lambda x: -(x[1]["ratio"] or 0)):
             flag = "  ◀" if r["ratio"] > 1 else ""
             print(f"  {a.symbol:<10}{a.lb*100:>4.0f}%"
-                  f"{p.budget(a.lb)*100:>7.2f}%{_fmt(r['Q']):>13}"
+                  f"{p.budget(a.lb, p.tf(a.symbol))*100:>7.2f}%{_fmt(r['Q']):>13}"
                   f"{_fmt(r['Q_star']):>13}{r['ratio']:>8.2f}"
                   f"{r['binding'] or '—':>9}{flag}")
         print("\n◀ demand exceeds the capacity the routes support at that budget")
@@ -291,7 +305,7 @@ class Matrix:
         print(f"  {'LB':>6}{'budget':>9}{'Q*':>14}{'S_max at LTV=' + f'{a.ltv:.0%}':>20}")
         for lb, q in self.curve(B, lbs):
             s = self.s_max(B, a.ltv, lb) if a.ltv else None
-            print(f"  {lb*100:>5.0f}%{self.params.budget(lb)*100:>8.2f}%"
+            print(f"  {lb*100:>5.0f}%{self.params.budget(lb, self.params.tf(B))*100:>8.2f}%"
                   f"{_fmt(q):>14}{(f'{s:,.0f}' if s else '—'):>20}")
 
     def feasible_table(self, B: str, S: Optional[float] = None):
@@ -449,7 +463,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         """Total 24h volume across the pools used on this leg."""
         return sum(vol_of.get(pid, 0.0) for pid, _ in leg_ids(x, y))
     for (B, D), ps in cands.items():
-        tau = p.budget(A[B].lb)
+        tau = p.budget(A[B].lb, p.tf(B))
         priced = []
         for path in ps:
             cs = [curve(path[i], path[i + 1]) for i in range(len(path) - 1)]

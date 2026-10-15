@@ -11,7 +11,7 @@
 
 ## Review 2026-10-15 (see agent/REVIEW_2026-10-15.md, agent/FIX_PROMPTS.md)
 
-- [ ] 9. Liquidation bonus split
+- [x] 9. Liquidation bonus split (per-reserve treasury_factor; the premise of finding 1 was reversed, see inconsistencies.md)
 - [ ] 10. Coin-type keying
 - [ ] 11. Swap direction
 - [ ] 12. Pool universe (DeepBook, Aftermath, discovery)
@@ -20,7 +20,7 @@
 - [ ] 15. Read robustness
 - [ ] 16. Curve interpolation
 - [ ] 17. Path ranking
-- [ ] 18. Matrix completeness and borrowable debts
+- [ ] 18. Matrix completeness and borrowable debts (+ close factor applies to collateral value, see inconsistencies.md)
 - [ ] 19. Coverage flag
 - [ ] 20. Stress corrections
 - [ ] 21. LST mint exit

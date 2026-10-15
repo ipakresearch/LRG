@@ -180,6 +180,7 @@ def fetch_navi_live() -> dict:
             "lt": int(lf["threshold"]) / RAY,
             "lb": int(lf["bonus"]) / RAY,
             "close_factor": int(lf["ratio"]) / RAY,
+            "treasury_factor": int(v["treasury_factor"]) / RAY,
             "supply_cap": int(v["supply_cap_ceiling"]) / scale,
             "borrow_cap_ratio": int(v["borrow_cap_ceiling"]) / RAY,
             "supplied": (int(v["supply_balance"]["total_supply"])
@@ -229,6 +230,10 @@ def param_diffs(live: dict) -> list:
             static = row[i] if row[i] is not None else 0.0
             if abs(static - a[k]) > 1e-9 * max(1.0, abs(static)):
                 out.append({"asset": s, "field": k, "navi_py": row[i], "chain": a[k]})
+    for s, tf in navi.TREASURY_FACTORS.items():
+        if s in live["assets"] and abs(tf - live["assets"][s]["treasury_factor"]) > 1e-9:
+            out.append({"asset": s, "field": "treasury_factor", "navi_py": tf,
+                        "chain": live["assets"][s]["treasury_factor"]})
     if abs(navi.CLOSE_FACTOR - next(iter(live["assets"].values()))["close_factor"]) > 1e-9:
         out.append({"asset": "*", "field": "close_factor", "navi_py": navi.CLOSE_FACTOR,
                     "chain": next(iter(live["assets"].values()))["close_factor"]})
@@ -306,8 +311,9 @@ def compute():
     live = fetch_navi_live()
     cf = next(iter(live["assets"].values()))["close_factor"]
     oracle, oracle_info, oracle_collisions = oracle_prices()
-    params = matrix.Params(close_factor=cf, beta=1.0,
-                           platform_share=navi.PLATFORM_SHARE, prices=oracle)
+    params = matrix.Params(close_factor=cf, beta=1.0, prices=oracle,
+                           treasury_factors={s: a["treasury_factor"]
+                                             for s, a in live["assets"].items()})
     _RecordingBook.instances.clear()
     original, matrix.PoolBook = matrix.PoolBook, _RecordingBook
     try:
@@ -413,7 +419,7 @@ def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
     for B in sorted({b for b, _ in M.cells}):
         a = M.assets[B]
         q_now_B, q_cap_B = M.demand(B, "current"), M.demand(B, "cap")
-        k = params.beta * params.close_factor * params.seized_factor(a.lb)
+        k = params.beta * params.close_factor * params.seized_factor(a.lb, params.tf(B))
         rows = []
         for (b, A), qs in sorted(M.cells.items()):
             if b != B:
@@ -477,7 +483,7 @@ def s_max_debt_bounded(params, M, borrowed: dict, B: str):
     a, pB = M.assets[B], M.prices.get(B)
     if not a.ltv or not pB:
         return None
-    k = params.beta * params.close_factor * params.seized_factor(a.lb)
+    k = params.beta * params.close_factor * params.seized_factor(a.lb, params.tf(B))
     bounds = []
     for (b, A), qs in M.cells.items():
         if b != B:
@@ -564,6 +570,7 @@ def stress(params, M, pos: dict, unverified) -> tuple:
     px = state["prices"]
     lb = {rid: (M.assets[s].lb if s in M.assets else state["reserves"][rid]["lb"])
           for rid, s in sym.items()}
+    tf = {rid: state["reserves"][rid]["treasury_factor"] for rid in sym}
 
     scenarios = [("baseline", 0.0, {})]
     for g, members in sorted(groups.items()):
@@ -595,7 +602,7 @@ def stress(params, M, pos: dict, unverified) -> tuple:
                     x["D_emode"] += share if p["emode"] is not None else 0.0
         for (b_rid, a_rid), x in acc.items():
             B, A = sym[b_rid], sym[a_rid]
-            q = params.close_factor * params.seized_factor(lb[b_rid]) * x["D"]
+            q = params.close_factor * params.seized_factor(lb[b_rid], tf[b_rid]) * x["D"]
             qs = M.cells.get((B, A))
             path = M.paths.get((B, A))
             rows.append({"scenario": name, "shock": s, "collateral": B, "debt": A,

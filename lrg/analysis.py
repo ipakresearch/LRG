@@ -34,7 +34,7 @@ def to_frame(M) -> pd.DataFrame:
             "hops": (len(path) - 1) if path else None,
             "no_route": (cap == 0.0),
             "dead_leg": getattr(M, "dead_leg", {}).get((B, A)),
-            "lb": a.lb, "budget": M.params.budget(a.lb),
+            "lb": a.lb, "budget": M.params.budget(a.lb, M.params.tf(B)),
             "ltv": a.ltv, "lt": a.lt,
             "supply_cap_tokens": a.supply_cap,
             "price": M.prices.get(B),
@@ -126,7 +126,7 @@ class LoadedMatrix:
         px = self.prices.get(B)
         if px is None:
             return None
-        return (p.beta * p.close_factor * p.seized_factor(a.lb)
+        return (p.beta * p.close_factor * p.seized_factor(a.lb, p.tf(B))
                 * a.ltv * S * px)
 
     def car(self, B, at="cap"):
@@ -145,7 +145,7 @@ def load(path: str, asset_table=None, assets=None, params=None) -> "LoadedMatrix
     priced = sum(1 for v in M.cells.values() if v is not None)
     print(f"{n} cells, {priced} priced, {n - priced} unpriced · "
           f"CF={M.params.close_factor}, β={M.params.beta}, "
-          f"platform share={M.params.platform_share:.0%}")
+          f"treasury factors={M.params.treasury_factors or M.params.treasury_share}")
     if not M.prices:
         print("no prices in the file — Q and the ratios cannot be computed; "
               "pass prices via M.prices = {...}")
@@ -212,7 +212,7 @@ def collateral_view(M, at: str = "cap", flag_low: float = 1.0,
         rows.append({
             "asset": B,
             "ltv": a.ltv, "lt": a.lt, "lb": a.lb,
-            "budget": M.params.budget(a.lb),
+            "budget": M.params.budget(a.lb, M.params.tf(B)),
             "supply_cap_tokens": a.supply_cap,
             "price": M.prices.get(B),
             "Q_usd": q, "Q_star_usd": qs,
@@ -227,7 +227,7 @@ def collateral_view(M, at: str = "cap", flag_low: float = 1.0,
             "ratio_median": (q / ser.median()) if ser.median() else None,
             "second_worst": vals[1] if len(vals) > 1 else None,
             "implied_cap_tokens": (qs / (M.params.beta * M.params.close_factor *
-                                         M.params.seized_factor(a.lb) * a.ltv *
+                                         M.params.seized_factor(a.lb, M.params.tf(B)) * a.ltv *
                                          (M.prices.get(B) or 1))
                                    if qs and a.ltv else None),
             "routes_priced": sum(1 for v in row.values() if v),

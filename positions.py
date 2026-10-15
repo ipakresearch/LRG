@@ -177,6 +177,7 @@ def read_state() -> dict:
             "oracle_id": int(v["oracle_id"]),
             "lt": int(lf["threshold"]) / RAY,
             "lb": int(lf["bonus"]) / RAY,
+            "treasury_factor": int(v["treasury_factor"]) / RAY,
             "supply_index": int(v["current_supply_index"]),
             "borrow_index": int(v["current_borrow_index"]),
             "supply_table": v["supply_balance"]["user_state"]["id"],
