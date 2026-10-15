@@ -14,10 +14,10 @@
 - [x] 9. Liquidation bonus split (per-reserve treasury_factor; the premise of finding 1 was reversed, see inconsistencies.md)
 - [x] 10. Coin-type keying
 - [x] 11. Swap direction
-- [ ] 12. Pool universe (DeepBook, Aftermath, discovery)
+- [x] 12. Pool universe (DeepBook, Aftermath, discovery; TVL now on chain)
 - [ ] 13. Turbos reader
 - [ ] 14. Empty pools
-- [ ] 15. Read robustness
+- [ ] 15. Read robustness (SUI→USDC top-4 still holds a failing Turbos pool and misses DeepBook)
 - [ ] 16. Curve interpolation
 - [ ] 17. Path ranking (CSV TVL is stale for some pools: rank by on-chain depth/output)
 - [ ] 18. Matrix completeness and borrowable debts (+ close factor applies to collateral value, see inconsistencies.md)

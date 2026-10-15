@@ -118,8 +118,7 @@ M = analysis.load("navi_matrix.json", asset_table=navi.ASSETS)   # params, treas
 | `lrg/pool.py` | the adapter interface, as a `typing.Protocol` |
 | `lrg/clmm.py` | concentrated liquidity: Cetus, Bluefin, Momentum, Turbos |
 | `lrg/venues.py` | weighted AMM (Aftermath) and order book (DeepBook) |
-| `lrg/discovery.py` | pool universe from GeckoTerminal |
-| `lrg/discovery_extra.py` | DeepBook and Aftermath, which it does not index |
+| `lrg/discovery.py` | pool universe: GeckoTerminal plus DeepBook and Aftermath, TVL checked on chain |
 | `lrg/book.py` | pool state, fetched once and cached, dispatched by venue |
 | `lrg/topology.py` | which routes exist between two assets |
 | `lrg/curves.py` | split execution, leg cost curves, route cost and capacity |

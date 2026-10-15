@@ -19,6 +19,7 @@ from typing import Dict, List, Optional
 from .coins import norm_type
 
 GRID_LO, GRID_HI, GRID_N = 50.0, 5e7, 70
+REF_USD = 10_000.0               # reference size for ranking pools
 
 
 def _out_usd(p, side: str, usd_in: float, prices) -> float:
@@ -72,8 +73,10 @@ class LegCurve:
 
     def __init__(self, leg_pools, prices, pick="split",
                  lo=GRID_LO, hi=GRID_HI, n=GRID_N):
+        # "best": the pool giving the most USD out at REF_USD. Venue
+        # `.liquidity` values are in different units and are not compared.
         self.pools = leg_pools if pick == "split" else [
-            max(leg_pools, key=lambda ps: getattr(ps[0], "liquidity", 0) or 0)]
+            max(leg_pools, key=lambda ps: _out_usd(ps[0], ps[1], REF_USD, prices))]
         self.prices = prices
         self.xs = [lo * (hi / lo) ** (i / (n - 1)) for i in range(n)]
         self.ys, self.allocs = [], []

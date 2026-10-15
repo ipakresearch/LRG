@@ -317,3 +317,90 @@ New zero-capacity debts: vSUI for 17 collaterals, haSUI for 12, stSUI for 5. The
 ## New finding: CSV TVL is stale for some pools
 
 GeckoTerminal TVL in `data/navi_pools.csv` can be far from on-chain reserves: Momentum MBTC/wBTC lists $593k and holds about $12; Cetus suiUSDe/USDC lists $501k and holds about $3.2k. Pool selection (top 4 per leg) and path ranking both use CSV TVL, so an empty pool can take a slot from a live one. Relevant to steps 3, 6 and 8: rank by on-chain depth or by output at a reference size.
+
+# Pool universe: DeepBook, Aftermath, discovery (2026-10-15)
+
+## Changes (uncommitted)
+
+- **`lrg/discovery.py`** runs end to end:
+  - `VENUE_TYPE` is defined, and `has_adapter` comes from the routed venues.
+  - Each token is paged up to GeckoTerminal's free-tier cap of 10 pages, with a warning naming any token that hits it.
+  - An exhausted rate-limit retry now raises, where it used to silently end a token's list.
+  - Rows carry `discovered_at`, coin types are normalized, and `discover_all()` adds DeepBook and Aftermath.
+- **On-chain TVL** (`verify_tvl`/`onchain_tvl`):
+  - `tvl_usd` is now each pool's on-chain reserves at oracle prices; when one side is unpriced, the priced side is doubled.
+  - GeckoTerminal's figure is kept as `tvl_gecko`, and `tvl_source` says which applies (onchain, venue or geckoterminal).
+  - Routed pools under $5k, or that can't be valued, are dropped.
+- **`lrg/venues.py`:**
+  - `discovery_rows()` returns DeepBook pools (both coins Navi assets, readable book) and Aftermath pairs above $25k. TVL uses coin-type prices.
+  - `_parse_book` sorts bids descending and asks ascending.
+  - The order-book fetch steps down from 200 to 100 to 50 levels, because the indexer runs out of gas on SUI_USDC at 200. Levels fetched are recorded as `levels`.
+- **Pool identity:**
+  - `book.pool_key` = (object id, sorted normalized coin pair).
+  - It's used by the `PoolBook` cache and failures, `matrix.build`/`graph.build` (`leg_ids`, `vol_of`, `pools`) and `run.py` (failure metadata).
+  - An Aftermath pair is matched exactly; a missing pair fails, where the code used to fall back to another pair of the same pool.
+- **Venue-neutral ranking:**
+  - `derive_prices(seed=...)` starts from the supplied oracle prices and orders pools by USD TVL under known prices.
+  - `LegCurve(pick="best")` picks the pool with the most USD out at $10k (`REF_USD`).
+  - `.liquidity` is no longer compared across venues.
+- **Housekeeping:** `lrg/discovery_extra.py` (endpoint guessing, superseded) is removed, and the README is updated.
+- **`data/navi_pools.csv` regenerated:** 179 rows became 272; the old file is in git.
+
+## Diff, routed venues
+
+| venue | old rows | old TVL (Gecko) | new rows | new TVL (on chain) |
+|---|---|---|---|---|
+| cetus | 62 | $22.9M | 101 | $24.6M |
+| bluefin | 42 | $16.7M | 51 | $12.4M |
+| momentum | 27 | $3.9M | 27 | $4.1M |
+| deepbook | 0 | — | 14 | $3.1M |
+| turbos-finance | 20 | $2.6M | 35 | $2.7M |
+| aftermath | 0 | — | 2 | $0.2M |
+
+**Added (112).** The largest are:
+- Bluefin SVBTC/wBTC ($1.6M) and sUSN/USDC ($978k)
+- DeepBook USDSUI/USDC ($722k), SUI/USDC ($579k), WBTC.lz/USDC ($462k), suiUSDe/USDC ($329k) and xBTC/USDC ($310k)
+- Momentum xSUI/SUI ($633k)
+- Aftermath LBTC/wBTC ($122k)
+
+**Dropped (33)**, all with on-chain reserves under $5k:
+- Bluefin BTCvc/USDC: $7.0M listed, $220 held
+- Momentum MBTC/wBTC: $593k listed, $13 held
+- Cetus suiUSDe/USDC: $501k listed, $3.2k held
+- Bluefin NAVX/USDC, Turbos stBTC/LBTC and Cetus FDUSD/USDC: $0 held
+- Several dead BUCK pools
+
+**Fake listings removed:** GeckoTerminal lists 25 pools above $1M that hold almost nothing. Examples: xSKHY/USDC ($9.4B listed, $70 held), USDD/wUSDC ($327M listed, $0 held), UNIVERSE/wBTC ($47M listed, $56 held). Paging 10 deep would have put them at the top of the wUSDC, USDC, wBTC and DEEP legs.
+
+**Truncated by the page cap:** SUI, USDC, WAL, DEEP and wUSDC.
+
+## SUI → USDC leg after the change
+
+The leg has 9 pools. The two Turbos pools fail (step 4); DeepBook and Aftermath read.
+
+| pools used | cost at $100k | cost at $1M | DeepBook share at $1M |
+|---|---|---|---|
+| all readable, with DeepBook | 0.39% | 4.45% | 19% |
+| all readable, without DeepBook | 0.54% | 6.60% | — |
+| matrix's top 4 by TVL | 0.61% | 7.84% | not included |
+
+The matrix still misses DeepBook. It takes the top 4 pools by TVL, DeepBook ranks 6th at $579k, and the 4th slot goes to Turbos USDC/SUI, which fails to read. Steps 6 (drop failed pools before taking the top N) and 8 (rank by output) fix this.
+
+Also seen: the Momentum package is missing from `clmm.PACKAGES`, so those pools are labelled by package prefix (`0x70285592`). This is cosmetic.
+
+## Full run with the new pool universe (2026-10-15)
+
+**Pools:** 129 needed, 115 read, 14 failed. All 14 failures are Turbos `tick_table_not_found` (step 4). DeepBook and Aftermath now read.
+
+**`Q_star_ex_zero` vs the step 2 run:**
+- Stables and enzoBTC: about ×4 (782 → 3,188 for USDC)
+- SUI: +173%
+- SOL: ×4
+- stSUI: +141%
+- BTC assets: +50% to +82%
+- WAL: −80% (the binding debt is now stSUI)
+- Others: within ±8%
+
+vSUI and haSUI are no longer zero-capacity debts for any collateral; stSUI still is for most.
+
+**MBTC silently dropped out of the matrix.** Its only pool, Momentum MBTC/wBTC, has $13 of reserves and fell below the floor. `build()` then treats MBTC as "absent from the pool set" and leaves it out of every row and column: 462 cells instead of 506. MBTC is missing from `summary.json` and `adequacy.csv`, and appears in `stress.csv` only through positions. Before, MBTC had zero capacity everywhere and failed. Now it doesn't appear at all, which reads better than it is. Step 9 is required before these numbers are quoted: an asset with no pool must get capacity 0, not be absent.

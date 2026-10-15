@@ -70,7 +70,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 
 from lrg import matrix                      # noqa: E402
-from lrg.book import PoolBook               # noqa: E402
+from lrg.book import PoolBook, pool_key     # noqa: E402
 from lrg.clmm import gql, Q_FIELDS, Q_OBJECT  # noqa: E402
 from lrg.coins import norm_type            # noqa: E402
 from lrg.curves import GRID_HI              # noqa: E402
@@ -279,7 +279,7 @@ def compute():
         raise RuntimeError("PoolBook counts disagree with the matrix; "
                            "coverage cannot be read")
 
-    net = [pid for pid, why in book.failed.items() if failure_kind(why) == "network"]
+    net = [key for key, why in book.failed.items() if failure_kind(why) == "network"]
     if net:
         # a transient outage, not missing liquidity: publishing would understate Q*
         raise Unusable(f"{len(net)} pools failed with network errors; rerun")
@@ -582,12 +582,14 @@ def stress(params, M, pos: dict, unverified) -> tuple:
 
 
 def write(params, M, book, live, pos, out_dir: str):
-    meta = {r["pool_id"]: r for r in csv.DictReader(open(POOLS_CSV))}
+    # keyed like PoolBook: object id plus coin pair (Aftermath ids are shared)
+    meta = {pool_key(r["pool_id"], r["coin_type_a"], r["coin_type_b"]): r
+            for r in csv.DictReader(open(POOLS_CSV))}
 
     failed = []
-    for pid, reason in sorted(book.failed.items()):
-        r = meta.get(pid, {})
-        failed.append({"pool_id": pid, "venue": r.get("venue"),
+    for key, reason in sorted(book.failed.items()):
+        r = meta.get(key, {})
+        failed.append({"pool_id": key[0], "venue": r.get("venue"),
                        "pair": (f"{r['symbol_a']}/{r['symbol_b']}" if r else None),
                        "kind": failure_kind(reason), "reason": reason})
 
@@ -595,8 +597,8 @@ def write(params, M, book, live, pos, out_dir: str):
     # Navi's symbol where the coin type is a Navi asset, else the CSV symbol
     navi_name = {norm_type(v): k for k, v in navi.COIN_TYPES.items()}
     failed_legs = set()
-    for pid in book.failed:
-        r = meta.get(pid)
+    for key in book.failed:
+        r = meta.get(key)
         if r:
             a = navi_name.get(norm_type(r["coin_type_a"]), r["symbol_a"])
             b = navi_name.get(norm_type(r["coin_type_b"]), r["symbol_b"])
@@ -682,7 +684,6 @@ def write(params, M, book, live, pos, out_dir: str):
                                     "price_source": "oracle" if M.price_source.get(ct) == "supplied"
                                     else "derived",
                                     "price": M.prices[ct],
-                                    "derived_price": M.derived_prices.get(ct),
                                     **({"oracle_age_s": live["oracle"]["info"][ct]["age_s"],
                                         "navi_reserve": live["oracle"]["info"][ct]["reserve"]}
                                        if ct in live["oracle"]["info"] else {})}

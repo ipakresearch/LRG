@@ -8,10 +8,8 @@ sym_a/sym_b, dec_a/dec_b, coin_a/coin_b, fee, venue, pool_id.
     import venues
     venues.probe_deepbook_orderbook("SUI_USDC")      # run this first
 
-    af = venues.aftermath_pools(min_usd=25_000, prices=prices)
-    db = venues.deepbook_pools()
-    rows = venues.to_csv_rows(af + db)
-    venues.append_to_csv(rows, "navi_pools.csv")
+    # prices: USD by normalized coin type (e.g. Navi's oracle)
+    rows = venues.discovery_rows(navi.COIN_TYPES, prices)   # CSV rows for both venues
 """
 from __future__ import annotations
 
@@ -19,6 +17,8 @@ import csv
 import json
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
+
+from .coins import norm_type
 
 import requests
 
@@ -109,11 +109,12 @@ def aftermath_pools(tokens: Dict[str, str], min_usd: float = 25_000.0,
                     prices: Dict[str, float] = None, verbose: bool = True
                     ) -> List[AftermathPool]:
     """
-    Pull Aftermath pools, keep only two-coin pools where both coins are in
-    `tokens` (symbol -> coin type) and TVL clears min_usd.
-    Multi-coin pools are split into all two-leg combinations.
+    Pull Aftermath pools, keep the coin pairs where both coins are in
+    `tokens` (symbol -> coin type) and, when prices (USD by coin type) are
+    given, TVL clears min_usd. Multi-coin pools are split into all two-coin
+    combinations, which share the pool's object id.
     """
-    by_type = {v: k for k, v in tokens.items()}
+    by_type = {norm_type(v): k for k, v in tokens.items()}
     prices = prices or {}
 
     data = requests.get(AF_POOLS, headers=UA, timeout=60).json()
@@ -125,7 +126,7 @@ def aftermath_pools(tokens: Dict[str, str], min_usd: float = 25_000.0,
         coins = p.get("coins") or {}
         legs = []
         for ctype, c in coins.items():
-            t = ctype if ctype.startswith("0x") else "0x" + ctype
+            t = norm_type(ctype if ctype.startswith("0x") else "0x" + ctype)
             if t not in by_type:
                 continue
             dec = c.get("decimals")
@@ -148,7 +149,7 @@ def aftermath_pools(tokens: Dict[str, str], min_usd: float = 25_000.0,
                     dec_a=da, dec_b=db, bal_a=ba, bal_b=bb,
                     w_a=wa / tot, w_b=wb / tot, fee=max(fa, fb),
                     flatness=flat, name=p.get("name", ""))
-                tvl = pool.tvl(prices.get(sa, 0), prices.get(sb, 0))
+                tvl = pool.tvl(prices.get(ta, 0), prices.get(tb, 0))
                 if prices and tvl < min_usd:
                     continue
                 out.append(pool)
@@ -204,6 +205,7 @@ class DeepBookPool:
     bids: List[Tuple[float, float]] = field(default_factory=list)   # (price, base qty)
     asks: List[Tuple[float, float]] = field(default_factory=list)
     name: str = ""
+    levels: int = 0        # book levels fetched per side; depth beyond them is unseen
 
     @property
     def liquidity(self) -> float:
@@ -300,21 +302,24 @@ def _parse_book(d) -> Tuple[List[Tuple[float, float]], List[Tuple[float, float]]
     if "bid_prices" in d:
         bids = list(zip(map(float, d["bid_prices"]), map(float, d["bid_quantities"])))
         asks = list(zip(map(float, d["ask_prices"]), map(float, d["ask_quantities"])))
-        return bids, asks
-    bids = pairs(d.get("bids") or d.get("bid"))
-    asks = pairs(d.get("asks") or d.get("ask"))
+    else:
+        bids = pairs(d.get("bids") or d.get("bid"))
+        asks = pairs(d.get("asks") or d.get("ask"))
+    # out() walks from the best level: highest bid first, lowest ask first
+    bids.sort(key=lambda e: -e[0])
+    asks.sort(key=lambda e: e[0])
     return bids, asks
 
 
 def deepbook_pools(tokens: Dict[str, str], taker_fee: float = 0.001,
-                   book_path: str = "/orderbook/{name}?level=2&depth=200",
+                   book_path: str = "/orderbook/{name}?level=2&depth={depth}",
                    verbose: bool = True) -> List[DeepBookPool]:
-    by_type = {v: k for k, v in tokens.items()}
+    by_type = {norm_type(v): k for k, v in tokens.items()}
     out = []
     for p in deepbook_pool_list():
         ta = p["base_asset_id"]; tb = p["quote_asset_id"]
-        ta = ta if ta.startswith("0x") else "0x" + ta
-        tb = tb if tb.startswith("0x") else "0x" + tb
+        ta = norm_type(ta if ta.startswith("0x") else "0x" + ta)
+        tb = norm_type(tb if tb.startswith("0x") else "0x" + tb)
         if ta not in by_type or tb not in by_type:
             continue
         pool = DeepBookPool(
@@ -322,15 +327,25 @@ def deepbook_pools(tokens: Dict[str, str], taker_fee: float = 0.001,
             sym_a=by_type[ta], sym_b=by_type[tb],
             dec_a=int(p["base_asset_decimals"]), dec_b=int(p["quote_asset_decimals"]),
             fee=taker_fee, name=p["pool_name"])
-        try:
-            url = DB_BASE + book_path.format(name=p["pool_name"])
-            d = requests.get(url, headers=UA, timeout=25).json()
-            pool.bids, pool.asks = _parse_book(d)
-        except Exception as e:
+        # the indexer simulates the read and runs out of gas on deep books at
+        # 200 levels, so step down until one depth answers
+        err = None
+        for depth in (200, 100, 50):
+            try:
+                url = DB_BASE + book_path.format(name=p["pool_name"], depth=depth)
+                r = requests.get(url, headers=UA, timeout=25)
+                r.raise_for_status()
+                pool.bids, pool.asks = _parse_book(r.json())
+                pool.levels = depth
+                break
+            except Exception as e:
+                err = e
+        else:
             if verbose:
-                print(f"  book failed for {p['pool_name']}: {e}")
+                print(f"  book failed for {p['pool_name']}: {err}")
         if verbose:
-            print(f"  {p['pool_name']:<16}{len(pool.bids):>4} bids {len(pool.asks):>4} asks")
+            print(f"  {p['pool_name']:<16}{len(pool.bids):>4} bids {len(pool.asks):>4} asks"
+                  f"  (depth {pool.levels})")
         if pool.bids or pool.asks:
             out.append(pool)
     if verbose:
@@ -341,13 +356,15 @@ def deepbook_pools(tokens: Dict[str, str], taker_fee: float = 0.001,
 # ---------------------------------------------------------------------------
 
 def to_csv_rows(pools, prices: Dict[str, float] = None) -> List[dict]:
+    """CSV rows for adapter pools; prices are USD by coin type."""
     prices = prices or {}
     rows = []
     for p in pools:
+        ta, tb = norm_type(p.coin_a), norm_type(p.coin_b)
         rows.append({
             "symbol_a": p.sym_a, "symbol_b": p.sym_b,
-            "coin_type_a": p.coin_a, "coin_type_b": p.coin_b,
-            "tvl_usd": f"{p.tvl(prices.get(p.sym_a, 0), prices.get(p.sym_b, 0)):.2f}",
+            "coin_type_a": ta, "coin_type_b": tb,
+            "tvl_usd": f"{p.tvl(prices.get(ta, 0), prices.get(tb, 0)):.2f}",
             "volume_24h": "0", "venue": p.venue,
             "pool_type": "WEIGHTED" if p.venue == "aftermath" else "ORDERBOOK",
             "fee_tier": f"{p.fee}", "pool_id": p.pool_id,
@@ -355,6 +372,18 @@ def to_csv_rows(pools, prices: Dict[str, float] = None) -> List[dict]:
             "pool_name": f"{p.sym_a} / {p.sym_b}",
         })
     return rows
+
+
+def discovery_rows(tokens: Dict[str, str], prices: Dict[str, float],
+                   min_usd: float = 25_000.0, verbose: bool = True) -> List[dict]:
+    """
+    CSV rows for DeepBook and Aftermath pools between coins in `tokens`.
+    Aftermath pairs below min_usd are dropped. DeepBook pools with a readable
+    book are all kept; their TVL is the depth of the levels fetched.
+    """
+    af = aftermath_pools(tokens, min_usd=min_usd, prices=prices, verbose=verbose)
+    db = deepbook_pools(tokens, verbose=verbose)
+    return to_csv_rows(af + db, prices)
 
 
 def append_to_csv(rows: List[dict], csv_path: str):

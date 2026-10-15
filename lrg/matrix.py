@@ -25,7 +25,7 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from . import clmm
 from .coins import norm_type
-from .book import PoolBook
+from .book import PoolBook, pool_key
 from .curves import LegCurve, route_capacity
 from . import graph as _graph
 
@@ -395,8 +395,8 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
 
     rows = _graph.load_pool_rows(csv_path, venues)
     adj = _graph.build_adjacency(rows)
-    vol_of = {r["pool_id"]: float(r["volume_24h"] or 0) for r in rows}
-    tvl_of = {r["pool_id"]: float(r["tvl_usd"] or 0) for r in rows}
+    key_of = lambda r: pool_key(r["pool_id"], r["coin_type_a"], r["coin_type_b"])
+    vol_of = {key_of(r): float(r["volume_24h"] or 0) for r in rows}
     name = {s: norm_type(t) for s, t in tokens.items()}
     tname = {v: k for k, v in name.items()}
     for r in rows:
@@ -416,7 +416,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
 
     # candidate paths, same selection as the network build
     def leg_ids(x, y):
-        return [c["pool_id"] for c in adj[x][y][:p.max_pools_per_leg]]
+        return [key_of(c) for c in adj[x][y][:p.max_pools_per_leg]]
 
     def bottleneck(path):
         return min(float(adj[path[i]][path[i + 1]][0]["tvl_usd"])
@@ -434,21 +434,21 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
     need = sorted({pid for ps in cands.values() for path in ps
                    for i in range(len(path) - 1) for pid in leg_ids(path[i], path[i + 1])})
     venue_of = {r["pool_id"]: r["venue"] for r in rows}
-    type_of = {r["pool_id"]: (r["coin_type_a"], r["coin_type_b"]) for r in rows}
     book = PoolBook(cache=cache, verbose=verbose, venue_of=venue_of,
                     tokens=tokens)
     if verbose:
         print(f"reading {len(need)} pools…")
     pools = {}
-    for pid in need:
-        ca, cb = type_of.get(pid, (None, None))
+    for key in need:
+        pid, ca, cb = key
         q = book.get(pid, coin_a=ca, coin_b=cb)
         if q:
-            pools[pid] = q
-    # Supplied prices win; any coin they do not cover keeps its derived
-    # price, so routes through unpriced intermediates stay usable.
-    derived = _graph.derive_prices(pools)
+            pools[key] = q
+    # Supplied prices win; coins they do not cover get a price derived from
+    # pool spot rates, seeded with the supplied ones, so routes through
+    # unpriced intermediates stay usable.
     supplied = {norm_type(t): v for t, v in (p.prices or {}).items()}
+    derived = _graph.derive_prices(pools, seed=supplied)
     prices = {**derived, **supplied}
     price_source = {t: "supplied" if t in supplied else "derived" for t in prices}
     if verbose:
