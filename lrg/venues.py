@@ -402,3 +402,147 @@ def append_to_csv(rows: List[dict], csv_path: str):
             seen.add(k); added += 1
     print(f"appended {added} pools to {csv_path}")
     return added
+
+
+# ---------------------------------------------------------------------------
+# LST minting: SUI -> LST at the protocol's own rate, one direction only
+# ---------------------------------------------------------------------------
+#
+# Volo (vSUI), Haedal (haSUI) and AlphaFi (stSUI) mint atomically and
+# permissionlessly, with no mint fee and no cap found: the public mint call
+# returns the LST coin in the same transaction. Each LST can also be redeemed
+# atomically, but redemption is deliberately not modelled as an exit (a
+# liquidator's route never sells an LST back to its protocol).
+#
+# The rate is read by simulating a mint of MINT_PROBE_SUI and dividing, so it
+# includes any mint fee and the protocol's refresh at mint time.
+
+MINT_PROBE_SUI = 1_000 * 10 ** 9
+SUI_TYPE = "0x2::sui::SUI"
+
+# symbol -> how to call the protocol's mint (shared objects after the coin
+# are passed in this order; "sys" is the Sui system state, "addr" a zero
+# referral address)
+MINTERS: Dict[str, dict] = {
+    "vSUI": {"package": "0x68d22cf8bdbcd11ecba1e094922873e4080d4d11133e2443fddda0bfd11dae20",
+             "module": "stake_pool", "function": "stake", "type_args": [],
+             "pool_id": "0x2d914e23d82fedef1b5f56a32d5c64bdcc3087ccfea2b4d6ea51a71f587840e5",
+             "args": ["pool", "0x680cd26af32b2bde8d3361e804c53ec1d1cfe24c7f039eb7f549e8dfde389a60",
+                      "sys", "coin"]},
+    "haSUI": {"package": "0x19e6ea7f5ced4f090e20da794cc80349a03e638940ddb95155a4e301f5f4967c",
+              "module": "staking", "function": "request_stake_coin", "type_args": [],
+              "pool_id": "0x47b224762220393057ebf4f70501b6e657c3e56684737568439a04f80849b2ca",
+              "args": ["sys", "pool", "coin", "addr"]},
+    "stSUI": {"package": "0x059f94b85c07eb74d2847f8255d8cc0a67c9a8dcc039eabf9f8b9e23a0de2700",
+              "module": "liquid_staking", "function": "mint",
+              "type_args": ["0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI"],
+              "pool_id": "0x1adb343ab351458e151bc392fbf1558b3332467f23bda45ae67cd355a57fd5f5",
+              "args": ["pool", "sys", "coin"]},
+}
+
+_Q_SIMULATE = """query($tx: JSON!) { simulateTransaction(transaction: $tx, checksEnabled: false) {
+  effects { status executionError { abortCode message } }
+  outputs { returnValues { value { json } } } } }"""
+
+
+@dataclass
+class MintPool:
+    """SUI in, LST out at `rate` SUI per LST; no depth limit, no reverse."""
+    pool_id: str
+    venue: str
+    coin_a: str            # SUI
+    coin_b: str            # the LST
+    sym_a: str
+    sym_b: str
+    dec_a: int
+    dec_b: int
+    rate: float            # SUI per LST, fee included
+    fee: float = 0.0
+    one_way: str = "a"     # only coin_a (SUI) is accepted as input
+    name: str = ""
+
+    @property
+    def liquidity(self) -> float:
+        return float("inf")
+
+    def price(self) -> float:
+        """LST per SUI."""
+        return 1.0 / self.rate
+
+    def out(self, q: float, side: str = "a") -> float:
+        if side != "a":
+            raise ValueError(f"{self.name}: minting only takes SUI in")
+        if q <= 0:
+            return 0.0
+        return q / 10 ** self.dec_a / self.rate * 10 ** self.dec_b
+
+    def tvl(self, price_a_usd: float, price_b_usd: float) -> float:
+        return 0.0             # not a pool of reserves; depth is unlimited
+
+    def size_for_slippage(self, target: float, side: str = "a") -> Optional[float]:
+        return None            # no price impact
+
+
+def mint_rate(sym: str, coin_type: str) -> float:
+    """SUI per LST from a simulated mint of MINT_PROBE_SUI."""
+    import base64
+    import struct
+    from .clmm import gql
+    m = MINTERS[sym]
+    inputs = [{"kind": "PURE", "pure": base64.b64encode(struct.pack("<Q", MINT_PROBE_SUI)).decode()}]
+    args = []
+    for a in m["args"]:
+        if a == "coin":
+            args.append({"kind": "RESULT", "result": 0, "subresult": 0})
+            continue
+        if a == "addr":
+            inputs.append({"kind": "PURE", "pure": base64.b64encode(bytes(32)).decode()})
+        else:
+            oid = {"pool": m["pool_id"], "sys": "0x5"}.get(a, a)
+            inputs.append({"kind": "SHARED", "objectId": oid, "mutable": True})
+        args.append({"kind": "INPUT", "input": len(inputs) - 1})
+    tx = {"sender": "0x" + "ab" * 32, "kind": {"programmableTransaction": {
+        "inputs": inputs,
+        "commands": [{"splitCoins": {"coin": {"kind": "GAS"}, "amounts": [{"kind": "INPUT", "input": 0}]}},
+                     {"moveCall": {"package": m["package"], "module": m["module"],
+                                   "function": m["function"], "typeArguments": m["type_args"],
+                                   "arguments": args}}]}}}
+    r = gql(_Q_SIMULATE, {"tx": tx})["simulateTransaction"]
+    if r["effects"]["status"] != "SUCCESS":
+        raise RuntimeError(f"{sym} mint simulation failed: {r['effects']['executionError']}")
+    minted = int(r["outputs"][1]["returnValues"][0]["value"]["json"]["balance"])
+    if minted <= 0:
+        raise RuntimeError(f"{sym} mint simulation returned nothing")
+    return MINT_PROBE_SUI / minted
+
+
+def mint_pools(tokens: Dict[str, str], verbose: bool = True) -> List[MintPool]:
+    """A MintPool for each LST in MINTERS that is also in `tokens`."""
+    out = []
+    for sym, m in MINTERS.items():
+        if sym not in tokens or "SUI" not in tokens:
+            continue
+        rate = mint_rate(sym, tokens[sym])
+        out.append(MintPool(pool_id=m["pool_id"], venue="lst-mint",
+                            coin_a=norm_type(tokens["SUI"]), coin_b=norm_type(tokens[sym]),
+                            sym_a="SUI", sym_b=sym, dec_a=9, dec_b=9, rate=rate,
+                            name=f"mint {sym}"))
+        if verbose:
+            print(f"  mint {sym}: {rate:.6f} SUI per {sym}")
+    return out
+
+
+def mint_rows(tokens: Dict[str, str]) -> List[dict]:
+    """CSV rows for the mint venue (one per LST); TVL is not meaningful."""
+    rows = []
+    for sym, m in MINTERS.items():
+        if sym in tokens and "SUI" in tokens:
+            rows.append({"symbol_a": "SUI", "symbol_b": sym,
+                         "coin_type_a": norm_type(tokens["SUI"]),
+                         "coin_type_b": norm_type(tokens[sym]),
+                         "tvl_usd": "0", "volume_24h": "0", "venue": "lst-mint",
+                         "pool_type": "MINT", "fee_tier": "0", "pool_id": m["pool_id"],
+                         "both_in_navi": "True", "has_adapter": "True",
+                         "pool_name": f"mint {sym} (SUI -> {sym} only)",
+                         "tvl_source": "venue"})
+    return rows

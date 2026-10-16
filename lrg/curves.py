@@ -43,15 +43,25 @@ def _out_usd(p, side: str, usd_in: float, prices) -> float:
     return p.out(usd_in / px_i * 10 ** dec_i, side) / 10 ** dec_o * px_o
 
 
+class OneWay(ValueError):
+    """The pool only trades in the other direction (e.g. LST minting)."""
+
+
 def side_of(p, coin_in: str) -> str:
     """Which of pool p's sides is coin_in, from the pool's own coin order.
-    Raises if p does not hold coin_in."""
+    Raises if p does not hold coin_in, and OneWay if p only accepts the
+    other coin as input (a pool with one_way = "a" takes coin_a in only)."""
     t = norm_type(coin_in)
     if norm_type(p.coin_a) == t:
-        return "a"
-    if norm_type(p.coin_b) == t:
-        return "b"
-    raise ValueError(f"pool {p.pool_id} holds {p.coin_a} / {p.coin_b}, not {coin_in}")
+        side = "a"
+    elif norm_type(p.coin_b) == t:
+        side = "b"
+    else:
+        raise ValueError(f"pool {p.pool_id} holds {p.coin_a} / {p.coin_b}, not {coin_in}")
+    one_way = getattr(p, "one_way", None)
+    if isinstance(one_way, str) and side != one_way:
+        raise OneWay(f"pool {p.pool_id} only takes {getattr(p, 'coin_' + one_way)} in")
+    return side
 
 
 def allocate(leg_pools, q_usd, prices, chunks: int = 32):

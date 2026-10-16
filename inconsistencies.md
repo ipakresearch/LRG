@@ -652,7 +652,11 @@ No reserve is isolated. `reserve_field_a/b/c` are 0 and unlabeled, and no other 
 ## Forced failure (Turbos USDC/SUI, $778k, made to fail; matrix-only build)
 
 - **Without the overtaking test:** 455 of 506 pairs were incomplete. Almost every pair keeps some candidate path through SUI→USDC. One failed pool on a leg holding about $6.7M flagged pairs whose winning path never uses that leg. Too broad to mean anything.
-- **With the overtaking test:** result pending (see the next run).
+- **With the overtaking test:** 255 of 506 pairs are incomplete.
+  - 197 have a winning path that crosses the SUI–USDC leg, e.g. WBTC.lz→USDC→SUI→DEEP.
+  - 58 have capacity 0 with the failed pool holding either coin, and SUI is in almost every pair.
+  - Losing paths no longer flag pairs on their own.
+  - That's what the definition asks for. A failed pool on the most-used leg makes about half the matrix unresolved.
 
 # Stress corrections (2026-10-16)
 
@@ -676,3 +680,36 @@ No reserve is isolated. `reserve_field_a/b/c` are 0 and unlabeled, and no other 
 ## Live run
 
 Pending: breaking shock per collateral before and after.
+
+# LST mint venue (2026-10-16)
+
+## Research (on chain, by simulating a mint of 1,000 SUI then redeeming it in one transaction)
+
+| LST | mint call | SUI per LST | mint fee | instant redeem | Navi oracle (LST÷SUI) | rate vs oracle |
+|---|---|---|---|---|---|---|
+| vSUI | Volo `stake_pool::stake` | 1.0689 | 0 | `unstake`, 3 bp | 0.9989 | +7.0% |
+| haSUI | Haedal `staking::request_stake_coin` | 1.0829 | 0 | `request_unstake_instant_coin`, 2 bp | 0.9982 | +8.5% |
+| stSUI | AlphaFi `liquid_staking::mint` | 1.0398 | 0 | `redeem`, 1 bp | 1.0041 | +3.6% |
+
+- **Minting is atomic and permissionless.**
+  - Each mint call is public and returns the coin in the same transaction, and the simulation ran from an arbitrary address.
+  - Nothing is paused: Volo's top-level `manage.paused` is false (the `paused: true` seen earlier is inside `validator_pool`), Haedal's `pause_stake` is false and stSUI's `is_paused` is false.
+  - No mint cap was found.
+- **The mint rate equals the market rate:** CoinGecko had vSUI at 1.068, haSUI at 1.083 and stSUI at 1.040 SUI.
+- **Redemption is also atomic for all three.** By decision it is not modelled as an exit.
+- **Protocol risk.** Navi's oracle prices all three LSTs at about the SUI price, below their own redemption rate.
+  - Repaying vSUI or haSUI debt costs 7.0–8.5% against the oracle, by DEX or by mint, above every budget (2.1–4.2%). Those debts can't be liquidated at a profit.
+  - LST collateral is valued 3.6–8.5% below what it redeems for.
+
+## Changes
+
+- **`venues.MintPool`:** SUI→LST at the live simulated rate, with unlimited depth and `one_way = "a"`.
+- **`venues.MINTERS`:** the call configuration for each LST.
+- **`venues.mint_pools` / `mint_rows`:** the pools, and their CSV rows (venue `lst-mint`, pool type `MINT`).
+- **`curves.side_of`** raises `OneWay` for the reverse direction, and `graph.leg_pools` skips it silently.
+- **Wiring:** `PoolBook` loads the venue, `load_pool_rows` keeps `MINT` rows despite their 0 TVL, `navi.VENUES` includes `lst-mint`, and discovery appends the rows. The three rows were appended to `data/navi_pools.csv`.
+- **`tests/test_mint.py`:** fixed rate at any size, one-way, leg selection, and cost equal to the premium at every size. All 33 tests pass.
+
+## Before and after (vSUI/haSUI/stSUI debt cells)
+
+Pending.

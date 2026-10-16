@@ -210,6 +210,9 @@ def discover_all(assets: Dict[str, str], adapters, prices: Dict[str, float],
         r["discovered_at"] = today
         r["tvl_source"] = "venue"
         rows.append(r)
+    for r in venues.mint_rows(assets):
+        r["discovered_at"] = today
+        rows.append(r)
     return rows, dropped
 
 

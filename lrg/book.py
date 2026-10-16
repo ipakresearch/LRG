@@ -58,6 +58,8 @@ class PoolBook:
                 pools = venues.deepbook_pools(self.tokens, verbose=self.verbose)
             elif venue == "aftermath":
                 pools = venues.aftermath_pools(self.tokens, verbose=self.verbose)
+            elif venue == "lst-mint":
+                pools = venues.mint_pools(self.tokens, verbose=self.verbose)
             else:
                 pools = []
         except Exception as e:
@@ -82,7 +84,7 @@ class PoolBook:
             return None
 
         v = venue or self.venue_of.get(pool_id)
-        if v in ("deepbook", "aftermath"):
+        if v in ("deepbook", "aftermath", "lst-mint"):
             self._load_venue(v)
             cands = self._extra.get(v, {}).get(pool_id, [])
             # the exact pair, never another pair of the same multi-coin pool

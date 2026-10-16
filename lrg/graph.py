@@ -24,7 +24,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from . import clmm
 from .coins import norm_type, USDC
 from .book import PoolBook, pool_key
-from .curves import REF_USD, LegCurve, _out_usd, route_capacity, route_cost, side_of
+from .curves import REF_USD, LegCurve, OneWay, _out_usd, route_capacity, route_cost, side_of
 
 SLIPPAGES = [0.02, 0.05, 0.07, 0.10]
 MAX_POOLS_PER_LEG = 4
@@ -40,8 +40,10 @@ def load_pool_rows(csv_path: str, venues) -> List[dict]:
     a/b order is the listing's, not necessarily the pool's: never take a swap
     side from it (see leg_pools)."""
     with open(csv_path) as fh:
+        # mint venues have no reserves (tvl 0) and unlimited depth
         rows = [r for r in csv.DictReader(fh)
-                if r["venue"] in venues and float(r["tvl_usd"] or 0) > 0]
+                if r["venue"] in venues
+                and (float(r["tvl_usd"] or 0) > 0 or r.get("pool_type") == "MINT")]
     for r in rows:
         r["coin_type_a"] = norm_type(r["coin_type_a"])
         r["coin_type_b"] = norm_type(r["coin_type_b"])
@@ -59,6 +61,8 @@ def leg_pools(pools, keys, coin_in: str, skipped: Optional[list] = None):
             continue
         try:
             out.append((p, side_of(p, coin_in)))
+        except OneWay:
+            continue                      # a one-way venue, not a misread pool
         except ValueError as e:
             if skipped is not None:
                 skipped.append(str(e))

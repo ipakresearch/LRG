@@ -41,7 +41,9 @@ CLOSE_FACTOR = 0.35
 
 # Venues carrying enough depth on Sui to matter for routing.
 VENUES = {"cetus", "bluefin", "turbos-finance", "momentum", "deepbook",
-          "aftermath"}
+          "aftermath",
+          # SUI -> vSUI/haSUI/stSUI by minting at the protocol rate; one way only
+          "lst-mint"}
 
 COIN_TYPES: Dict[str, str] = {
     "SUI":     "0x2::sui::SUI",
