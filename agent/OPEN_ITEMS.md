@@ -1,13 +1,13 @@
 # Open items
 
 - [x] 1. Oracle prices (2026-10-15: `lrg/protocols/navi_oracle.py`; see inconsistencies.md)
-- [ ] 2. On-chain config reader
-- [ ] 3. Turbos tick reader
-- [ ] 4. Cetus/Bluefin failed reads
-- [ ] 5. Rerun and recheck MBTC and SUI->USDC
-- [ ] 6. Coverage gate
-- [ ] 7. Validation against realized liquidations
-- [ ] 8. Positions reader and signal 2
+- [x] 2. On-chain config reader (run.fetch_navi_live: LTV, LT, LB, caps, treasury factor, borrowable; E-Mode in positions.read_state)
+- [x] 3. Turbos tick reader (see 13)
+- [x] 4. Cetus/Bluefin failed reads (empty pools, see 14)
+- [x] 5. Rerun and recheck MBTC and SUI->USDC (see 22)
+- [ ] 6. Coverage gate (coverage status per pair and run-level share exist; no threshold that withholds a run yet)
+- [ ] 7. Validation against realized liquidations (bonus split checked on 40 events; capacity not yet validated)
+- [x] 8. Positions reader and signal 2
 
 ## Review 2026-10-15 (see agent/REVIEW_2026-10-15.md, agent/FIX_PROMPTS.md)
 
