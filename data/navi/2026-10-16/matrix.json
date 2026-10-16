@@ -1,0 +1,5858 @@
+{
+ "params": {
+  "close_factor": 0.35,
+  "beta": 1.0,
+  "treasury_factors": {
+   "WBTC.lz": 0.8,
+   "DEEP": 0.55,
+   "haSUI": 0.65,
+   "MBTC": 0.55,
+   "LBTC": 0.85,
+   "suiUSDT": 0.55,
+   "NAVX": 0.55,
+   "SOL": 0.55,
+   "USDSUI": 0.55,
+   "suiETH": 0.85,
+   "USDC": 0.55,
+   "XAUm": 0.55,
+   "suiUSDe": 0.55,
+   "xBTC": 0.8,
+   "stSUI": 0.55,
+   "SUI": 0.65,
+   "wBTC": 0.85,
+   "vSUI": 0.65,
+   "USDY": 0.55,
+   "enzoBTC": 0.55,
+   "BUCK": 0.55,
+   "WAL": 0.55,
+   "wUSDC": 0.55,
+   "FDUSD": 0.55
+  },
+  "treasury_share": null,
+  "flash_fee": 0.0009,
+  "lb_max": 0.15,
+  "prices": {
+   "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS": 0.013142,
+   "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC": 82044.43871398,
+   "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC": 82074.39122743,
+   "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL": 0.01896506,
+   "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP": 0.022926,
+   "0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI": 1.04379079,
+   "0xd1a91b46bd6d966b62686263609074ad16cfdffc63c31a4775870a2d54d20c6b::mbtc::MBTC": 82044.43871398,
+   "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040::lbtc::LBTC": 82215.5654963,
+   "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT": 0.998805,
+   "0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX": 0.01113291,
+   "0xb7844e289a8410e50fb3ca48d69eb9cf29e27d223ef90353fe1bd8e27ff8f3f8::coin::COIN": 106.37772652,
+   "0x44f838219cf67b058f3b37907b655f226153c18e33dfcd0da559a844fea9b1c1::usdsui::USDSUI": 0.999868,
+   "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH": 2451.04753604,
+   "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC": 0.999868,
+   "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM": 4201.2105,
+   "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS": 0.024754,
+   "0x41d587e5336f1c86cad50d38a7136db99333bb9bda91cea4ba69115defeb1402::sui_usde::SUI_USDE": 0.99987,
+   "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN": 82044.43871398,
+   "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD": 0.999887,
+   "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN": 82044.43871398,
+   "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA": 0.0016815,
+   "0x876a4b7bce8aeaef60464c11f4026903e9afacab79b9b142686158aa86560b50::xbtc::XBTC": 82002.8135849,
+   "0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI": 1.04589865,
+   "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI": 1.04407054,
+   "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN": 2451.04753604,
+   "0xaafb102dd0902f5055cadecd687fb5b71ca82ef0e0285d90afde828ec58ca96b::btc::BTC": 82044.43871398,
+   "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN": 0.998805,
+   "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE": 0.00978443,
+   "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT": 1.04407054,
+   "0x960b531667636f39e85867775f52f6b1f220a058c4de786905bdf761e06a56bb::usdy::USDY": 1.1495,
+   "0x8f2b5eb696ed88b71fea398d330bccfa52f6e2a5a8e1ac6180fcb25c6de42ebc::coin::COIN": 82044.43871398,
+   "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK": 0.99844203,
+   "0x356a26eb9e012a68958082340d4c4116e7f55615cf27affcff209cf0ae544f59::wal::WAL": 0.046215,
+   "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN": 0.999878,
+   "0xf16e6b723f242ec745dfd7634ad072c42d5c1d9ac9d62a39c381303eaa57693a::fdusd::FDUSD": 0.997651
+  },
+  "max_hops": 4,
+  "max_pools_per_leg": 4,
+  "max_candidates": 20,
+  "excluded_debts": [
+   "MBTC",
+   "enzoBTC"
+  ],
+  "pick": "split",
+  "min_position_usd": 100.0,
+  "min_sold_usd": 1000.0
+ },
+ "prices": {
+  "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS": 0.013142,
+  "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC": 82044.43871398,
+  "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC": 82074.39122743,
+  "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL": 0.01896506,
+  "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP": 0.022926,
+  "0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI": 1.04379079,
+  "0xd1a91b46bd6d966b62686263609074ad16cfdffc63c31a4775870a2d54d20c6b::mbtc::MBTC": 82044.43871398,
+  "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040::lbtc::LBTC": 82215.5654963,
+  "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT": 0.998805,
+  "0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX": 0.01113291,
+  "0xb7844e289a8410e50fb3ca48d69eb9cf29e27d223ef90353fe1bd8e27ff8f3f8::coin::COIN": 106.37772652,
+  "0x44f838219cf67b058f3b37907b655f226153c18e33dfcd0da559a844fea9b1c1::usdsui::USDSUI": 0.999868,
+  "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH": 2451.04753604,
+  "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC": 0.999868,
+  "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM": 4201.2105,
+  "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS": 0.024754,
+  "0x41d587e5336f1c86cad50d38a7136db99333bb9bda91cea4ba69115defeb1402::sui_usde::SUI_USDE": 0.99987,
+  "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN": 82044.43871398,
+  "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD": 0.999887,
+  "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN": 82044.43871398,
+  "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA": 0.0016815,
+  "0x876a4b7bce8aeaef60464c11f4026903e9afacab79b9b142686158aa86560b50::xbtc::XBTC": 82002.8135849,
+  "0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI": 1.04589865,
+  "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI": 1.04407054,
+  "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN": 2451.04753604,
+  "0xaafb102dd0902f5055cadecd687fb5b71ca82ef0e0285d90afde828ec58ca96b::btc::BTC": 82044.43871398,
+  "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN": 0.998805,
+  "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE": 0.00978443,
+  "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT": 1.04407054,
+  "0x960b531667636f39e85867775f52f6b1f220a058c4de786905bdf761e06a56bb::usdy::USDY": 1.1495,
+  "0x8f2b5eb696ed88b71fea398d330bccfa52f6e2a5a8e1ac6180fcb25c6de42ebc::coin::COIN": 82044.43871398,
+  "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK": 0.99844203,
+  "0x356a26eb9e012a68958082340d4c4116e7f55615cf27affcff209cf0ae544f59::wal::WAL": 0.046215,
+  "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN": 0.999878,
+  "0xf16e6b723f242ec745dfd7634ad072c42d5c1d9ac9d62a39c381303eaa57693a::fdusd::FDUSD": 0.997651,
+  "0xe14726c336e81b32328e92afc37345d159f5b550b09fa92bd43640cfdd0a0cfd::usdb::USDB": 0.9984438459615523,
+  "0x7016aae72cfc67f2fadf55769c0a7dd54291a583b63051a5ed71081cce836ac6::sca::SCA": 0.007126602905416572,
+  "0x35169bc93e1fddfcf3a82a9eae726d349689ed59e4b065369af8789fe59f8608::mmt::MMT": 0.14625473722009497
+ },
+ "price_source": {
+  "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS": "supplied",
+  "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC": "supplied",
+  "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC": "supplied",
+  "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL": "supplied",
+  "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP": "supplied",
+  "0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI": "supplied",
+  "0xd1a91b46bd6d966b62686263609074ad16cfdffc63c31a4775870a2d54d20c6b::mbtc::MBTC": "supplied",
+  "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040::lbtc::LBTC": "supplied",
+  "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT": "supplied",
+  "0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX": "supplied",
+  "0xb7844e289a8410e50fb3ca48d69eb9cf29e27d223ef90353fe1bd8e27ff8f3f8::coin::COIN": "supplied",
+  "0x44f838219cf67b058f3b37907b655f226153c18e33dfcd0da559a844fea9b1c1::usdsui::USDSUI": "supplied",
+  "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH": "supplied",
+  "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC": "supplied",
+  "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM": "supplied",
+  "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS": "supplied",
+  "0x41d587e5336f1c86cad50d38a7136db99333bb9bda91cea4ba69115defeb1402::sui_usde::SUI_USDE": "supplied",
+  "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN": "supplied",
+  "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD": "supplied",
+  "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN": "supplied",
+  "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA": "supplied",
+  "0x876a4b7bce8aeaef60464c11f4026903e9afacab79b9b142686158aa86560b50::xbtc::XBTC": "supplied",
+  "0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI": "supplied",
+  "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI": "supplied",
+  "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN": "supplied",
+  "0xaafb102dd0902f5055cadecd687fb5b71ca82ef0e0285d90afde828ec58ca96b::btc::BTC": "supplied",
+  "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN": "supplied",
+  "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE": "supplied",
+  "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT": "supplied",
+  "0x960b531667636f39e85867775f52f6b1f220a058c4de786905bdf761e06a56bb::usdy::USDY": "supplied",
+  "0x8f2b5eb696ed88b71fea398d330bccfa52f6e2a5a8e1ac6180fcb25c6de42ebc::coin::COIN": "supplied",
+  "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK": "supplied",
+  "0x356a26eb9e012a68958082340d4c4116e7f55615cf27affcff209cf0ae544f59::wal::WAL": "supplied",
+  "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN": "supplied",
+  "0xf16e6b723f242ec745dfd7634ad072c42d5c1d9ac9d62a39c381303eaa57693a::fdusd::FDUSD": "supplied",
+  "0xe14726c336e81b32328e92afc37345d159f5b550b09fa92bd43640cfdd0a0cfd::usdb::USDB": "derived",
+  "0x7016aae72cfc67f2fadf55769c0a7dd54291a583b63051a5ed71081cce836ac6::sca::SCA": "derived",
+  "0x35169bc93e1fddfcf3a82a9eae726d349689ed59e4b065369af8789fe59f8608::mmt::MMT": "derived"
+ },
+ "tokens": {
+  "SUI": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+  "USDC": "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC",
+  "suiUSDT": "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT",
+  "suiUSDe": "0x41d587e5336f1c86cad50d38a7136db99333bb9bda91cea4ba69115defeb1402::sui_usde::SUI_USDE",
+  "USDSUI": "0x44f838219cf67b058f3b37907b655f226153c18e33dfcd0da559a844fea9b1c1::usdsui::USDSUI",
+  "vSUI": "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT",
+  "haSUI": "0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI",
+  "stSUI": "0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI",
+  "suiETH": "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH",
+  "USDY": "0x960b531667636f39e85867775f52f6b1f220a058c4de786905bdf761e06a56bb::usdy::USDY",
+  "FDUSD": "0xf16e6b723f242ec745dfd7634ad072c42d5c1d9ac9d62a39c381303eaa57693a::fdusd::FDUSD",
+  "BUCK": "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK",
+  "xBTC": "0x876a4b7bce8aeaef60464c11f4026903e9afacab79b9b142686158aa86560b50::xbtc::XBTC",
+  "wBTC": "0xaafb102dd0902f5055cadecd687fb5b71ca82ef0e0285d90afde828ec58ca96b::btc::BTC",
+  "LBTC": "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040::lbtc::LBTC",
+  "MBTC": "0xd1a91b46bd6d966b62686263609074ad16cfdffc63c31a4775870a2d54d20c6b::mbtc::MBTC",
+  "WBTC.lz": "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC",
+  "enzoBTC": "0x8f2b5eb696ed88b71fea398d330bccfa52f6e2a5a8e1ac6180fcb25c6de42ebc::coin::COIN",
+  "SOL": "0xb7844e289a8410e50fb3ca48d69eb9cf29e27d223ef90353fe1bd8e27ff8f3f8::coin::COIN",
+  "WAL": "0x356a26eb9e012a68958082340d4c4116e7f55615cf27affcff209cf0ae544f59::wal::WAL",
+  "DEEP": "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP",
+  "NAVX": "0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX",
+  "wUSDC": "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN",
+  "XAUm": "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM"
+ },
+ "cells": {
+  "WBTC.lz|DEEP": 131885.82,
+  "WBTC.lz|haSUI": 0.0,
+  "WBTC.lz|MBTC": 0.0,
+  "WBTC.lz|LBTC": 40262.6,
+  "WBTC.lz|suiUSDT": 323770.37,
+  "WBTC.lz|NAVX": 3794.52,
+  "WBTC.lz|SOL": 1635.79,
+  "WBTC.lz|USDSUI": 323998.23,
+  "WBTC.lz|suiETH": 39790.88,
+  "WBTC.lz|USDC": 324025.84,
+  "WBTC.lz|XAUm": 177763.81,
+  "WBTC.lz|suiUSDe": 323126.96,
+  "WBTC.lz|xBTC": 212540.31,
+  "WBTC.lz|stSUI": 0.0,
+  "WBTC.lz|SUI": 324337.08,
+  "WBTC.lz|wBTC": 40341.4,
+  "WBTC.lz|vSUI": 0.0,
+  "WBTC.lz|USDY": 323946.91,
+  "WBTC.lz|enzoBTC": 212628.69,
+  "WBTC.lz|BUCK": 323940.25,
+  "WBTC.lz|WAL": 71086.45,
+  "WBTC.lz|wUSDC": 25117.12,
+  "WBTC.lz|FDUSD": 31274.49,
+  "DEEP|WBTC.lz": 199088.6,
+  "DEEP|haSUI": 0.0,
+  "DEEP|MBTC": 0.0,
+  "DEEP|LBTC": 40999.74,
+  "DEEP|suiUSDT": 219462.97,
+  "DEEP|NAVX": 5885.5,
+  "DEEP|SOL": 2503.48,
+  "DEEP|USDSUI": 221020.28,
+  "DEEP|suiETH": 55074.96,
+  "DEEP|USDC": 221288.04,
+  "DEEP|XAUm": 136588.38,
+  "DEEP|suiUSDe": 213012.64,
+  "DEEP|xBTC": 187842.3,
+  "DEEP|stSUI": 39095.55,
+  "DEEP|SUI": 270325.83,
+  "DEEP|wBTC": 41071.13,
+  "DEEP|vSUI": 0.0,
+  "DEEP|USDY": 222246.2,
+  "DEEP|enzoBTC": 161232.02,
+  "DEEP|BUCK": 220771.14,
+  "DEEP|WAL": 80773.44,
+  "DEEP|wUSDC": 25482.9,
+  "DEEP|FDUSD": 31729.95,
+  "haSUI|WBTC.lz": 344999.21,
+  "haSUI|DEEP": 495942.67,
+  "haSUI|MBTC": 0.0,
+  "haSUI|LBTC": 57042.61,
+  "haSUI|suiUSDT": 646943.83,
+  "haSUI|NAVX": 17201.11,
+  "haSUI|SOL": 7012.09,
+  "haSUI|USDSUI": 1718147.46,
+  "haSUI|suiETH": 149837.92,
+  "haSUI|USDC": 1733294.67,
+  "haSUI|XAUm": 377442.81,
+  "haSUI|suiUSDe": 570761.75,
+  "haSUI|xBTC": 213572.06,
+  "haSUI|stSUI": 2264520.73,
+  "haSUI|SUI": 2350631.13,
+  "haSUI|wBTC": 57390.66,
+  "haSUI|vSUI": 2182719.74,
+  "haSUI|USDY": 1118193.01,
+  "haSUI|enzoBTC": 190410.5,
+  "haSUI|BUCK": 1725118.46,
+  "haSUI|WAL": 147574.92,
+  "haSUI|wUSDC": 43085.39,
+  "haSUI|FDUSD": 31426.33,
+  "MBTC|WBTC.lz": 0.0,
+  "MBTC|DEEP": 0.0,
+  "MBTC|haSUI": 0.0,
+  "MBTC|LBTC": 0.0,
+  "MBTC|suiUSDT": 0.0,
+  "MBTC|NAVX": 0.0,
+  "MBTC|SOL": 0.0,
+  "MBTC|USDSUI": 0.0,
+  "MBTC|suiETH": 0.0,
+  "MBTC|USDC": 0.0,
+  "MBTC|XAUm": 0.0,
+  "MBTC|suiUSDe": 0.0,
+  "MBTC|xBTC": 0.0,
+  "MBTC|stSUI": 0.0,
+  "MBTC|SUI": 0.0,
+  "MBTC|wBTC": 0.0,
+  "MBTC|vSUI": 0.0,
+  "MBTC|USDY": 0.0,
+  "MBTC|enzoBTC": 0.0,
+  "MBTC|BUCK": 0.0,
+  "MBTC|WAL": 0.0,
+  "MBTC|wUSDC": 0.0,
+  "MBTC|FDUSD": 0.0,
+  "LBTC|WBTC.lz": 105030.69,
+  "LBTC|DEEP": 98031.4,
+  "LBTC|haSUI": 0.0,
+  "LBTC|MBTC": 0.0,
+  "LBTC|suiUSDT": 104234.49,
+  "LBTC|NAVX": 2844.57,
+  "LBTC|SOL": 1223.2,
+  "LBTC|USDSUI": 104252.66,
+  "LBTC|suiETH": 30138.55,
+  "LBTC|USDC": 104259.26,
+  "LBTC|XAUm": 100113.34,
+  "LBTC|suiUSDe": 104155.2,
+  "LBTC|xBTC": 104742.94,
+  "LBTC|stSUI": 0.0,
+  "LBTC|SUI": 104474.78,
+  "LBTC|wBTC": 107419.43,
+  "LBTC|vSUI": 0.0,
+  "LBTC|USDY": 104334.41,
+  "LBTC|enzoBTC": 104787.92,
+  "LBTC|BUCK": 104255.6,
+  "LBTC|WAL": 69592.43,
+  "LBTC|wUSDC": 24934.19,
+  "LBTC|FDUSD": 31046.74,
+  "suiUSDT|WBTC.lz": 85721.99,
+  "suiUSDT|DEEP": 83918.16,
+  "suiUSDT|haSUI": 0.0,
+  "suiUSDT|MBTC": 0.0,
+  "suiUSDT|LBTC": 40659.87,
+  "suiUSDT|NAVX": 5493.24,
+  "suiUSDT|SOL": 2343.09,
+  "suiUSDT|USDSUI": 85783.43,
+  "suiUSDT|suiETH": 58679.1,
+  "suiUSDT|USDC": 85793.13,
+  "suiUSDT|XAUm": 83706.1,
+  "suiUSDT|suiUSDe": 85660.81,
+  "suiUSDT|xBTC": 85329.17,
+  "suiUSDT|stSUI": 27931.69,
+  "suiUSDT|SUI": 86132.42,
+  "suiUSDT|wBTC": 40727.24,
+  "suiUSDT|vSUI": 0.0,
+  "suiUSDT|USDY": 85917.43,
+  "suiUSDT|enzoBTC": 85396.51,
+  "suiUSDT|BUCK": 85790.24,
+  "suiUSDT|WAL": 78294.77,
+  "suiUSDT|wUSDC": 25263.43,
+  "suiUSDT|FDUSD": 31456.68,
+  "NAVX|WBTC.lz": 2783.27,
+  "NAVX|DEEP": 3082.2,
+  "NAVX|haSUI": 0.0,
+  "NAVX|MBTC": 0.0,
+  "NAVX|LBTC": 2610.05,
+  "NAVX|suiUSDT": 2514.9,
+  "NAVX|SOL": 779.18,
+  "NAVX|USDSUI": 2505.37,
+  "NAVX|suiETH": 2486.64,
+  "NAVX|USDC": 2513.26,
+  "NAVX|XAUm": 4544.81,
+  "NAVX|suiUSDe": 2476.46,
+  "NAVX|xBTC": 2411.44,
+  "NAVX|stSUI": 0.0,
+  "NAVX|SUI": 3427.29,
+  "NAVX|wBTC": 2761.98,
+  "NAVX|vSUI": 0.0,
+  "NAVX|USDY": 2696.67,
+  "NAVX|enzoBTC": 2445.54,
+  "NAVX|BUCK": 2521.37,
+  "NAVX|WAL": 3198.57,
+  "NAVX|wUSDC": 2512.0,
+  "NAVX|FDUSD": 2468.19,
+  "SOL|WBTC.lz": 2700.27,
+  "SOL|DEEP": 2836.4,
+  "SOL|haSUI": 0.0,
+  "SOL|MBTC": 0.0,
+  "SOL|LBTC": 2618.85,
+  "SOL|suiUSDT": 2574.39,
+  "SOL|NAVX": 1858.2,
+  "SOL|USDSUI": 2570.29,
+  "SOL|suiETH": 2561.41,
+  "SOL|USDC": 2573.69,
+  "SOL|XAUm": 3447.97,
+  "SOL|suiUSDe": 2557.83,
+  "SOL|xBTC": 2525.44,
+  "SOL|stSUI": 397.67,
+  "SOL|SUI": 2961.49,
+  "SOL|wBTC": 2690.27,
+  "SOL|vSUI": 0.0,
+  "SOL|USDY": 2652.53,
+  "SOL|enzoBTC": 2544.13,
+  "SOL|BUCK": 2577.18,
+  "SOL|WAL": 2868.41,
+  "SOL|wUSDC": 2573.14,
+  "SOL|FDUSD": 2554.19,
+  "USDSUI|WBTC.lz": 340900.99,
+  "USDSUI|DEEP": 198925.05,
+  "USDSUI|haSUI": 0.0,
+  "USDSUI|MBTC": 0.0,
+  "USDSUI|LBTC": 40659.39,
+  "USDSUI|suiUSDT": 640023.98,
+  "USDSUI|NAVX": 5479.46,
+  "USDSUI|SOL": 2337.15,
+  "USDSUI|suiETH": 58943.35,
+  "USDSUI|USDC": 1944651.17,
+  "USDSUI|XAUm": 377761.76,
+  "USDSUI|suiUSDe": 571296.38,
+  "USDSUI|xBTC": 213778.41,
+  "USDSUI|stSUI": 25789.44,
+  "USDSUI|SUI": 1746519.92,
+  "USDSUI|wBTC": 40726.87,
+  "USDSUI|vSUI": 0.0,
+  "USDSUI|USDY": 1119273.34,
+  "USDSUI|enzoBTC": 213867.31,
+  "USDSUI|BUCK": 1941743.36,
+  "USDSUI|WAL": 83674.33,
+  "USDSUI|wUSDC": 25263.43,
+  "USDSUI|FDUSD": 31456.68,
+  "suiETH|WBTC.lz": 26280.63,
+  "suiETH|DEEP": 21994.74,
+  "suiETH|haSUI": 0.0,
+  "suiETH|MBTC": 0.0,
+  "suiETH|LBTC": 23819.01,
+  "suiETH|suiUSDT": 25397.56,
+  "suiETH|NAVX": 2244.79,
+  "suiETH|SOL": 1013.49,
+  "suiETH|USDSUI": 25444.57,
+  "suiETH|USDC": 25541.58,
+  "suiETH|XAUm": 19380.23,
+  "suiETH|suiUSDe": 24885.83,
+  "suiETH|xBTC": 22499.98,
+  "suiETH|stSUI": 0.0,
+  "suiETH|SUI": 30032.71,
+  "suiETH|wBTC": 25601.56,
+  "suiETH|vSUI": 0.0,
+  "suiETH|USDY": 27221.84,
+  "suiETH|enzoBTC": 23150.8,
+  "suiETH|BUCK": 25592.87,
+  "suiETH|WAL": 25702.02,
+  "suiETH|wUSDC": 24235.69,
+  "suiETH|FDUSD": 24161.53,
+  "USDC|WBTC.lz": 340912.14,
+  "USDC|DEEP": 199300.93,
+  "USDC|haSUI": 0.0,
+  "USDC|MBTC": 0.0,
+  "USDC|LBTC": 40660.8,
+  "USDC|suiUSDT": 640174.37,
+  "USDC|NAVX": 5501.79,
+  "USDC|SOL": 2346.4,
+  "USDC|USDSUI": 1827982.17,
+  "USDC|suiETH": 59155.93,
+  "USDC|XAUm": 377769.05,
+  "USDC|suiUSDe": 571296.55,
+  "USDC|xBTC": 213778.41,
+  "USDC|stSUI": 30992.89,
+  "USDC|SUI": 1749569.03,
+  "USDC|wBTC": 40727.95,
+  "USDC|vSUI": 0.0,
+  "USDC|USDY": 1119273.29,
+  "USDC|enzoBTC": 213867.32,
+  "USDC|BUCK": 2013442.32,
+  "USDC|WAL": 83831.5,
+  "USDC|wUSDC": 25263.43,
+  "USDC|FDUSD": 31456.68,
+  "suiUSDe|WBTC.lz": 275451.09,
+  "suiUSDe|DEEP": 228812.73,
+  "suiUSDe|haSUI": 0.0,
+  "suiUSDe|MBTC": 0.0,
+  "suiUSDe|LBTC": 41087.51,
+  "suiUSDe|suiUSDT": 277443.88,
+  "suiUSDe|NAVX": 6873.82,
+  "suiUSDe|SOL": 2915.22,
+  "suiUSDe|USDSUI": 277572.56,
+  "suiUSDe|suiETH": 70986.52,
+  "suiUSDe|USDC": 277591.72,
+  "suiUSDe|XAUm": 266647.61,
+  "suiUSDe|xBTC": 215635.55,
+  "suiUSDe|stSUI": 261955.78,
+  "suiUSDe|SUI": 277887.53,
+  "suiUSDe|wBTC": 41150.97,
+  "suiUSDe|vSUI": 0.0,
+  "suiUSDe|USDY": 277594.51,
+  "suiUSDe|enzoBTC": 215725.24,
+  "suiUSDe|BUCK": 277542.6,
+  "suiUSDe|WAL": 92901.73,
+  "suiUSDe|wUSDC": 25482.9,
+  "suiUSDe|FDUSD": 31729.96,
+  "xBTC|WBTC.lz": 401831.07,
+  "xBTC|DEEP": 143987.07,
+  "xBTC|haSUI": 0.0,
+  "xBTC|MBTC": 0.0,
+  "xBTC|LBTC": 40371.61,
+  "xBTC|suiUSDT": 323930.65,
+  "xBTC|NAVX": 4182.06,
+  "xBTC|SOL": 1804.52,
+  "xBTC|USDSUI": 324756.48,
+  "xBTC|suiETH": 43690.97,
+  "xBTC|USDC": 325118.82,
+  "xBTC|XAUm": 207905.33,
+  "xBTC|suiUSDe": 323291.77,
+  "xBTC|stSUI": 0.0,
+  "xBTC|SUI": 329102.92,
+  "xBTC|wBTC": 40456.59,
+  "xBTC|vSUI": 0.0,
+  "xBTC|USDY": 324105.08,
+  "xBTC|enzoBTC": 939183.27,
+  "xBTC|BUCK": 324098.68,
+  "xBTC|WAL": 71528.34,
+  "xBTC|wUSDC": 25117.12,
+  "xBTC|FDUSD": 31274.49,
+  "stSUI|WBTC.lz": 4351.3,
+  "stSUI|DEEP": 4402.0,
+  "stSUI|haSUI": 1364.9,
+  "stSUI|MBTC": 0.0,
+  "stSUI|LBTC": 4264.69,
+  "stSUI|suiUSDT": 4263.79,
+  "stSUI|NAVX": 3156.09,
+  "stSUI|SOL": 2336.31,
+  "stSUI|USDSUI": 4261.13,
+  "stSUI|suiETH": 4198.64,
+  "stSUI|USDC": 4264.09,
+  "stSUI|XAUm": 4974.43,
+  "stSUI|suiUSDe": 4250.11,
+  "stSUI|xBTC": 4206.73,
+  "stSUI|SUI": 4496.37,
+  "stSUI|wBTC": 4308.31,
+  "stSUI|vSUI": 1399.0,
+  "stSUI|USDY": 4329.63,
+  "stSUI|enzoBTC": 4231.93,
+  "stSUI|BUCK": 4266.92,
+  "stSUI|WAL": 4407.59,
+  "stSUI|wUSDC": 4262.74,
+  "stSUI|FDUSD": 4244.11,
+  "SUI|WBTC.lz": 327990.82,
+  "SUI|DEEP": 190329.82,
+  "SUI|haSUI": 0.0,
+  "SUI|MBTC": 0.0,
+  "SUI|LBTC": 40429.37,
+  "SUI|suiUSDT": 621937.97,
+  "SUI|NAVX": 4705.38,
+  "SUI|SOL": 1969.23,
+  "SUI|USDSUI": 1032727.15,
+  "SUI|suiETH": 47133.53,
+  "SUI|USDC": 1037915.34,
+  "SUI|XAUm": 244358.43,
+  "SUI|suiUSDe": 565031.9,
+  "SUI|xBTC": 213572.08,
+  "SUI|stSUI": 0.0,
+  "SUI|wBTC": 40508.69,
+  "SUI|vSUI": 0.0,
+  "SUI|USDY": 977299.36,
+  "SUI|enzoBTC": 213660.89,
+  "SUI|BUCK": 1026385.57,
+  "SUI|WAL": 80157.26,
+  "SUI|wUSDC": 25239.05,
+  "SUI|FDUSD": 31426.31,
+  "wBTC|WBTC.lz": 105030.69,
+  "wBTC|DEEP": 36623.78,
+  "wBTC|haSUI": 0.0,
+  "wBTC|MBTC": 0.0,
+  "wBTC|LBTC": 381183.07,
+  "wBTC|suiUSDT": 104234.49,
+  "wBTC|NAVX": 2580.08,
+  "wBTC|SOL": 1126.99,
+  "wBTC|USDSUI": 104252.66,
+  "wBTC|suiETH": 28050.95,
+  "wBTC|USDC": 104259.28,
+  "wBTC|XAUm": 87443.69,
+  "wBTC|suiUSDe": 104149.23,
+  "wBTC|xBTC": 104742.95,
+  "wBTC|stSUI": 0.0,
+  "wBTC|SUI": 104474.78,
+  "wBTC|vSUI": 0.0,
+  "wBTC|USDY": 104334.41,
+  "wBTC|enzoBTC": 104787.91,
+  "wBTC|BUCK": 104255.61,
+  "wBTC|WAL": 69350.51,
+  "wBTC|wUSDC": 24871.83,
+  "wBTC|FDUSD": 31046.74,
+  "vSUI|WBTC.lz": 93712.9,
+  "vSUI|DEEP": 92941.78,
+  "vSUI|haSUI": 42534.99,
+  "vSUI|MBTC": 0.0,
+  "vSUI|LBTC": 45946.19,
+  "vSUI|suiUSDT": 93745.36,
+  "vSUI|NAVX": 15137.91,
+  "vSUI|SOL": 6254.95,
+  "vSUI|USDSUI": 93760.06,
+  "vSUI|suiETH": 84517.56,
+  "vSUI|USDC": 93766.08,
+  "vSUI|XAUm": 92442.06,
+  "vSUI|suiUSDe": 93678.7,
+  "vSUI|xBTC": 93471.42,
+  "vSUI|stSUI": 90878.62,
+  "vSUI|SUI": 94440.67,
+  "vSUI|wBTC": 46312.73,
+  "vSUI|USDY": 93839.8,
+  "vSUI|enzoBTC": 93512.59,
+  "vSUI|BUCK": 93763.65,
+  "vSUI|WAL": 90359.18,
+  "vSUI|wUSDC": 35394.01,
+  "vSUI|FDUSD": 31426.33,
+  "USDY|WBTC.lz": 340702.35,
+  "USDY|DEEP": 191985.71,
+  "USDY|haSUI": 0.0,
+  "USDY|MBTC": 0.0,
+  "USDY|LBTC": 40642.42,
+  "USDY|suiUSDT": 636245.59,
+  "USDY|NAVX": 5280.17,
+  "USDY|SOL": 2255.28,
+  "USDY|USDSUI": 1003708.0,
+  "USDY|suiETH": 56721.0,
+  "USDY|USDC": 1004013.54,
+  "USDY|XAUm": 366020.73,
+  "USDY|suiUSDe": 568263.88,
+  "USDY|xBTC": 213778.41,
+  "USDY|stSUI": 3555.62,
+  "USDY|SUI": 998019.73,
+  "USDY|wBTC": 40714.45,
+  "USDY|vSUI": 0.0,
+  "USDY|enzoBTC": 213867.33,
+  "USDY|BUCK": 1003277.21,
+  "USDY|WAL": 81912.77,
+  "USDY|wUSDC": 25263.43,
+  "USDY|FDUSD": 31456.68,
+  "enzoBTC|WBTC.lz": 407682.99,
+  "enzoBTC|DEEP": 154551.36,
+  "enzoBTC|haSUI": 0.0,
+  "enzoBTC|MBTC": 0.0,
+  "enzoBTC|LBTC": 41096.21,
+  "enzoBTC|suiUSDT": 350760.28,
+  "enzoBTC|NAVX": 6370.52,
+  "enzoBTC|SOL": 2729.55,
+  "enzoBTC|USDSUI": 351040.04,
+  "enzoBTC|suiETH": 65168.62,
+  "enzoBTC|USDC": 351071.58,
+  "enzoBTC|XAUm": 298552.15,
+  "enzoBTC|suiUSDe": 348448.59,
+  "enzoBTC|xBTC": 669771.57,
+  "enzoBTC|stSUI": 82313.71,
+  "enzoBTC|SUI": 351374.29,
+  "enzoBTC|wBTC": 41152.85,
+  "enzoBTC|vSUI": 0.0,
+  "enzoBTC|USDY": 350941.6,
+  "enzoBTC|BUCK": 350966.78,
+  "enzoBTC|WAL": 85125.23,
+  "enzoBTC|wUSDC": 25482.9,
+  "enzoBTC|FDUSD": 31729.95,
+  "BUCK|WBTC.lz": 71710.96,
+  "BUCK|DEEP": 71052.33,
+  "BUCK|haSUI": 0.0,
+  "BUCK|MBTC": 0.0,
+  "BUCK|LBTC": 41092.06,
+  "BUCK|suiUSDT": 71724.23,
+  "BUCK|NAVX": 6903.1,
+  "BUCK|SOL": 2925.44,
+  "BUCK|USDSUI": 71732.31,
+  "BUCK|suiETH": 68873.14,
+  "BUCK|USDC": 71736.77,
+  "BUCK|XAUm": 70875.13,
+  "BUCK|suiUSDe": 71683.25,
+  "BUCK|xBTC": 71530.0,
+  "BUCK|stSUI": 69268.81,
+  "BUCK|SUI": 71903.5,
+  "BUCK|wBTC": 41151.53,
+  "BUCK|vSUI": 0.0,
+  "BUCK|USDY": 71798.85,
+  "BUCK|enzoBTC": 71561.02,
+  "BUCK|WAL": 70772.94,
+  "BUCK|wUSDC": 25482.9,
+  "BUCK|FDUSD": 31729.96,
+  "WAL|WBTC.lz": 71476.33,
+  "WAL|DEEP": 69218.25,
+  "WAL|haSUI": 0.0,
+  "WAL|MBTC": 0.0,
+  "WAL|LBTC": 40978.61,
+  "WAL|suiUSDT": 71494.56,
+  "WAL|NAVX": 5540.38,
+  "WAL|SOL": 2375.76,
+  "WAL|USDSUI": 71505.71,
+  "WAL|suiETH": 54321.53,
+  "WAL|USDC": 71511.85,
+  "WAL|XAUm": 68973.28,
+  "WAL|suiUSDe": 71437.98,
+  "WAL|xBTC": 71220.39,
+  "WAL|stSUI": 8237.64,
+  "WAL|SUI": 71732.08,
+  "WAL|wBTC": 41056.81,
+  "WAL|vSUI": 0.0,
+  "WAL|USDY": 71597.9,
+  "WAL|enzoBTC": 71264.56,
+  "WAL|BUCK": 71511.25,
+  "WAL|wUSDC": 25482.9,
+  "WAL|FDUSD": 31729.95,
+  "FDUSD|WBTC.lz": 1379.52,
+  "FDUSD|DEEP": 1382.67,
+  "FDUSD|haSUI": 0.0,
+  "FDUSD|MBTC": 0.0,
+  "FDUSD|LBTC": 1377.75,
+  "FDUSD|suiUSDT": 1375.87,
+  "FDUSD|NAVX": 1364.64,
+  "FDUSD|SOL": 1349.2,
+  "FDUSD|USDSUI": 1375.77,
+  "FDUSD|suiETH": 1376.63,
+  "FDUSD|USDC": 1375.84,
+  "FDUSD|XAUm": 1393.58,
+  "FDUSD|suiUSDe": 1375.53,
+  "FDUSD|xBTC": 1375.01,
+  "FDUSD|stSUI": 1331.26,
+  "FDUSD|SUI": 1382.58,
+  "FDUSD|wBTC": 1379.3,
+  "FDUSD|vSUI": 0.0,
+  "FDUSD|USDY": 1377.44,
+  "FDUSD|enzoBTC": 1375.62,
+  "FDUSD|BUCK": 1375.91,
+  "FDUSD|WAL": 1381.0,
+  "FDUSD|wUSDC": 1375.84
+ },
+ "paths": {
+  "WBTC.lz|DEEP": [
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "WBTC.lz|haSUI": [
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "WBTC.lz|MBTC": null,
+  "WBTC.lz|LBTC": [
+   "WBTC.lz",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "WBTC.lz|suiUSDT": [
+   "WBTC.lz",
+   "USDC",
+   "suiUSDT"
+  ],
+  "WBTC.lz|NAVX": [
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "WBTC.lz|SOL": [
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "WBTC.lz|USDSUI": [
+   "WBTC.lz",
+   "USDC",
+   "USDSUI"
+  ],
+  "WBTC.lz|suiETH": [
+   "WBTC.lz",
+   "USDC",
+   "suiETH"
+  ],
+  "WBTC.lz|USDC": [
+   "WBTC.lz",
+   "USDC"
+  ],
+  "WBTC.lz|XAUm": [
+   "WBTC.lz",
+   "USDC",
+   "XAUm"
+  ],
+  "WBTC.lz|suiUSDe": [
+   "WBTC.lz",
+   "USDC",
+   "suiUSDe"
+  ],
+  "WBTC.lz|xBTC": [
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "WBTC.lz|stSUI": [
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "WBTC.lz|SUI": [
+   "WBTC.lz",
+   "USDC",
+   "SUI"
+  ],
+  "WBTC.lz|wBTC": [
+   "WBTC.lz",
+   "xBTC",
+   "wBTC"
+  ],
+  "WBTC.lz|vSUI": [
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "WBTC.lz|USDY": [
+   "WBTC.lz",
+   "USDC",
+   "USDY"
+  ],
+  "WBTC.lz|enzoBTC": [
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "WBTC.lz|BUCK": [
+   "WBTC.lz",
+   "USDC",
+   "BUCK"
+  ],
+  "WBTC.lz|WAL": [
+   "WBTC.lz",
+   "USDC",
+   "WAL"
+  ],
+  "WBTC.lz|wUSDC": [
+   "WBTC.lz",
+   "USDC",
+   "wUSDC"
+  ],
+  "WBTC.lz|FDUSD": [
+   "WBTC.lz",
+   "xBTC",
+   "USDC",
+   "FDUSD"
+  ],
+  "DEEP|WBTC.lz": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "WBTC.lz"
+  ],
+  "DEEP|haSUI": [
+   "DEEP",
+   "SUI",
+   "haSUI"
+  ],
+  "DEEP|MBTC": null,
+  "DEEP|LBTC": [
+   "DEEP",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "DEEP|suiUSDT": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "DEEP|NAVX": [
+   "DEEP",
+   "SUI",
+   "NAVX"
+  ],
+  "DEEP|SOL": [
+   "DEEP",
+   "SUI",
+   "SOL"
+  ],
+  "DEEP|USDSUI": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "USDSUI"
+  ],
+  "DEEP|suiETH": [
+   "DEEP",
+   "USDC",
+   "suiETH"
+  ],
+  "DEEP|USDC": [
+   "DEEP",
+   "SUI",
+   "USDC"
+  ],
+  "DEEP|XAUm": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "XAUm"
+  ],
+  "DEEP|suiUSDe": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "DEEP|xBTC": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "DEEP|stSUI": [
+   "DEEP",
+   "SUI",
+   "stSUI"
+  ],
+  "DEEP|SUI": [
+   "DEEP",
+   "SUI"
+  ],
+  "DEEP|wBTC": [
+   "DEEP",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "DEEP|vSUI": [
+   "DEEP",
+   "SUI",
+   "vSUI"
+  ],
+  "DEEP|USDY": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "USDY"
+  ],
+  "DEEP|enzoBTC": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "DEEP|BUCK": [
+   "DEEP",
+   "SUI",
+   "USDC",
+   "BUCK"
+  ],
+  "DEEP|WAL": [
+   "DEEP",
+   "SUI",
+   "WAL"
+  ],
+  "DEEP|wUSDC": [
+   "DEEP",
+   "SUI",
+   "suiUSDe",
+   "USDC",
+   "wUSDC"
+  ],
+  "DEEP|FDUSD": [
+   "DEEP",
+   "USDC",
+   "FDUSD"
+  ],
+  "haSUI|WBTC.lz": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "WBTC.lz"
+  ],
+  "haSUI|DEEP": [
+   "haSUI",
+   "SUI",
+   "DEEP"
+  ],
+  "haSUI|MBTC": null,
+  "haSUI|LBTC": [
+   "haSUI",
+   "SUI",
+   "LBTC"
+  ],
+  "haSUI|suiUSDT": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "haSUI|NAVX": [
+   "haSUI",
+   "SUI",
+   "NAVX"
+  ],
+  "haSUI|SOL": [
+   "haSUI",
+   "SUI",
+   "SOL"
+  ],
+  "haSUI|USDSUI": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "USDSUI"
+  ],
+  "haSUI|suiETH": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "suiETH"
+  ],
+  "haSUI|USDC": [
+   "haSUI",
+   "SUI",
+   "USDC"
+  ],
+  "haSUI|XAUm": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "XAUm"
+  ],
+  "haSUI|suiUSDe": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "haSUI|xBTC": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "haSUI|stSUI": [
+   "haSUI",
+   "SUI",
+   "stSUI"
+  ],
+  "haSUI|SUI": [
+   "haSUI",
+   "SUI"
+  ],
+  "haSUI|wBTC": [
+   "haSUI",
+   "SUI",
+   "LBTC",
+   "wBTC"
+  ],
+  "haSUI|vSUI": [
+   "haSUI",
+   "SUI",
+   "vSUI"
+  ],
+  "haSUI|USDY": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "USDY"
+  ],
+  "haSUI|enzoBTC": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "haSUI|BUCK": [
+   "haSUI",
+   "SUI",
+   "USDC",
+   "BUCK"
+  ],
+  "haSUI|WAL": [
+   "haSUI",
+   "SUI",
+   "WAL"
+  ],
+  "haSUI|wUSDC": [
+   "haSUI",
+   "SUI",
+   "wUSDC"
+  ],
+  "haSUI|FDUSD": [
+   "haSUI",
+   "SUI",
+   "suiUSDe",
+   "USDC",
+   "FDUSD"
+  ],
+  "MBTC|WBTC.lz": null,
+  "MBTC|DEEP": null,
+  "MBTC|haSUI": null,
+  "MBTC|LBTC": null,
+  "MBTC|suiUSDT": null,
+  "MBTC|NAVX": null,
+  "MBTC|SOL": null,
+  "MBTC|USDSUI": null,
+  "MBTC|suiETH": null,
+  "MBTC|USDC": null,
+  "MBTC|XAUm": null,
+  "MBTC|suiUSDe": null,
+  "MBTC|xBTC": null,
+  "MBTC|stSUI": null,
+  "MBTC|SUI": null,
+  "MBTC|wBTC": null,
+  "MBTC|vSUI": null,
+  "MBTC|USDY": null,
+  "MBTC|enzoBTC": null,
+  "MBTC|BUCK": null,
+  "MBTC|WAL": null,
+  "MBTC|wUSDC": null,
+  "MBTC|FDUSD": null,
+  "LBTC|WBTC.lz": [
+   "LBTC",
+   "WBTC.lz"
+  ],
+  "LBTC|DEEP": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "LBTC|haSUI": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "LBTC|MBTC": null,
+  "LBTC|suiUSDT": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDT"
+  ],
+  "LBTC|NAVX": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "LBTC|SOL": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "LBTC|USDSUI": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDSUI"
+  ],
+  "LBTC|suiETH": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiETH"
+  ],
+  "LBTC|USDC": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC"
+  ],
+  "LBTC|XAUm": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "XAUm"
+  ],
+  "LBTC|suiUSDe": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDe"
+  ],
+  "LBTC|xBTC": [
+   "LBTC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "LBTC|stSUI": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "LBTC|SUI": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI"
+  ],
+  "LBTC|wBTC": [
+   "LBTC",
+   "wBTC"
+  ],
+  "LBTC|vSUI": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "LBTC|USDY": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDY"
+  ],
+  "LBTC|enzoBTC": [
+   "LBTC",
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "LBTC|BUCK": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "BUCK"
+  ],
+  "LBTC|WAL": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "WAL"
+  ],
+  "LBTC|wUSDC": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "wUSDC"
+  ],
+  "LBTC|FDUSD": [
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "FDUSD"
+  ],
+  "suiUSDT|WBTC.lz": [
+   "suiUSDT",
+   "USDC",
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "suiUSDT|DEEP": [
+   "suiUSDT",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "suiUSDT|haSUI": [
+   "suiUSDT",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "suiUSDT|MBTC": null,
+  "suiUSDT|LBTC": [
+   "suiUSDT",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "suiUSDT|NAVX": [
+   "suiUSDT",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "suiUSDT|SOL": [
+   "suiUSDT",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "suiUSDT|USDSUI": [
+   "suiUSDT",
+   "USDC",
+   "USDSUI"
+  ],
+  "suiUSDT|suiETH": [
+   "suiUSDT",
+   "USDC",
+   "suiETH"
+  ],
+  "suiUSDT|USDC": [
+   "suiUSDT",
+   "USDC"
+  ],
+  "suiUSDT|XAUm": [
+   "suiUSDT",
+   "USDC",
+   "XAUm"
+  ],
+  "suiUSDT|suiUSDe": [
+   "suiUSDT",
+   "USDC",
+   "suiUSDe"
+  ],
+  "suiUSDT|xBTC": [
+   "suiUSDT",
+   "USDC",
+   "xBTC"
+  ],
+  "suiUSDT|stSUI": [
+   "suiUSDT",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "suiUSDT|SUI": [
+   "suiUSDT",
+   "USDC",
+   "SUI"
+  ],
+  "suiUSDT|wBTC": [
+   "suiUSDT",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "suiUSDT|vSUI": [
+   "suiUSDT",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "suiUSDT|USDY": [
+   "suiUSDT",
+   "USDC",
+   "USDY"
+  ],
+  "suiUSDT|enzoBTC": [
+   "suiUSDT",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "suiUSDT|BUCK": [
+   "suiUSDT",
+   "USDC",
+   "BUCK"
+  ],
+  "suiUSDT|WAL": [
+   "suiUSDT",
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "suiUSDT|wUSDC": [
+   "suiUSDT",
+   "USDC",
+   "wUSDC"
+  ],
+  "suiUSDT|FDUSD": [
+   "suiUSDT",
+   "USDC",
+   "FDUSD"
+  ],
+  "NAVX|WBTC.lz": [
+   "NAVX",
+   "SUI",
+   "LBTC",
+   "WBTC.lz"
+  ],
+  "NAVX|DEEP": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "DEEP"
+  ],
+  "NAVX|haSUI": [
+   "NAVX",
+   "SUI",
+   "haSUI"
+  ],
+  "NAVX|MBTC": null,
+  "NAVX|LBTC": [
+   "NAVX",
+   "SUI",
+   "LBTC"
+  ],
+  "NAVX|suiUSDT": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "NAVX|SOL": [
+   "NAVX",
+   "SUI",
+   "SOL"
+  ],
+  "NAVX|USDSUI": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "USDSUI"
+  ],
+  "NAVX|suiETH": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "suiETH"
+  ],
+  "NAVX|USDC": [
+   "NAVX",
+   "SUI",
+   "USDC"
+  ],
+  "NAVX|XAUm": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "XAUm"
+  ],
+  "NAVX|suiUSDe": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "NAVX|xBTC": [
+   "NAVX",
+   "SUI",
+   "LBTC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "NAVX|stSUI": [
+   "NAVX",
+   "SUI",
+   "stSUI"
+  ],
+  "NAVX|SUI": [
+   "NAVX",
+   "SUI"
+  ],
+  "NAVX|wBTC": [
+   "NAVX",
+   "SUI",
+   "LBTC",
+   "wBTC"
+  ],
+  "NAVX|vSUI": [
+   "NAVX",
+   "SUI",
+   "vSUI"
+  ],
+  "NAVX|USDY": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "USDY"
+  ],
+  "NAVX|enzoBTC": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "NAVX|BUCK": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "BUCK"
+  ],
+  "NAVX|WAL": [
+   "NAVX",
+   "SUI",
+   "WAL"
+  ],
+  "NAVX|wUSDC": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "wUSDC"
+  ],
+  "NAVX|FDUSD": [
+   "NAVX",
+   "SUI",
+   "USDC",
+   "FDUSD"
+  ],
+  "SOL|WBTC.lz": [
+   "SOL",
+   "SUI",
+   "LBTC",
+   "WBTC.lz"
+  ],
+  "SOL|DEEP": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "DEEP"
+  ],
+  "SOL|haSUI": [
+   "SOL",
+   "SUI",
+   "haSUI"
+  ],
+  "SOL|MBTC": null,
+  "SOL|LBTC": [
+   "SOL",
+   "SUI",
+   "LBTC"
+  ],
+  "SOL|suiUSDT": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "SOL|NAVX": [
+   "SOL",
+   "SUI",
+   "NAVX"
+  ],
+  "SOL|USDSUI": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "USDSUI"
+  ],
+  "SOL|suiETH": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "suiETH"
+  ],
+  "SOL|USDC": [
+   "SOL",
+   "SUI",
+   "USDC"
+  ],
+  "SOL|XAUm": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "XAUm"
+  ],
+  "SOL|suiUSDe": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "SOL|xBTC": [
+   "SOL",
+   "SUI",
+   "LBTC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "SOL|stSUI": [
+   "SOL",
+   "SUI",
+   "stSUI"
+  ],
+  "SOL|SUI": [
+   "SOL",
+   "SUI"
+  ],
+  "SOL|wBTC": [
+   "SOL",
+   "SUI",
+   "LBTC",
+   "wBTC"
+  ],
+  "SOL|vSUI": [
+   "SOL",
+   "SUI",
+   "vSUI"
+  ],
+  "SOL|USDY": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "USDY"
+  ],
+  "SOL|enzoBTC": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "SOL|BUCK": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "BUCK"
+  ],
+  "SOL|WAL": [
+   "SOL",
+   "SUI",
+   "WAL"
+  ],
+  "SOL|wUSDC": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "wUSDC"
+  ],
+  "SOL|FDUSD": [
+   "SOL",
+   "SUI",
+   "USDC",
+   "FDUSD"
+  ],
+  "USDSUI|WBTC.lz": [
+   "USDSUI",
+   "USDC",
+   "WBTC.lz"
+  ],
+  "USDSUI|DEEP": [
+   "USDSUI",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "USDSUI|haSUI": [
+   "USDSUI",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "USDSUI|MBTC": null,
+  "USDSUI|LBTC": [
+   "USDSUI",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "USDSUI|suiUSDT": [
+   "USDSUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "USDSUI|NAVX": [
+   "USDSUI",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "USDSUI|SOL": [
+   "USDSUI",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "USDSUI|suiETH": [
+   "USDSUI",
+   "USDC",
+   "suiETH"
+  ],
+  "USDSUI|USDC": [
+   "USDSUI",
+   "USDC"
+  ],
+  "USDSUI|XAUm": [
+   "USDSUI",
+   "USDC",
+   "XAUm"
+  ],
+  "USDSUI|suiUSDe": [
+   "USDSUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "USDSUI|xBTC": [
+   "USDSUI",
+   "USDC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "USDSUI|stSUI": [
+   "USDSUI",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "USDSUI|SUI": [
+   "USDSUI",
+   "USDC",
+   "SUI"
+  ],
+  "USDSUI|wBTC": [
+   "USDSUI",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "USDSUI|vSUI": [
+   "USDSUI",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "USDSUI|USDY": [
+   "USDSUI",
+   "USDC",
+   "USDY"
+  ],
+  "USDSUI|enzoBTC": [
+   "USDSUI",
+   "USDC",
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "USDSUI|BUCK": [
+   "USDSUI",
+   "USDC",
+   "BUCK"
+  ],
+  "USDSUI|WAL": [
+   "USDSUI",
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "USDSUI|wUSDC": [
+   "USDSUI",
+   "USDC",
+   "wUSDC"
+  ],
+  "USDSUI|FDUSD": [
+   "USDSUI",
+   "USDC",
+   "FDUSD"
+  ],
+  "suiETH|WBTC.lz": [
+   "suiETH",
+   "USDC",
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "suiETH|DEEP": [
+   "suiETH",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "suiETH|haSUI": [
+   "suiETH",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "suiETH|MBTC": null,
+  "suiETH|LBTC": [
+   "suiETH",
+   "wBTC",
+   "LBTC"
+  ],
+  "suiETH|suiUSDT": [
+   "suiETH",
+   "USDC",
+   "suiUSDT"
+  ],
+  "suiETH|NAVX": [
+   "suiETH",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "suiETH|SOL": [
+   "suiETH",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "suiETH|USDSUI": [
+   "suiETH",
+   "USDC",
+   "USDSUI"
+  ],
+  "suiETH|USDC": [
+   "suiETH",
+   "USDC"
+  ],
+  "suiETH|XAUm": [
+   "suiETH",
+   "USDC",
+   "XAUm"
+  ],
+  "suiETH|suiUSDe": [
+   "suiETH",
+   "USDC",
+   "suiUSDe"
+  ],
+  "suiETH|xBTC": [
+   "suiETH",
+   "USDC",
+   "xBTC"
+  ],
+  "suiETH|stSUI": [
+   "suiETH",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "suiETH|SUI": [
+   "suiETH",
+   "USDC",
+   "SUI"
+  ],
+  "suiETH|wBTC": [
+   "suiETH",
+   "wBTC"
+  ],
+  "suiETH|vSUI": [
+   "suiETH",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "suiETH|USDY": [
+   "suiETH",
+   "USDC",
+   "USDY"
+  ],
+  "suiETH|enzoBTC": [
+   "suiETH",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "suiETH|BUCK": [
+   "suiETH",
+   "USDC",
+   "BUCK"
+  ],
+  "suiETH|WAL": [
+   "suiETH",
+   "USDC",
+   "WAL"
+  ],
+  "suiETH|wUSDC": [
+   "suiETH",
+   "USDC",
+   "wUSDC"
+  ],
+  "suiETH|FDUSD": [
+   "suiETH",
+   "USDC",
+   "FDUSD"
+  ],
+  "USDC|WBTC.lz": [
+   "USDC",
+   "WBTC.lz"
+  ],
+  "USDC|DEEP": [
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "USDC|haSUI": [
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "USDC|MBTC": null,
+  "USDC|LBTC": [
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "USDC|suiUSDT": [
+   "USDC",
+   "suiUSDT"
+  ],
+  "USDC|NAVX": [
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "USDC|SOL": [
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "USDC|USDSUI": [
+   "USDC",
+   "USDSUI"
+  ],
+  "USDC|suiETH": [
+   "USDC",
+   "suiETH"
+  ],
+  "USDC|XAUm": [
+   "USDC",
+   "XAUm"
+  ],
+  "USDC|suiUSDe": [
+   "USDC",
+   "suiUSDe"
+  ],
+  "USDC|xBTC": [
+   "USDC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "USDC|stSUI": [
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "USDC|SUI": [
+   "USDC",
+   "SUI"
+  ],
+  "USDC|wBTC": [
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "USDC|vSUI": [
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "USDC|USDY": [
+   "USDC",
+   "USDY"
+  ],
+  "USDC|enzoBTC": [
+   "USDC",
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "USDC|BUCK": [
+   "USDC",
+   "BUCK"
+  ],
+  "USDC|WAL": [
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "USDC|wUSDC": [
+   "USDC",
+   "wUSDC"
+  ],
+  "USDC|FDUSD": [
+   "USDC",
+   "FDUSD"
+  ],
+  "suiUSDe|WBTC.lz": [
+   "suiUSDe",
+   "USDC",
+   "WBTC.lz"
+  ],
+  "suiUSDe|DEEP": [
+   "suiUSDe",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "suiUSDe|haSUI": [
+   "suiUSDe",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "suiUSDe|MBTC": null,
+  "suiUSDe|LBTC": [
+   "suiUSDe",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "suiUSDe|suiUSDT": [
+   "suiUSDe",
+   "USDC",
+   "suiUSDT"
+  ],
+  "suiUSDe|NAVX": [
+   "suiUSDe",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "suiUSDe|SOL": [
+   "suiUSDe",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "suiUSDe|USDSUI": [
+   "suiUSDe",
+   "USDC",
+   "USDSUI"
+  ],
+  "suiUSDe|suiETH": [
+   "suiUSDe",
+   "USDC",
+   "suiETH"
+  ],
+  "suiUSDe|USDC": [
+   "suiUSDe",
+   "USDC"
+  ],
+  "suiUSDe|XAUm": [
+   "suiUSDe",
+   "USDC",
+   "XAUm"
+  ],
+  "suiUSDe|xBTC": [
+   "suiUSDe",
+   "USDC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "suiUSDe|stSUI": [
+   "suiUSDe",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "suiUSDe|SUI": [
+   "suiUSDe",
+   "USDC",
+   "SUI"
+  ],
+  "suiUSDe|wBTC": [
+   "suiUSDe",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "suiUSDe|vSUI": [
+   "suiUSDe",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "suiUSDe|USDY": [
+   "suiUSDe",
+   "USDC",
+   "USDY"
+  ],
+  "suiUSDe|enzoBTC": [
+   "suiUSDe",
+   "USDC",
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "suiUSDe|BUCK": [
+   "suiUSDe",
+   "USDC",
+   "BUCK"
+  ],
+  "suiUSDe|WAL": [
+   "suiUSDe",
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "suiUSDe|wUSDC": [
+   "suiUSDe",
+   "USDC",
+   "wUSDC"
+  ],
+  "suiUSDe|FDUSD": [
+   "suiUSDe",
+   "USDC",
+   "FDUSD"
+  ],
+  "xBTC|WBTC.lz": [
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "xBTC|DEEP": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "xBTC|haSUI": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "xBTC|MBTC": null,
+  "xBTC|LBTC": [
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "xBTC|suiUSDT": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDT"
+  ],
+  "xBTC|NAVX": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "xBTC|SOL": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "xBTC|USDSUI": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDSUI"
+  ],
+  "xBTC|suiETH": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiETH"
+  ],
+  "xBTC|USDC": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC"
+  ],
+  "xBTC|XAUm": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "XAUm"
+  ],
+  "xBTC|suiUSDe": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDe"
+  ],
+  "xBTC|stSUI": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "xBTC|SUI": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI"
+  ],
+  "xBTC|wBTC": [
+   "xBTC",
+   "wBTC"
+  ],
+  "xBTC|vSUI": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "xBTC|USDY": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDY"
+  ],
+  "xBTC|enzoBTC": [
+   "xBTC",
+   "enzoBTC"
+  ],
+  "xBTC|BUCK": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "BUCK"
+  ],
+  "xBTC|WAL": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "WAL"
+  ],
+  "xBTC|wUSDC": [
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "wUSDC"
+  ],
+  "xBTC|FDUSD": [
+   "xBTC",
+   "USDC",
+   "FDUSD"
+  ],
+  "stSUI|WBTC.lz": [
+   "stSUI",
+   "USDC",
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "stSUI|DEEP": [
+   "stSUI",
+   "USDC",
+   "DEEP"
+  ],
+  "stSUI|haSUI": [
+   "stSUI",
+   "SUI",
+   "haSUI"
+  ],
+  "stSUI|MBTC": null,
+  "stSUI|LBTC": [
+   "stSUI",
+   "USDC",
+   "xBTC",
+   "WBTC.lz",
+   "LBTC"
+  ],
+  "stSUI|suiUSDT": [
+   "stSUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "stSUI|NAVX": [
+   "stSUI",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "stSUI|SOL": [
+   "stSUI",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "stSUI|USDSUI": [
+   "stSUI",
+   "USDC",
+   "USDSUI"
+  ],
+  "stSUI|suiETH": [
+   "stSUI",
+   "USDC",
+   "suiETH"
+  ],
+  "stSUI|USDC": [
+   "stSUI",
+   "USDC"
+  ],
+  "stSUI|XAUm": [
+   "stSUI",
+   "USDC",
+   "XAUm"
+  ],
+  "stSUI|suiUSDe": [
+   "stSUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "stSUI|xBTC": [
+   "stSUI",
+   "USDC",
+   "xBTC"
+  ],
+  "stSUI|SUI": [
+   "stSUI",
+   "USDC",
+   "SUI"
+  ],
+  "stSUI|wBTC": [
+   "stSUI",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "stSUI|vSUI": [
+   "stSUI",
+   "SUI",
+   "vSUI"
+  ],
+  "stSUI|USDY": [
+   "stSUI",
+   "USDC",
+   "USDY"
+  ],
+  "stSUI|enzoBTC": [
+   "stSUI",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "stSUI|BUCK": [
+   "stSUI",
+   "USDC",
+   "BUCK"
+  ],
+  "stSUI|WAL": [
+   "stSUI",
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "stSUI|wUSDC": [
+   "stSUI",
+   "USDC",
+   "wUSDC"
+  ],
+  "stSUI|FDUSD": [
+   "stSUI",
+   "USDC",
+   "FDUSD"
+  ],
+  "SUI|WBTC.lz": [
+   "SUI",
+   "USDC",
+   "WBTC.lz"
+  ],
+  "SUI|DEEP": [
+   "SUI",
+   "DEEP"
+  ],
+  "SUI|haSUI": [
+   "SUI",
+   "haSUI"
+  ],
+  "SUI|MBTC": null,
+  "SUI|LBTC": [
+   "SUI",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "SUI|suiUSDT": [
+   "SUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "SUI|NAVX": [
+   "SUI",
+   "NAVX"
+  ],
+  "SUI|SOL": [
+   "SUI",
+   "SOL"
+  ],
+  "SUI|USDSUI": [
+   "SUI",
+   "USDC",
+   "USDSUI"
+  ],
+  "SUI|suiETH": [
+   "SUI",
+   "USDC",
+   "suiETH"
+  ],
+  "SUI|USDC": [
+   "SUI",
+   "USDC"
+  ],
+  "SUI|XAUm": [
+   "SUI",
+   "USDC",
+   "XAUm"
+  ],
+  "SUI|suiUSDe": [
+   "SUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "SUI|xBTC": [
+   "SUI",
+   "USDC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "SUI|stSUI": [
+   "SUI",
+   "stSUI"
+  ],
+  "SUI|wBTC": [
+   "SUI",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "SUI|vSUI": [
+   "SUI",
+   "vSUI"
+  ],
+  "SUI|USDY": [
+   "SUI",
+   "USDC",
+   "USDY"
+  ],
+  "SUI|enzoBTC": [
+   "SUI",
+   "USDC",
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "SUI|BUCK": [
+   "SUI",
+   "USDC",
+   "BUCK"
+  ],
+  "SUI|WAL": [
+   "SUI",
+   "WAL"
+  ],
+  "SUI|wUSDC": [
+   "SUI",
+   "USDC",
+   "wUSDC"
+  ],
+  "SUI|FDUSD": [
+   "SUI",
+   "USDC",
+   "FDUSD"
+  ],
+  "wBTC|WBTC.lz": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz"
+  ],
+  "wBTC|DEEP": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "DEEP"
+  ],
+  "wBTC|haSUI": [
+   "wBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "wBTC|MBTC": null,
+  "wBTC|LBTC": [
+   "wBTC",
+   "LBTC"
+  ],
+  "wBTC|suiUSDT": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDT"
+  ],
+  "wBTC|NAVX": [
+   "wBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "wBTC|SOL": [
+   "wBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "wBTC|USDSUI": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDSUI"
+  ],
+  "wBTC|suiETH": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiETH"
+  ],
+  "wBTC|USDC": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC"
+  ],
+  "wBTC|XAUm": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "XAUm"
+  ],
+  "wBTC|suiUSDe": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDe"
+  ],
+  "wBTC|xBTC": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "wBTC|stSUI": [
+   "wBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "wBTC|SUI": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI"
+  ],
+  "wBTC|vSUI": [
+   "wBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "wBTC|USDY": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDY"
+  ],
+  "wBTC|enzoBTC": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "wBTC|BUCK": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "BUCK"
+  ],
+  "wBTC|WAL": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "WAL"
+  ],
+  "wBTC|wUSDC": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "wUSDC"
+  ],
+  "wBTC|FDUSD": [
+   "wBTC",
+   "LBTC",
+   "WBTC.lz",
+   "USDC",
+   "FDUSD"
+  ],
+  "vSUI|WBTC.lz": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "vSUI|DEEP": [
+   "vSUI",
+   "SUI",
+   "DEEP"
+  ],
+  "vSUI|haSUI": [
+   "vSUI",
+   "SUI",
+   "haSUI"
+  ],
+  "vSUI|MBTC": null,
+  "vSUI|LBTC": [
+   "vSUI",
+   "SUI",
+   "LBTC"
+  ],
+  "vSUI|suiUSDT": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "suiUSDT"
+  ],
+  "vSUI|NAVX": [
+   "vSUI",
+   "SUI",
+   "NAVX"
+  ],
+  "vSUI|SOL": [
+   "vSUI",
+   "SUI",
+   "SOL"
+  ],
+  "vSUI|USDSUI": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "USDSUI"
+  ],
+  "vSUI|suiETH": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "suiETH"
+  ],
+  "vSUI|USDC": [
+   "vSUI",
+   "SUI",
+   "USDC"
+  ],
+  "vSUI|XAUm": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "XAUm"
+  ],
+  "vSUI|suiUSDe": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "suiUSDe"
+  ],
+  "vSUI|xBTC": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "xBTC"
+  ],
+  "vSUI|stSUI": [
+   "vSUI",
+   "SUI",
+   "stSUI"
+  ],
+  "vSUI|SUI": [
+   "vSUI",
+   "SUI"
+  ],
+  "vSUI|wBTC": [
+   "vSUI",
+   "SUI",
+   "LBTC",
+   "wBTC"
+  ],
+  "vSUI|USDY": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "USDY"
+  ],
+  "vSUI|enzoBTC": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "vSUI|BUCK": [
+   "vSUI",
+   "SUI",
+   "USDC",
+   "BUCK"
+  ],
+  "vSUI|WAL": [
+   "vSUI",
+   "SUI",
+   "WAL"
+  ],
+  "vSUI|wUSDC": [
+   "vSUI",
+   "SUI",
+   "wUSDC"
+  ],
+  "vSUI|FDUSD": [
+   "vSUI",
+   "SUI",
+   "WAL",
+   "USDC",
+   "FDUSD"
+  ],
+  "USDY|WBTC.lz": [
+   "USDY",
+   "USDC",
+   "WBTC.lz"
+  ],
+  "USDY|DEEP": [
+   "USDY",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "USDY|haSUI": [
+   "USDY",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "USDY|MBTC": null,
+  "USDY|LBTC": [
+   "USDY",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "USDY|suiUSDT": [
+   "USDY",
+   "USDC",
+   "suiUSDT"
+  ],
+  "USDY|NAVX": [
+   "USDY",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "USDY|SOL": [
+   "USDY",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "USDY|USDSUI": [
+   "USDY",
+   "USDC",
+   "USDSUI"
+  ],
+  "USDY|suiETH": [
+   "USDY",
+   "USDC",
+   "suiETH"
+  ],
+  "USDY|USDC": [
+   "USDY",
+   "USDC"
+  ],
+  "USDY|XAUm": [
+   "USDY",
+   "USDC",
+   "XAUm"
+  ],
+  "USDY|suiUSDe": [
+   "USDY",
+   "USDC",
+   "suiUSDe"
+  ],
+  "USDY|xBTC": [
+   "USDY",
+   "USDC",
+   "WBTC.lz",
+   "xBTC"
+  ],
+  "USDY|stSUI": [
+   "USDY",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "USDY|SUI": [
+   "USDY",
+   "USDC",
+   "SUI"
+  ],
+  "USDY|wBTC": [
+   "USDY",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "USDY|vSUI": [
+   "USDY",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "USDY|enzoBTC": [
+   "USDY",
+   "USDC",
+   "WBTC.lz",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "USDY|BUCK": [
+   "USDY",
+   "USDC",
+   "BUCK"
+  ],
+  "USDY|WAL": [
+   "USDY",
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "USDY|wUSDC": [
+   "USDY",
+   "USDC",
+   "wUSDC"
+  ],
+  "USDY|FDUSD": [
+   "USDY",
+   "USDC",
+   "FDUSD"
+  ],
+  "enzoBTC|WBTC.lz": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "enzoBTC|DEEP": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "enzoBTC|haSUI": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "enzoBTC|MBTC": null,
+  "enzoBTC|LBTC": [
+   "enzoBTC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "enzoBTC|suiUSDT": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDT"
+  ],
+  "enzoBTC|NAVX": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "enzoBTC|SOL": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "enzoBTC|USDSUI": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDSUI"
+  ],
+  "enzoBTC|suiETH": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiETH"
+  ],
+  "enzoBTC|USDC": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC"
+  ],
+  "enzoBTC|XAUm": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "XAUm"
+  ],
+  "enzoBTC|suiUSDe": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "suiUSDe"
+  ],
+  "enzoBTC|xBTC": [
+   "enzoBTC",
+   "xBTC"
+  ],
+  "enzoBTC|stSUI": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "enzoBTC|SUI": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "SUI"
+  ],
+  "enzoBTC|wBTC": [
+   "enzoBTC",
+   "xBTC",
+   "wBTC"
+  ],
+  "enzoBTC|vSUI": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "enzoBTC|USDY": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "USDY"
+  ],
+  "enzoBTC|BUCK": [
+   "enzoBTC",
+   "xBTC",
+   "WBTC.lz",
+   "USDC",
+   "BUCK"
+  ],
+  "enzoBTC|WAL": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "enzoBTC|wUSDC": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "wUSDC"
+  ],
+  "enzoBTC|FDUSD": [
+   "enzoBTC",
+   "xBTC",
+   "USDC",
+   "FDUSD"
+  ],
+  "BUCK|WBTC.lz": [
+   "BUCK",
+   "USDC",
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "BUCK|DEEP": [
+   "BUCK",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "BUCK|haSUI": [
+   "BUCK",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "BUCK|MBTC": null,
+  "BUCK|LBTC": [
+   "BUCK",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "BUCK|suiUSDT": [
+   "BUCK",
+   "USDC",
+   "suiUSDT"
+  ],
+  "BUCK|NAVX": [
+   "BUCK",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "BUCK|SOL": [
+   "BUCK",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "BUCK|USDSUI": [
+   "BUCK",
+   "USDC",
+   "USDSUI"
+  ],
+  "BUCK|suiETH": [
+   "BUCK",
+   "USDC",
+   "suiETH"
+  ],
+  "BUCK|USDC": [
+   "BUCK",
+   "USDC"
+  ],
+  "BUCK|XAUm": [
+   "BUCK",
+   "USDC",
+   "XAUm"
+  ],
+  "BUCK|suiUSDe": [
+   "BUCK",
+   "USDC",
+   "suiUSDe"
+  ],
+  "BUCK|xBTC": [
+   "BUCK",
+   "USDC",
+   "xBTC"
+  ],
+  "BUCK|stSUI": [
+   "BUCK",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "BUCK|SUI": [
+   "BUCK",
+   "USDC",
+   "SUI"
+  ],
+  "BUCK|wBTC": [
+   "BUCK",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "BUCK|vSUI": [
+   "BUCK",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "BUCK|USDY": [
+   "BUCK",
+   "USDC",
+   "USDY"
+  ],
+  "BUCK|enzoBTC": [
+   "BUCK",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "BUCK|WAL": [
+   "BUCK",
+   "USDC",
+   "WAL"
+  ],
+  "BUCK|wUSDC": [
+   "BUCK",
+   "USDC",
+   "wUSDC"
+  ],
+  "BUCK|FDUSD": [
+   "BUCK",
+   "USDC",
+   "FDUSD"
+  ],
+  "WAL|WBTC.lz": [
+   "WAL",
+   "USDC",
+   "xBTC",
+   "WBTC.lz"
+  ],
+  "WAL|DEEP": [
+   "WAL",
+   "USDC",
+   "SUI",
+   "DEEP"
+  ],
+  "WAL|haSUI": [
+   "WAL",
+   "SUI",
+   "haSUI"
+  ],
+  "WAL|MBTC": null,
+  "WAL|LBTC": [
+   "WAL",
+   "USDC",
+   "xBTC",
+   "wBTC",
+   "LBTC"
+  ],
+  "WAL|suiUSDT": [
+   "WAL",
+   "USDC",
+   "suiUSDT"
+  ],
+  "WAL|NAVX": [
+   "WAL",
+   "SUI",
+   "NAVX"
+  ],
+  "WAL|SOL": [
+   "WAL",
+   "SUI",
+   "SOL"
+  ],
+  "WAL|USDSUI": [
+   "WAL",
+   "USDC",
+   "USDSUI"
+  ],
+  "WAL|suiETH": [
+   "WAL",
+   "USDC",
+   "suiETH"
+  ],
+  "WAL|USDC": [
+   "WAL",
+   "USDC"
+  ],
+  "WAL|XAUm": [
+   "WAL",
+   "USDC",
+   "XAUm"
+  ],
+  "WAL|suiUSDe": [
+   "WAL",
+   "USDC",
+   "suiUSDe"
+  ],
+  "WAL|xBTC": [
+   "WAL",
+   "USDC",
+   "xBTC"
+  ],
+  "WAL|stSUI": [
+   "WAL",
+   "SUI",
+   "stSUI"
+  ],
+  "WAL|SUI": [
+   "WAL",
+   "USDC",
+   "SUI"
+  ],
+  "WAL|wBTC": [
+   "WAL",
+   "USDC",
+   "xBTC",
+   "wBTC"
+  ],
+  "WAL|vSUI": [
+   "WAL",
+   "SUI",
+   "vSUI"
+  ],
+  "WAL|USDY": [
+   "WAL",
+   "USDC",
+   "USDY"
+  ],
+  "WAL|enzoBTC": [
+   "WAL",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "WAL|BUCK": [
+   "WAL",
+   "USDC",
+   "BUCK"
+  ],
+  "WAL|wUSDC": [
+   "WAL",
+   "USDC",
+   "wUSDC"
+  ],
+  "WAL|FDUSD": [
+   "WAL",
+   "USDC",
+   "FDUSD"
+  ],
+  "FDUSD|WBTC.lz": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "LBTC",
+   "WBTC.lz"
+  ],
+  "FDUSD|DEEP": [
+   "FDUSD",
+   "USDC",
+   "DEEP"
+  ],
+  "FDUSD|haSUI": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "haSUI"
+  ],
+  "FDUSD|MBTC": null,
+  "FDUSD|LBTC": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "LBTC"
+  ],
+  "FDUSD|suiUSDT": [
+   "FDUSD",
+   "USDC",
+   "suiUSDT"
+  ],
+  "FDUSD|NAVX": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "NAVX"
+  ],
+  "FDUSD|SOL": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "SOL"
+  ],
+  "FDUSD|USDSUI": [
+   "FDUSD",
+   "USDC",
+   "USDSUI"
+  ],
+  "FDUSD|suiETH": [
+   "FDUSD",
+   "USDC",
+   "suiETH"
+  ],
+  "FDUSD|USDC": [
+   "FDUSD",
+   "USDC"
+  ],
+  "FDUSD|XAUm": [
+   "FDUSD",
+   "USDC",
+   "XAUm"
+  ],
+  "FDUSD|suiUSDe": [
+   "FDUSD",
+   "USDC",
+   "suiUSDe"
+  ],
+  "FDUSD|xBTC": [
+   "FDUSD",
+   "USDC",
+   "xBTC"
+  ],
+  "FDUSD|stSUI": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "stSUI"
+  ],
+  "FDUSD|SUI": [
+   "FDUSD",
+   "USDC",
+   "SUI"
+  ],
+  "FDUSD|wBTC": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "LBTC",
+   "wBTC"
+  ],
+  "FDUSD|vSUI": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "vSUI"
+  ],
+  "FDUSD|USDY": [
+   "FDUSD",
+   "USDC",
+   "USDY"
+  ],
+  "FDUSD|enzoBTC": [
+   "FDUSD",
+   "USDC",
+   "xBTC",
+   "enzoBTC"
+  ],
+  "FDUSD|BUCK": [
+   "FDUSD",
+   "USDC",
+   "BUCK"
+  ],
+  "FDUSD|WAL": [
+   "FDUSD",
+   "USDC",
+   "SUI",
+   "WAL"
+  ],
+  "FDUSD|wUSDC": [
+   "FDUSD",
+   "USDC",
+   "wUSDC"
+  ]
+ },
+ "unreachable": [
+  "WBTC.lz|MBTC",
+  "DEEP|MBTC",
+  "haSUI|MBTC",
+  "MBTC|WBTC.lz",
+  "MBTC|DEEP",
+  "MBTC|haSUI",
+  "MBTC|LBTC",
+  "MBTC|suiUSDT",
+  "MBTC|NAVX",
+  "MBTC|SOL",
+  "MBTC|USDSUI",
+  "MBTC|suiETH",
+  "MBTC|USDC",
+  "MBTC|XAUm",
+  "MBTC|suiUSDe",
+  "MBTC|xBTC",
+  "MBTC|stSUI",
+  "MBTC|SUI",
+  "MBTC|wBTC",
+  "MBTC|vSUI",
+  "MBTC|USDY",
+  "MBTC|enzoBTC",
+  "MBTC|BUCK",
+  "MBTC|WAL",
+  "MBTC|wUSDC",
+  "MBTC|FDUSD",
+  "LBTC|MBTC",
+  "suiUSDT|MBTC",
+  "NAVX|MBTC",
+  "SOL|MBTC",
+  "USDSUI|MBTC",
+  "suiETH|MBTC",
+  "USDC|MBTC",
+  "suiUSDe|MBTC",
+  "xBTC|MBTC",
+  "stSUI|MBTC",
+  "SUI|MBTC",
+  "wBTC|MBTC",
+  "vSUI|MBTC",
+  "USDY|MBTC",
+  "enzoBTC|MBTC",
+  "BUCK|MBTC",
+  "WAL|MBTC",
+  "FDUSD|MBTC"
+ ],
+ "dead_leg": {
+  "WBTC.lz|enzoBTC": "xBTC\u2192enzoBTC",
+  "DEEP|enzoBTC": "xBTC\u2192enzoBTC",
+  "DEEP|wUSDC": "SUI\u2192suiUSDe",
+  "haSUI|enzoBTC": "xBTC\u2192enzoBTC",
+  "haSUI|FDUSD": "SUI\u2192suiUSDe",
+  "LBTC|enzoBTC": "xBTC\u2192enzoBTC",
+  "suiUSDT|enzoBTC": "xBTC\u2192enzoBTC",
+  "NAVX|enzoBTC": "xBTC\u2192enzoBTC",
+  "SOL|enzoBTC": "xBTC\u2192enzoBTC",
+  "USDSUI|enzoBTC": "xBTC\u2192enzoBTC",
+  "suiETH|enzoBTC": "xBTC\u2192enzoBTC",
+  "USDC|enzoBTC": "xBTC\u2192enzoBTC",
+  "suiUSDe|enzoBTC": "xBTC\u2192enzoBTC",
+  "xBTC|enzoBTC": "xBTC\u2192enzoBTC",
+  "stSUI|enzoBTC": "xBTC\u2192enzoBTC",
+  "SUI|enzoBTC": "xBTC\u2192enzoBTC",
+  "wBTC|enzoBTC": "xBTC\u2192enzoBTC",
+  "vSUI|enzoBTC": "xBTC\u2192enzoBTC",
+  "USDY|enzoBTC": "xBTC\u2192enzoBTC",
+  "enzoBTC|WBTC.lz": "enzoBTC\u2192xBTC",
+  "enzoBTC|DEEP": "enzoBTC\u2192xBTC",
+  "enzoBTC|haSUI": "enzoBTC\u2192xBTC",
+  "enzoBTC|LBTC": "enzoBTC\u2192xBTC",
+  "enzoBTC|suiUSDT": "enzoBTC\u2192xBTC",
+  "enzoBTC|NAVX": "enzoBTC\u2192xBTC",
+  "enzoBTC|SOL": "enzoBTC\u2192xBTC",
+  "enzoBTC|USDSUI": "enzoBTC\u2192xBTC",
+  "enzoBTC|suiETH": "enzoBTC\u2192xBTC",
+  "enzoBTC|USDC": "enzoBTC\u2192xBTC",
+  "enzoBTC|XAUm": "enzoBTC\u2192xBTC",
+  "enzoBTC|suiUSDe": "enzoBTC\u2192xBTC",
+  "enzoBTC|xBTC": "enzoBTC\u2192xBTC",
+  "enzoBTC|stSUI": "enzoBTC\u2192xBTC",
+  "enzoBTC|SUI": "enzoBTC\u2192xBTC",
+  "enzoBTC|wBTC": "enzoBTC\u2192xBTC",
+  "enzoBTC|vSUI": "enzoBTC\u2192xBTC",
+  "enzoBTC|USDY": "enzoBTC\u2192xBTC",
+  "enzoBTC|BUCK": "enzoBTC\u2192xBTC",
+  "enzoBTC|WAL": "enzoBTC\u2192xBTC",
+  "enzoBTC|wUSDC": "enzoBTC\u2192xBTC",
+  "enzoBTC|FDUSD": "enzoBTC\u2192xBTC",
+  "BUCK|enzoBTC": "xBTC\u2192enzoBTC",
+  "WAL|enzoBTC": "xBTC\u2192enzoBTC",
+  "FDUSD|enzoBTC": "xBTC\u2192enzoBTC"
+ },
+ "pools_read": 149,
+ "pools_failed": 0,
+ "pools_empty": 0,
+ "saturated": [],
+ "no_pool": [
+  "MBTC"
+ ],
+ "coverage": {
+  "WBTC.lz|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WBTC.lz|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "DEEP|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "haSUI|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "MBTC|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "LBTC|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDT|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "NAVX|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SOL|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDSUI|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiETH|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDC|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "suiUSDe|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "xBTC|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "stSUI|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "SUI|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "wBTC|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "vSUI|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "USDY|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "enzoBTC|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "BUCK|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|wUSDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "WAL|FDUSD": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|WBTC.lz": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|DEEP": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|haSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|MBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|LBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|suiUSDT": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|NAVX": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|SOL": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|USDSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|suiETH": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|USDC": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|XAUm": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|suiUSDe": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|xBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|stSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|SUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|wBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|vSUI": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|USDY": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|enzoBTC": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|BUCK": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|WAL": {
+   "status": "complete",
+   "failed": []
+  },
+  "FDUSD|wUSDC": {
+   "status": "complete",
+   "failed": []
+  }
+ },
+ "emode_capacity": {
+  "USDY|WBTC.lz": {
+   "0.03": 279929.3168372091
+  },
+  "USDY|DEEP": {
+   "0.03": 75781.30853258108
+  },
+  "USDY|haSUI": {
+   "0.03": 0.0
+  },
+  "USDY|MBTC": {
+   "0.03": 0.0
+  },
+  "USDY|LBTC": {
+   "0.03": 39291.8312507147
+  },
+  "USDY|suiUSDT": {
+   "0.03": 602932.0441786125
+  },
+  "USDY|NAVX": {
+   "0.03": 1786.1106620301694
+  },
+  "USDY|SOL": {
+   "0.03": 763.2549703648057
+  },
+  "USDY|USDSUI": {
+   "0.03": 981909.0510278763
+  },
+  "USDY|suiETH": {
+   "0.03": 20785.08082805432
+  },
+  "USDY|USDC": {
+   "0.03": 982208.1070029647
+  },
+  "USDY|XAUm": {
+   "0.03": 56822.16629207374
+  },
+  "USDY|suiUSDe": {
+   "0.03": 551185.8587297373
+  },
+  "USDY|xBTC": {
+   "0.03": 209135.54155703753
+  },
+  "USDY|stSUI": {
+   "0.03": 0.0
+  },
+  "USDY|SUI": {
+   "0.03": 976338.7270541653
+  },
+  "USDY|wBTC": {
+   "0.03": 39374.50604785385
+  },
+  "USDY|vSUI": {
+   "0.03": 0.0
+  },
+  "USDY|enzoBTC": {
+   "0.03": 209222.49859386956
+  },
+  "USDY|BUCK": {
+   "0.03": 981487.5768032799
+  },
+  "USDY|WAL": {
+   "0.03": 68166.18245587898
+  },
+  "USDY|wUSDC": {
+   "0.03": 24406.16030645844
+  },
+  "USDY|FDUSD": {
+   "0.03": 30773.448283376685
+  },
+  "suiUSDe|WBTC.lz": {
+   "0.03": 261393.67317958776
+  },
+  "suiUSDe|DEEP": {
+   "0.03": 79844.49543634038
+  },
+  "suiUSDe|haSUI": {
+   "0.03": 0.0
+  },
+  "suiUSDe|MBTC": {
+   "0.03": 0.0
+  },
+  "suiUSDe|LBTC": {
+   "0.03": 39309.9741652435
+  },
+  "suiUSDe|suiUSDT": {
+   "0.03": 264108.5792129104
+  },
+  "suiUSDe|NAVX": {
+   "0.03": 1934.3329675271673
+  },
+  "suiUSDe|SOL": {
+   "0.03": 827.8860938633898
+  },
+  "suiUSDe|USDSUI": {
+   "0.03": 264301.9460934516
+  },
+  "suiUSDe|suiETH": {
+   "0.03": 22266.66396868998
+  },
+  "suiUSDe|USDC": {
+   "0.03": 264331.3565117997
+  },
+  "suiUSDe|XAUm": {
+   "0.03": 64105.85174775263
+  },
+  "suiUSDe|xBTC": {
+   "0.03": 209135.56568079078
+  },
+  "suiUSDe|stSUI": {
+   "0.03": 0.0
+  },
+  "suiUSDe|SUI": {
+   "0.03": 264796.5833150306
+  },
+  "suiUSDe|wBTC": {
+   "0.03": 39391.83304748112
+  },
+  "suiUSDe|vSUI": {
+   "0.03": 0.0
+  },
+  "suiUSDe|USDY": {
+   "0.03": 264344.51581382763
+  },
+  "suiUSDe|enzoBTC": {
+   "0.03": 209222.53808123613
+  },
+  "suiUSDe|BUCK": {
+   "0.03": 264257.8202571732
+  },
+  "suiUSDe|WAL": {
+   "0.03": 68298.27668415166
+  },
+  "suiUSDe|wUSDC": {
+   "0.03": 24455.735159020456
+  },
+  "suiUSDe|FDUSD": {
+   "0.03": 30773.45069174752
+  },
+  "vSUI|WBTC.lz": {
+   "0.05": 92086.74234125415
+  },
+  "vSUI|DEEP": {
+   "0.05": 91318.71147694888
+  },
+  "vSUI|haSUI": {
+   "0.05": 21858.18125382343
+  },
+  "vSUI|MBTC": {
+   "0.05": 0.0
+  },
+  "vSUI|LBTC": {
+   "0.05": 40331.79728322749
+  },
+  "vSUI|suiUSDT": {
+   "0.05": 92118.9846473755
+  },
+  "vSUI|NAVX": {
+   "0.05": 12319.249209322308
+  },
+  "vSUI|SOL": {
+   "0.05": 5131.616743743362
+  },
+  "vSUI|USDSUI": {
+   "0.05": 92133.58935831561
+  },
+  "vSUI|suiETH": {
+   "0.05": 68636.51745286732
+  },
+  "vSUI|USDC": {
+   "0.05": 92139.57436385954
+  },
+  "vSUI|XAUm": {
+   "0.05": 90816.08810974068
+  },
+  "vSUI|suiUSDe": {
+   "0.05": 92052.73648339568
+  },
+  "vSUI|xBTC": {
+   "0.05": 91846.47691634751
+  },
+  "vSUI|stSUI": {
+   "0.05": 88326.42590786223
+  },
+  "vSUI|SUI": {
+   "0.05": 92808.84445543688
+  },
+  "vSUI|wBTC": {
+   "0.05": 40703.562148681725
+  },
+  "vSUI|USDY": {
+   "0.05": 92212.83549832387
+  },
+  "vSUI|enzoBTC": {
+   "0.05": 91887.46988783703
+  },
+  "vSUI|BUCK": {
+   "0.05": 92137.16482230736
+  },
+  "vSUI|WAL": {
+   "0.05": 86327.3003700557
+  },
+  "vSUI|wUSDC": {
+   "0.05": 30702.399547285397
+  },
+  "vSUI|FDUSD": {
+   "0.05": 30894.964477469293
+  },
+  "USDSUI|WBTC.lz": {
+   "0.03": 289799.95722762094
+  },
+  "USDSUI|DEEP": {
+   "0.03": 85104.71305720929
+  },
+  "USDSUI|haSUI": {
+   "0.03": 0.0
+  },
+  "USDSUI|MBTC": {
+   "0.03": 0.0
+  },
+  "USDSUI|LBTC": {
+   "0.03": 39321.57580533909
+  },
+  "USDSUI|suiUSDT": {
+   "0.03": 606164.359010381
+  },
+  "USDSUI|NAVX": {
+   "0.03": 1974.5252919568222
+  },
+  "USDSUI|SOL": {
+   "0.03": 844.7680012628714
+  },
+  "USDSUI|suiETH": {
+   "0.03": 22962.117685897043
+  },
+  "USDSUI|USDC": {
+   "0.03": 1895971.1334644558
+  },
+  "USDSUI|XAUm": {
+   "0.03": 72252.44815376357
+  },
+  "USDSUI|suiUSDe": {
+   "0.03": 551950.470004282
+  },
+  "USDSUI|xBTC": {
+   "0.03": 209135.56001577532
+  },
+  "USDSUI|stSUI": {
+   "0.03": 0.0
+  },
+  "USDSUI|SUI": {
+   "0.03": 1220742.412949673
+  },
+  "USDSUI|wBTC": {
+   "0.03": 39402.99328862611
+  },
+  "USDSUI|vSUI": {
+   "0.03": 0.0
+  },
+  "USDSUI|USDY": {
+   "0.03": 1094964.46053227
+  },
+  "USDSUI|enzoBTC": {
+   "0.03": 209222.51820848256
+  },
+  "USDSUI|BUCK": {
+   "0.03": 1890472.086565979
+  },
+  "USDSUI|WAL": {
+   "0.03": 68436.95279797411
+  },
+  "USDSUI|wUSDC": {
+   "0.03": 24480.11873780177
+  },
+  "USDSUI|FDUSD": {
+   "0.03": 30773.456133842952
+  },
+  "USDC|WBTC.lz": {
+   "0.03": 289807.7948964274
+  },
+  "USDC|DEEP": {
+   "0.03": 85935.11551922618
+  },
+  "USDC|haSUI": {
+   "0.03": 0.0
+  },
+  "USDC|MBTC": {
+   "0.03": 0.0
+  },
+  "USDC|LBTC": {
+   "0.03": 39324.497517852076
+  },
+  "USDC|suiUSDT": {
+   "0.03": 606272.907384224
+  },
+  "USDC|NAVX": {
+   "0.03": 1995.860942846427
+  },
+  "USDC|SOL": {
+   "0.03": 854.0293355914506
+  },
+  "USDC|USDSUI": {
+   "0.03": 1748647.5147054275
+  },
+  "USDC|suiETH": {
+   "0.03": 23194.153894765077
+  },
+  "USDC|XAUm": {
+   "0.03": 73880.21630495923
+  },
+  "USDC|suiUSDe": {
+   "0.03": 551984.3148038603
+  },
+  "USDC|xBTC": {
+   "0.03": 209135.55078507692
+  },
+  "USDC|stSUI": {
+   "0.03": 0.0
+  },
+  "USDC|SUI": {
+   "0.03": 1227374.3254442203
+  },
+  "USDC|wBTC": {
+   "0.03": 39405.817515554234
+  },
+  "USDC|vSUI": {
+   "0.03": 0.0
+  },
+  "USDC|USDY": {
+   "0.03": 1094964.5562721028
+  },
+  "USDC|enzoBTC": {
+   "0.03": 209222.52151450468
+  },
+  "USDC|BUCK": {
+   "0.03": 1943323.2339940893
+  },
+  "USDC|WAL": {
+   "0.03": 68462.35176237991
+  },
+  "USDC|wUSDC": {
+   "0.03": 24487.95940191712
+  },
+  "USDC|FDUSD": {
+   "0.03": 30773.455928648233
+  },
+  "suiUSDT|WBTC.lz": {
+   "0.03": 80546.0773207104
+  },
+  "suiUSDT|DEEP": {
+   "0.03": 75432.22639024076
+  },
+  "suiUSDT|haSUI": {
+   "0.03": 0.0
+  },
+  "suiUSDT|MBTC": {
+   "0.03": 0.0
+  },
+  "suiUSDT|LBTC": {
+   "0.03": 39322.59389447184
+  },
+  "suiUSDT|NAVX": {
+   "0.03": 1988.2952914723699
+  },
+  "suiUSDT|SOL": {
+   "0.03": 850.8321087415344
+  },
+  "suiUSDT|USDSUI": {
+   "0.03": 80663.4903095722
+  },
+  "suiUSDT|suiETH": {
+   "0.03": 23072.66381328891
+  },
+  "suiUSDT|USDC": {
+   "0.03": 80682.96994510191
+  },
+  "suiUSDT|XAUm": {
+   "0.03": 65560.83237232373
+  },
+  "suiUSDT|suiUSDe": {
+   "0.03": 80424.8584550677
+  },
+  "suiUSDT|xBTC": {
+   "0.03": 79761.07247838604
+  },
+  "suiUSDT|stSUI": {
+   "0.03": 0.0
+  },
+  "suiUSDT|SUI": {
+   "0.03": 81375.74825539315
+  },
+  "suiUSDT|wBTC": {
+   "0.03": 39403.97357269423
+  },
+  "suiUSDT|vSUI": {
+   "0.03": 0.0
+  },
+  "suiUSDT|USDY": {
+   "0.03": 80937.9634023819
+  },
+  "suiUSDT|enzoBTC": {
+   "0.03": 79895.21004338155
+  },
+  "suiUSDT|BUCK": {
+   "0.03": 80678.03276086954
+  },
+  "suiUSDT|WAL": {
+   "0.03": 68250.61681308175
+  },
+  "suiUSDT|wUSDC": {
+   "0.03": 24483.76526884932
+  },
+  "suiUSDT|FDUSD": {
+   "0.03": 30773.458287292666
+  }
+ }
+}

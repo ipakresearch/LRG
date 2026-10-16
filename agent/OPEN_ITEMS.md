@@ -25,3 +25,5 @@
 - [x] 20. Stress corrections (borrowing-power split, CF cap on collateral, E-Mode, beta, unpriced/bad debt, 5% grid, LST depeg)
 - [x] 21. LST mint exit (SUI->LST mint venue; redemption not modelled by decision)
 - [x] 22. Rerun (2026-10-16; see inconsistencies.md)
+- [x] 23. Stress materiality floors (dust positions < $100, pair Q >= $1,000, first failing shock in stress_breaks.csv, monotonicity flag, Q* over material debts; see inconsistencies.md)
+- [x] 24. Stress rerunnable from a saved run (run.py --from-run; matrix.json and positions.json.gz saved per run)
