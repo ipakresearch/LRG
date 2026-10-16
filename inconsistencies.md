@@ -589,3 +589,67 @@ The old method's overstatement grows as the budget shrinks. After step 1, Navi b
   - Other differences were under 0.1%, which is refinement noise.
 - **The pairs from 2026-10-09 that improved without the cap:** all match the uncapped result, apart from refinement noise. These include SUI→SOL ($2,229, direct path), SOL→SUI ($2,669) and the SOL↔BTC routes. The stSUI-debt pairs are $0 under both, and MBTC is no longer in the pool set.
 - **SUI → USDC leg in the matrix:** DeepBook `0xe05dafb5` is now first, then Bluefin `0x15dbcac8`, then Cetus `0xb8d7d9e6` and `0x51e883ba`.
+
+# Matrix completeness, borrowable debts, one Q_cap (2026-10-16)
+
+## Chain (reserves)
+
+`borrow_cap_ceiling` is 0 for:
+- **wUSDC:** 2.14M of user debt outstanding, about $2.1M
+- **XAUm:** 0.28 tokens, about $1.2k
+- **enzoBTC:** no debt
+- **MBTC:** no debt
+
+No reserve is isolated. `reserve_field_a/b/c` are 0 and unlabeled, and no other borrowing flag was found.
+
+## Changes (committed in `4717ad9`)
+
+- **Every asset is in the matrix.**
+  - `build()` includes every asset with a coin type. One with no pool has no path, so capacity 0 in every pair. These are listed in `Matrix.no_pool`.
+  - MBTC is back as a row and a column of zeros.
+- **Debt set**, from `run.debt_set`:
+  - It holds the borrowable assets (`borrow_cap > 0` and not isolated), plus any non-borrowable asset that still carries user debt, since a liquidation of that debt must buy it.
+  - Excluded today: MBTC and enzoBTC. Kept, unlike the prompt: wUSDC and XAUm, because of their outstanding debt.
+  - Excluded debts keep their cells in `matrix.csv` but leave row minima and `Q_star` (`Params.excluded_debts`, `Matrix.debt_row`), adequacy, signal 1 and `s_max_debt_bounded`.
+  - A new `config.json` lists both sets with reasons, along with params, treasury factors and the Q_cap formula.
+- **One Q_cap** (`run.pair_demand`), used by both adequacy and signal 1:
+  - `Q_cap(B, A) = β·CF·(1+b_B)·min(LTV_B·S_B·P_B, max(borrowed_A, cap_A·S_A)·P_A)`
+  - Signal 1 is now per pair and debt-bounded; it was previously unbounded.
+  - Documented in the README and the `run.py` docstring. `agent/TASK.md` is still to be updated (step 14).
+
+## Run (`data/navi/2026-10-15`, exit 0)
+
+- **Row minimum (Q\*):** still 0 for every collateral except haSUI ($6,890 → $7,110), vSUI ($6,090 → $6,387) and stSUI ($904 → $1,285). The binding debt is haSUI, as before.
+- **MBTC:** now present, with Q\* 0 against all 22 debts in the set; adequacy red, signal 1 fail.
+- **MBTC and enzoBTC bind no row.**
+- **Row minimum excluding zeros, before → after:**
+  - BUCK 768 → 2,834 and WAL 766 → 2,706: stSUI moved to zero, so it no longer counts.
+  - SOL 804 → 55 (stSUI)
+  - NAVX 1,434 → 809 (DEEP)
+  - Most others within ±30%. The runs are about a day apart, so this mixes in market movement.
+- **Status:** every collateral is red on adequacy and fails signal 1.
+
+# Coverage flag (2026-10-16)
+
+## Changes
+
+- **`matrix._coverage` / `Matrix.coverage`:** each pair is `complete` or `incomplete`, with the failed pool keys. Empty pools never count.
+  - **When a failed pool counts on a leg:** the leg has fewer than 4 readable pools, or the failed pool's on-chain TVL is at least that of the weakest chosen pool.
+  - **Incomplete when** any of these holds:
+    1. a counting failed pool sits on the winning path
+    2. it sits on another kept path that could overtake the winner: capacity scales at most by (1 + T/L) for a failed pool of TVL T on a leg holding L
+    3. an enumerated path went unpriced on a leg with a failed pool
+    4. capacity is 0 and a failed pool holds either coin
+- **`run.py`:**
+  - `matrix.csv` replaces `unverified` with `coverage` and `failed_pools`, each pool listed with its TVL.
+  - In `adequacy.csv`, an incomplete pair gets status `incomplete`, never red or amber, with `status_if_complete` kept.
+  - Per-collateral rank, worst first: red > amber > incomplete > green.
+  - Signal 1 fails only on complete pairs, and is `unresolved` when it fails only on incomplete ones.
+  - Stress: incomplete pairs don't set `breaking_shock`; they're reported as `breaking_shock_incomplete`.
+  - `coverage.json` and `summary.json` carry `coverage_share` (on-chain TVL read ÷ needed) and `pairs_incomplete`.
+- **`tests/test_coverage.py`:** 8 cases (failed pool in a top slot or below the slots, lost route, zero capacity, none failed, overtaking yes and no, signal 1). All 24 tests pass.
+
+## Forced failure (Turbos USDC/SUI, $778k, made to fail; matrix-only build)
+
+- **Without the overtaking test:** 455 of 506 pairs were incomplete. Almost every pair keeps some candidate path through SUI→USDC. One failed pool on a leg holding about $6.7M flagged pairs whose winning path never uses that leg. Too broad to mean anything.
+- **With the overtaking test:** result pending (see the next run).

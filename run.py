@@ -5,7 +5,8 @@ Fetches live pool state, builds the capacity matrix at Navi's current defaults
 (top-20 candidate paths per pair), and writes to data/navi/YYYY-MM-DD/ (UTC):
 
     matrix.csv      every pair: collateral, debt, capacity_usd, path, and
-                    unverified (a leg of the path has a pool that failed to read)
+                    coverage ("complete", or "incomplete" when a failed read
+                    could have changed the pair) and the failed pools with TVL
     summary.json    per collateral: Q* (row minimum) and the binding debt asset,
                     the minimum over nonzero cells and its debt asset, and the
                     debt assets with zero capacity
@@ -387,7 +388,9 @@ def check_health_factors(state: dict, positions: list) -> dict:
     return {"tolerance": HF_TOL, "min_debt_usd": HF_SAMPLE_MIN_USD, "positions": rows}
 
 
-STATUS_RANK = {"red": 3, "amber": 2, "green": 1, "unknown": 0}
+# incomplete outranks green: "green" is never claimed over a pair a failed read
+# could have changed, but a confirmed red or amber still shows
+STATUS_RANK = {"red": 4, "amber": 3, "incomplete": 2, "green": 1, "unknown": 0}
 
 
 def pair_demand(k: float, q_now_B, q_cap_B, pA, la: dict, borrowed_A: float) -> tuple:
@@ -412,7 +415,7 @@ def pair_demand(k: float, q_now_B, q_cap_B, pA, la: dict, borrowed_A: float) -> 
     return min(q_now_B, k * borrowed_A * pA), min(q_cap_B, k * maxdebt * pA)
 
 
-def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
+def adequacy(params, M, live: dict, coverage_of, borrowed: dict) -> tuple:
     """
     Per pair: demand now and at caps against the pair's capacity.
 
@@ -454,10 +457,15 @@ def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
                 status = "amber"
             else:
                 status = "green"
+            cov = coverage_of((B, A))
+            status_if_complete = status
+            if cov["status"] == "incomplete" and status != "unknown":
+                status = "incomplete"          # never red or amber on an incomplete read
             path = M.paths.get((B, A))
             rows.append({"collateral": B, "debt": A, "Q_now": q_now, "Q_cap": q_cap,
                          "Q_star": qs, "Q_star_saturated": is_saturated(qs),
-                         "status": status, "unverified": unverified(path),
+                         "status": status, "status_if_complete": status_if_complete,
+                         "coverage": cov["status"], "failed_pools": cov["failed_pools"],
                          "debt_price_missing": pA is None,
                          "path": " → ".join(path) if path else ""})
         pairs += rows
@@ -475,9 +483,10 @@ def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
             "binding_debt": worst["debt"],
             "binding_Q_now": worst["Q_now"], "binding_Q_cap": worst["Q_cap"],
             "binding_Q_star": worst["Q_star"],
-            "unverified": worst["unverified"],
+            "coverage": worst["coverage"],
             "pairs": {s: sum(r["status"] == s for r in rows)
-                      for s in ("red", "amber", "green", "unknown")},
+                      for s in ("red", "amber", "incomplete", "green", "unknown")},
+            "incomplete_pairs": sorted(r["debt"] for r in rows if r["coverage"] == "incomplete"),
             "s_max": M.s_max(B, a.ltv, a.lb),
             "s_max_debt_bounded": s_max_debt_bounded(params, M, borrowed, B),
         }
@@ -509,8 +518,9 @@ def s_max_debt_bounded(params, M, borrowed: dict, B: str):
 def signal_1(pairs: list) -> dict:
     """
     Per collateral: each pair's debt-bounded Q_cap (pair_demand, as in
-    adequacy) against its Q*, over the debt set. Fails if any pair's Q* is
-    below its Q_cap; the binding pair is the one with the smallest Q*.
+    adequacy) against its Q*, over the debt set. Fails if a pair with
+    complete coverage has Q* below its Q_cap; "unresolved" if only pairs with
+    incomplete coverage do. The binding pair is the one with the smallest Q*.
     """
     out = {}
     for B in sorted({r["collateral"] for r in pairs}):
@@ -518,12 +528,16 @@ def signal_1(pairs: list) -> dict:
         if any(r["Q_cap"] is None for r in rows):
             out[B] = {"status": "unknown"}
             continue
-        failing = sorted(r["debt"] for r in rows if r["Q_cap"] > r["Q_star"])
+        failing = sorted(r["debt"] for r in rows if r["Q_cap"] > r["Q_star"]
+                         and r["coverage"] == "complete")
+        failing_inc = sorted(r["debt"] for r in rows if r["Q_cap"] > r["Q_star"]
+                             and r["coverage"] == "incomplete")
         bind = min(rows, key=lambda r: r["Q_star"])
-        out[B] = {"status": "fail" if failing else "pass",
+        status = "fail" if failing else ("unresolved" if failing_inc else "pass")
+        out[B] = {"status": status,
                   "binding_debt": bind["debt"], "binding_Q_star": bind["Q_star"],
                   "binding_Q_cap": bind["Q_cap"],
-                  "failing_debts": failing}
+                  "failing_debts": failing, "failing_debts_incomplete": failing_inc}
     return out
 
 
@@ -568,7 +582,7 @@ def price_groups(state: dict, sym: dict) -> tuple:
     return groups, how
 
 
-def stress(params, M, pos: dict, unverified) -> tuple:
+def stress(params, M, pos: dict, coverage_of) -> tuple:
     """
     stress.csv rows and per-collateral breaking shock. See the module docstring.
     Q uses the reserve's normal bonus for every position, as specified; the
@@ -623,15 +637,22 @@ def stress(params, M, pos: dict, unverified) -> tuple:
                          "no_capacity_data": qs is None,
                          "n_positions": x["n"], "D_protected_usd": x["D_protected"],
                          "D_emode_usd": x["D_emode"],
-                         "unverified": unverified(path) if qs is not None else None,
+                         "coverage": coverage_of((B, A))["status"] if qs is not None else None,
                          "path": " → ".join(path) if path else ""})
 
     per_coll = {}
     for B in sorted({b for b, _ in M.cells}):
-        failing = [r for r in rows if r["collateral"] == B and r["fails"]]
+        # an incomplete pair never sets the breaking shock; its own lowest
+        # failing shock is reported apart
+        fail_inc = [r for r in rows if r["collateral"] == B and r["fails"]
+                    and r["coverage"] == "incomplete"]
+        inc = {"breaking_shock_incomplete": min((r["shock"] for r in fail_inc), default=None),
+               "incomplete_debts": sorted({r["debt"] for r in fail_inc})}
+        failing = [r for r in rows if r["collateral"] == B and r["fails"]
+                   and r["coverage"] != "incomplete"]
         if not failing:
             per_coll[B] = {"breaking_shock": None, "scenario": None, "binding_debt": None,
-                           "note": f"no pair fails up to {max(SHOCKS):.0%}"}
+                           "note": f"no complete pair fails up to {max(SHOCKS):.0%}", **inc}
             continue
         s_min = min(r["shock"] for r in failing)
         worst = max((r for r in failing if r["shock"] == s_min),
@@ -640,8 +661,7 @@ def stress(params, M, pos: dict, unverified) -> tuple:
                        "binding_debt": worst["debt"], "Q": worst["Q"],
                        "Q_star": worst["Q_star"], "D_usd": worst["D_usd"],
                        "n_positions": worst["n_positions"],
-                       "D_emode_usd": worst["D_emode_usd"],
-                       "unverified": worst["unverified"]}
+                       "D_emode_usd": worst["D_emode_usd"], **inc}
     return rows, per_coll, how, len(scenarios)
 
 
@@ -657,38 +677,42 @@ def write(params, M, book, live, pos, out_dir: str):
                        "pair": (f"{r['symbol_a']}/{r['symbol_b']}" if r else None),
                        "kind": failure_kind(reason), "reason": reason})
 
-    # token pairs with a failed pool, named as build() names path tokens:
-    # Navi's symbol where the coin type is a Navi asset, else the CSV symbol
-    navi_name = {norm_type(v): k for k, v in navi.COIN_TYPES.items()}
-    failed_legs = set()
-    for key in book.failed:
-        r = meta.get(key)
-        if r:
-            a = navi_name.get(norm_type(r["coin_type_a"]), r["symbol_a"])
-            b = navi_name.get(norm_type(r["coin_type_b"]), r["symbol_b"])
-            failed_legs.add(frozenset((a, b)))
+    def coverage_of(pair) -> dict:
+        """Matrix.coverage for a pair, with failed pools named and sized."""
+        c = M.coverage.get(pair, {"status": "complete", "failed": []})
+        return {"status": c["status"],
+                "failed_pools": [{"pool_id": k[0], "venue": meta.get(k, {}).get("venue"),
+                                  "tvl_usd": float(meta.get(k, {}).get("tvl_usd") or 0)}
+                                 for k in c["failed"]]}
 
-    def unverified(path) -> bool:
-        return bool(path) and any(frozenset(path[i:i + 2]) in failed_legs
-                                  for i in range(len(path) - 1))
+    # share of the needed pool TVL (on-chain, from the CSV) that was read;
+    # empty pools are zero depth and left out of both sides
+    tvl = lambda k: float(meta.get(k, {}).get("tvl_usd") or 0)
+    read_tvl = sum(tvl(k) for k in book.pools)
+    need_tvl = read_tvl + sum(tvl(k) for k in book.failed)
+    coverage_share = read_tvl / need_tvl if need_tvl else None
+    n_incomplete = sum(1 for c in M.coverage.values() if c["status"] == "incomplete")
 
     with open(os.path.join(out_dir, "matrix.csv"), "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["collateral", "debt", "capacity_usd", "saturated", "path", "unverified"])
+        w.writerow(["collateral", "debt", "capacity_usd", "saturated", "path",
+                    "coverage", "failed_pools"])
         for (B, D), cap in sorted(M.cells.items()):
             path = M.paths.get((B, D))
+            cov = coverage_of((B, D))
             w.writerow([B, D, cap, str(is_saturated(cap)).lower(),
-                        " → ".join(path) if path else "",
-                        str(unverified(path)).lower()])
+                        " → ".join(path) if path else "", cov["status"],
+                        ";".join(f'{f["pool_id"]}({f["tvl_usd"]:.0f})'
+                                 for f in cov["failed_pools"])])
 
     borrowed = pos["borrowed"]
-    pairs, per_coll = adequacy(params, M, live, unverified, borrowed)
+    pairs, per_coll = adequacy(params, M, live, coverage_of, borrowed)
     sig1 = signal_1(pairs)
-    s_rows, s_coll, groups_how, n_scen = stress(params, M, pos, unverified)
+    s_rows, s_coll, groups_how, n_scen = stress(params, M, pos, coverage_of)
     s_cols = ["scenario", "shock", "collateral", "debt", "D_usd", "Q", "Q_star",
               "Q_star_saturated", "fails",
               "no_capacity_data", "n_positions", "D_protected_usd", "D_emode_usd",
-              "unverified", "path"]
+              "coverage", "path"]
     with open(os.path.join(out_dir, "stress.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=s_cols)
         w.writeheader()
@@ -697,13 +721,16 @@ def write(params, M, book, live, pos, out_dir: str):
             w.writerow({k: (str(v).lower() if isinstance(v, bool) else
                             "" if v is None else v) for k, v in r.items()})
     cols = ["collateral", "debt", "Q_now", "Q_cap", "Q_star", "Q_star_saturated",
-            "status", "unverified", "debt_price_missing", "path"]
+            "status", "status_if_complete", "coverage", "failed_pools",
+            "debt_price_missing", "path"]
     with open(os.path.join(out_dir, "adequacy.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=cols)
         w.writeheader()
         for r in pairs:
+            row = dict(r, failed_pools=";".join(f'{f["pool_id"]}({f["tvl_usd"]:.0f})'
+                                                for f in r["failed_pools"]))
             w.writerow({k: (str(v).lower() if isinstance(v, bool) else
-                            "" if v is None else v) for k, v in r.items()})
+                            "" if v is None else v) for k, v in row.items()})
 
     collaterals = {}
     for B in sorted({b for b, _ in M.cells}):
@@ -737,6 +764,8 @@ def write(params, M, book, live, pos, out_dir: str):
                  "debt_set": live["debt_set"],
                  "no_pool": M.no_pool,
                  "anomalies": anomalies}
+    run["coverage_share"] = coverage_share
+    run["pairs_incomplete"] = n_incomplete
     with open(os.path.join(out_dir, "summary.json"), "w") as fh:
         json.dump({"run": run, "navi_live": navi_live, "collaterals": collaterals},
                   fh, indent=1)
@@ -760,8 +789,10 @@ def write(params, M, book, live, pos, out_dir: str):
     coverage = {"pools_needed": len(book.pools) + len(book.failed) + len(book.empty),
                 "pools_read": len(book.pools), "pools_failed": len(book.failed),
                 "pools_empty": len(book.empty),
+                "coverage_share": coverage_share,
+                "pairs_incomplete": n_incomplete,
                 "failed": failed,
-                "empty": empty,     # zero depth; never marks a route unverified
+                "empty": empty,     # zero depth; never makes a pair incomplete
                 "untracked_navi_reserves": live["untracked"],
                 "prices": {
                     # keyed by normalized coin type; label is for display only

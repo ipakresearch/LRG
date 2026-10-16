@@ -146,6 +146,8 @@ class Matrix:
     skipped_pools: List[str] = field(default_factory=list)      # pools not holding a leg's coin
     saturated: List[Tuple[str, str]] = field(default_factory=list)  # capacity >= GRID_HI: "at least"
     no_pool: List[str] = field(default_factory=list)   # assets with no pool: every pair is 0
+    # (B, A) -> {"status": "complete" | "incomplete", "failed": [pool keys]}
+    coverage: Dict[Tuple[str, str], dict] = field(default_factory=dict)
 
     def price(self, symbol: str) -> Optional[float]:
         """USD price of the asset named `symbol`, looked up by its coin type."""
@@ -363,6 +365,8 @@ class Matrix:
             "pools_empty": self.pools_empty,
             "saturated": [f"{b}|{a}" for b, a in self.saturated],
             "no_pool": self.no_pool,
+            "coverage": {f"{b}|{a}": {"status": v["status"], "failed": [list(k) for k in v["failed"]]}
+                         for (b, a), v in self.coverage.items()},
         }
         with open(path, "w") as fh:
             json.dump(d, fh, indent=1)
@@ -370,6 +374,83 @@ class Matrix:
 
 
 REFINE_WITHIN = 0.10     # refine every path within this share of the grid best
+
+
+def _coverage(cells, cands, kept, curve, leg_ids, adj, key_of, tvl_of, failed,
+              n_slots, name, budgets=None, kept_curves=None, winners=None
+              ) -> Dict[Tuple[str, str], dict]:
+    """
+    Per pair: whether a failed (or truncated) read could have changed its
+    capacity. Empty pools are zero depth and never count. A failed pool
+    counts on a leg if it could have been one of the leg's n_slots pools:
+    the leg ended up with fewer readable pools than slots, or its listed
+    (on-chain) TVL is at least that of the weakest pool chosen. Ranking by
+    output is not possible for a pool that did not read.
+
+    A pair is incomplete when
+      1. a leg of its winning path has a counting failed pool; or a leg of
+         another kept path does and that path could overtake the winner:
+         capacity at a given cost scales at most linearly with a leg's depth
+         (exactly so for constant-product pools), so a failed pool of TVL T
+         on a leg holding L lifts the path by at most (1 + T/L);
+      2. one of its enumerated paths went unpriced on a leg that has a failed
+         pool (a better path may have been lost); or
+      3. its capacity is 0 and any failed pool holds either of its coins.
+    budgets, kept_curves and winners enable the overtaking test in 1;
+    without them every kept path counts.
+    """
+    leg_cache: Dict[Tuple[str, str, bool], List[tuple]] = {}
+
+    def leg_failed(x, y, counting=True):
+        k = (x, y, counting)
+        if k not in leg_cache:
+            on_leg = [key_of(r) for r in adj[x][y] if key_of(r) in failed]
+            if counting and on_leg:
+                chosen = leg_ids(x, y)
+                if len(chosen) >= n_slots:
+                    floor = min(tvl_of.get(c, 0.0) for c in chosen)
+                    on_leg = [f for f in on_leg if tvl_of.get(f, 0.0) >= floor]
+            leg_cache[k] = on_leg
+        return leg_cache[k]
+
+    def lift(x, y, fails):
+        held = sum(tvl_of.get(c, 0.0) for c in leg_ids(x, y))
+        add = sum(tvl_of.get(f, 0.0) for f in fails)
+        return float("inf") if held <= 0 else 1 + add / held
+
+    out = {}
+    for (B, D), cap in cells.items():
+        bad = set()
+        paths_k = kept.get((B, D), [])
+        win = (winners or {}).get((B, D))
+        for j, path in enumerate(paths_k):
+            legs = [(path[i], path[i + 1]) for i in range(len(path) - 1)]
+            hits = {lg: leg_failed(*lg) for lg in legs}
+            if not any(hits.values()):
+                continue
+            if budgets is None or win is None or j == win:
+                for f in hits.values():
+                    bad.update(f)
+                continue
+            # a losing path counts only if the missing depth could lift it
+            # past the winner
+            factor = 1.0
+            for lg, f in hits.items():
+                if f:
+                    factor *= lift(*lg, f)
+            mine = grid_capacity(kept_curves[(B, D)][j], budgets[(B, D)])
+            if mine * factor >= (cap or 0.0):
+                for f in hits.values():
+                    bad.update(f)
+        for path in cands.get((B, D), []):
+            for i in range(len(path) - 1):
+                if curve(path[i], path[i + 1]) is None:
+                    bad.update(leg_failed(path[i], path[i + 1], counting=False))
+        if not cap and name.get(B) and name.get(D):
+            bad.update(f for f in failed if name[B] in f[1:] or name[D] in f[1:])
+        out[(B, D)] = {"status": "incomplete" if bad else "complete",
+                       "failed": sorted(bad)}
+    return out
 
 
 def _best_route(cands: Sequence[list], tau: float, refine: bool = True
@@ -435,6 +516,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
     adj = _graph.build_adjacency(rows)
     key_of = lambda r: pool_key(r["pool_id"], r["coin_type_a"], r["coin_type_b"])
     vol_of = {key_of(r): float(r["volume_24h"] or 0) for r in rows}
+    tvl_of = {key_of(r): float(r["tvl_usd"] or 0) for r in rows}
     name = {s: norm_type(t) for s, t in tokens.items()}
     tname = {v: k for k, v in name.items()}
     for r in rows:
@@ -514,6 +596,8 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
     cells, paths, curves, unreachable = {}, {}, {}, []
     candidates: Dict[Tuple[str, str], List[list]] = {}
     candidate_paths: Dict[Tuple[str, str], List[list]] = {}
+    budgets: Dict[Tuple[str, str], float] = {}
+    winners: Dict[Tuple[str, str], Optional[int]] = {}
     dead_leg: Dict[Tuple[str, str], Optional[str]] = {}
 
     def leg_volume(x, y):
@@ -528,6 +612,7 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         candidates[(B, D)] = [cs for _, cs in priced]
         candidate_paths[(B, D)] = [path for path, _ in priced]
         best_cap, i = _best_route(candidates[(B, D)], tau)
+        budgets[(B, D)], winners[(B, D)] = tau, i
         best_path, best_curves = priced[i] if i is not None else (None, None)
         if best_cap is None:
             # No priced path. That is worse than a thin one, so it enters the
@@ -547,8 +632,14 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         if verbose and len(cells) % 100 == 0:
             print(f"  {len(cells)} cells…", flush=True)
 
+    coverage = _coverage(cells, cands, candidate_paths, curve, leg_ids, adj, key_of,
+                         tvl_of, set(book.failed), p.max_pools_per_leg, name,
+                         budgets=budgets, kept_curves=candidates, winners=winners)
+
     if verbose:
-        print(f"\n{len(cells)} cells, {len(unreachable)} with no route")
+        n_inc = sum(1 for c in coverage.values() if c["status"] == "incomplete")
+        print(f"\n{len(cells)} cells, {len(unreachable)} with no route, "
+              f"{n_inc} with incomplete coverage")
 
     if verbose and dead_leg:
         n = sum(1 for v in dead_leg.values() if v)
@@ -562,4 +653,4 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
                   derived_prices=derived, price_source=price_source,
                   tokens=name, skipped_pools=sorted(set(skipped)),
                   saturated=sorted(k for k, v in cells.items() if is_saturated(v)),
-                  no_pool=no_pool)
+                  no_pool=no_pool, coverage=coverage)

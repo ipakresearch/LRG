@@ -20,8 +20,8 @@
 - [x] 15. Read robustness (strict gql, truncation checks + re-read, reserve cap, leg slots; tests/)
 - [x] 16. Curve interpolation (cost interpolation + exact refinement; saturation flagged)
 - [x] 17. Path ranking (paths by route cost at $1k/$10k/$250k; pools per leg by output at $10k)
-- [ ] 18. Matrix completeness and borrowable debts (+ close factor applies to collateral value, see inconsistencies.md)
-- [ ] 19. Coverage flag
+- [x] 18. Matrix completeness and borrowable debts (open: close factor applies to collateral value, see inconsistencies.md)
+- [x] 19. Coverage flag (complete/incomplete per pair; overtaking test; coverage share)
 - [ ] 20. Stress corrections
 - [ ] 21. LST mint exit
 - [ ] 22. Rerun

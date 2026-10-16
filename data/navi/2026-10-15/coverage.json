@@ -1,17 +1,9 @@
 {
- "pools_needed": 130,
- "pools_read": 129,
- "pools_failed": 1,
+ "pools_needed": 146,
+ "pools_read": 146,
+ "pools_failed": 0,
  "pools_empty": 0,
- "failed": [
-  {
-   "pool_id": "0x51e883ba7c0b566a26cbc8a94cd33eb0abd418a77cc1e60ad22fd9b1f29cd2ab",
-   "venue": "cetus",
-   "pair": "USDC/SUI",
-   "kind": "truncated",
-   "reason": "truncated: read 700 of 702 fields in tick table 0x7f07284d6d\u2026"
-  }
- ],
+ "failed": [],
  "empty": [],
  "untracked_navi_reserves": [
   {
@@ -86,261 +78,261 @@
    "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI": {
     "label": "SUI",
     "price_source": "oracle",
-    "price": 1.03483197,
-    "oracle_age_s": 514.4614911079407,
+    "price": 1.03405997,
+    "oracle_age_s": 47.50421500205994,
     "navi_reserve": 0
    },
    "0x0041f9f9344cac094454cd574e333c4fdb132d7bcc9379bcd4aab485b2a63942::wbtc::WBTC": {
     "label": "WBTC.lz",
     "price_source": "oracle",
-    "price": 82238.44734973,
-    "oracle_age_s": 701.2364909648895,
+    "price": 82206.45663883,
+    "oracle_age_s": 1609.9402151107788,
     "navi_reserve": 32
    },
    "0x027792d9fed7f9844eb4839566001bb6f6cb4804f66aa2da6fe1ee242d896881::coin::COIN": {
     "label": "WBTC",
     "price_source": "oracle",
-    "price": 82021.16268465,
-    "oracle_age_s": 2318.950490951538,
+    "price": 82213.11541291,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 8
    },
    "0x06864a6f921804860930db6ddbe2e16acdf8504495ea7481637a1c8b9a8fe54b::cetus::CETUS": {
     "label": "CETUS",
     "price_source": "oracle",
-    "price": 0.02409582,
-    "oracle_age_s": 2318.950490951538,
+    "price": 0.02422706,
+    "oracle_age_s": 502.60121512413025,
     "navi_reserve": 4
    },
    "0x2053d08c1e2bd02791056171aab0fd12bd7cd7efad2ab8f6b9c8902f14df2ff2::ausd::AUSD": {
     "label": "AUSD",
     "price_source": "oracle",
-    "price": 0.999921,
-    "oracle_age_s": 2318.950490951538,
+    "price": 0.999878,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 9
    },
    "0x35169bc93e1fddfcf3a82a9eae726d349689ed59e4b065369af8789fe59f8608::mmt::MMT": {
     "label": "MMT",
     "price_source": "derived",
-    "price": 0.14753957748724028
+    "price": 0.14505018800474231
    },
    "0x356a26eb9e012a68958082340d4c4116e7f55615cf27affcff209cf0ae544f59::wal::WAL": {
     "label": "WAL",
     "price_source": "oracle",
-    "price": 0.05093996,
-    "oracle_age_s": 514.4614911079407,
+    "price": 0.05132,
+    "oracle_age_s": 47.50421500205994,
     "navi_reserve": 24
    },
    "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT": {
     "label": "suiUSDT",
     "price_source": "oracle",
-    "price": 0.998921,
-    "oracle_age_s": 2318.950490951538,
+    "price": 0.998895,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 19
    },
    "0x3a304c7feba2d819ea57c3542d68439ca2c386ba02159c740f7b406e592c62ea::haedal::HAEDAL": {
     "label": "HAEDAL",
     "price_source": "oracle",
-    "price": 0.01848325,
-    "oracle_age_s": 1482.6984910964966,
+    "price": 0.01845999,
+    "oracle_age_s": 502.60121512413025,
     "navi_reserve": 25
    },
    "0x3e8e9423d80e1774a7ca128fccd8bf5f1f7753be658c5e645929037f7c819040::lbtc::LBTC": {
     "label": "LBTC",
     "price_source": "oracle",
-    "price": 82342.67450077,
-    "oracle_age_s": 701.2364909648895,
+    "price": 82328.82663961,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 23
    },
    "0x41d587e5336f1c86cad50d38a7136db99333bb9bda91cea4ba69115defeb1402::sui_usde::SUI_USDE": {
     "label": "suiUSDe",
     "price_source": "oracle",
-    "price": 0.99985,
-    "oracle_age_s": 304.3504910469055,
+    "price": 0.999855,
+    "oracle_age_s": 1788.4592151641846,
     "navi_reserve": 33
    },
    "0x44f838219cf67b058f3b37907b655f226153c18e33dfcd0da559a844fea9b1c1::usdsui::USDSUI": {
     "label": "USDSUI",
     "price_source": "oracle",
-    "price": 0.999875,
-    "oracle_age_s": 687.4254910945892,
+    "price": 0.99985,
+    "oracle_age_s": 113.83921504020691,
     "navi_reserve": 34
    },
    "0x5145494a5f5100e645e4b0aa950fa6b68f614e8c59e17bc5ded3495123a79178::ns::NS": {
     "label": "NS",
     "price_source": "oracle",
-    "price": 0.013083,
-    "oracle_age_s": 1222.0174911022186,
+    "price": 0.012967,
+    "oracle_age_s": 2829.498215198517,
     "navi_reserve": 13
    },
    "0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT": {
     "label": "vSUI",
     "price_source": "oracle",
-    "price": 1.03503963,
-    "oracle_age_s": 701.2364909648895,
+    "price": 1.03405997,
+    "oracle_age_s": 47.50421500205994,
     "navi_reserve": 5
    },
    "0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN": {
     "label": "wUSDC",
     "price_source": "oracle",
-    "price": 0.999874,
-    "oracle_age_s": 1222.0174911022186,
+    "price": 0.999855,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 1
    },
    "0x5f496ed5d9d045c5b788dc1bb85f54100f2ede11e46f6a232c29daada4c5bdb6::coin::COIN": {
     "label": "COIN",
     "price_source": "oracle",
-    "price": 82021.16268465,
-    "oracle_age_s": 2318.950490951538,
+    "price": 82213.11541291,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 14
    },
    "0x7016aae72cfc67f2fadf55769c0a7dd54291a583b63051a5ed71081cce836ac6::sca::SCA": {
     "label": "SCA",
     "price_source": "derived",
-    "price": 0.006084482684435007
+    "price": 0.006084323561881027
    },
    "0x7262fb2f7a3a14c888c438a3cd9b912469a58cf60f367352c46584262e8299aa::ika::IKA": {
     "label": "IKA",
     "price_source": "oracle",
-    "price": 0.00167219,
-    "oracle_age_s": 1896.7394909858704,
+    "price": 0.0016645,
+    "oracle_age_s": 47.50421500205994,
     "navi_reserve": 27
    },
    "0x876a4b7bce8aeaef60464c11f4026903e9afacab79b9b142686158aa86560b50::xbtc::XBTC": {
     "label": "xBTC",
     "price_source": "oracle",
-    "price": 82021.16268465,
-    "oracle_age_s": 2318.950490951538,
+    "price": 82244.79192577,
+    "oracle_age_s": 502.60121512413025,
     "navi_reserve": 26
    },
    "0x8f2b5eb696ed88b71fea398d330bccfa52f6e2a5a8e1ac6180fcb25c6de42ebc::coin::COIN": {
     "label": "enzoBTC",
     "price_source": "oracle",
-    "price": 82021.16268465,
-    "oracle_age_s": 2318.950490951538,
+    "price": 82213.11541291,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 28
    },
    "0x960b531667636f39e85867775f52f6b1f220a058c4de786905bdf761e06a56bb::usdy::USDY": {
     "label": "USDY",
     "price_source": "oracle",
     "price": 1.1495,
-    "oracle_age_s": 701.2364909648895,
+    "oracle_age_s": 502.60121512413025,
     "navi_reserve": 12
    },
    "0x9d297676e7a4b771ab023291377b2adfaa4938fb9080b8d12430e4b108b836a9::xaum::XAUM": {
     "label": "XAUm",
     "price_source": "oracle",
-    "price": 4175.938,
-    "oracle_age_s": 2318.950490951538,
+    "price": 4191.437,
+    "oracle_age_s": 1304.490215063095,
     "navi_reserve": 31
    },
    "0xa03ab7eee2c8e97111977b77374eaf6324ba617e7027382228350db08469189e::ybtc::YBTC": {
     "label": "YBTC",
     "price_source": "oracle",
-    "price": 82021.16268465,
-    "oracle_age_s": 2318.950490951538,
+    "price": 82213.11541291,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 30
    },
    "0xa99b8952d4f7d947ea77fe0ecdcc9e5fc0bcab2841d6e2a5aa00c3044e5544b5::navx::NAVX": {
     "label": "NAVX",
     "price_source": "oracle",
-    "price": 0.0109516,
-    "oracle_age_s": 1482.6984910964966,
+    "price": 0.011114,
+    "oracle_age_s": 47.50421500205994,
     "navi_reserve": 7
    },
    "0xaafb102dd0902f5055cadecd687fb5b71ca82ef0e0285d90afde828ec58ca96b::btc::BTC": {
     "label": "wBTC",
     "price_source": "oracle",
-    "price": 82021.16268465,
-    "oracle_age_s": 2318.950490951538,
+    "price": 82218.84455171,
+    "oracle_age_s": 1218.6002151966095,
     "navi_reserve": 21
    },
    "0xaf8cd5edc19c4512f4259f0bee101a40d41ebed738ade5874359610ef8eeced5::coin::COIN": {
-    "label": "COIN",
+    "label": "WETH",
     "price_source": "oracle",
-    "price": 2435.28425467,
-    "oracle_age_s": 2318.950490951538,
+    "price": 2454.98317743,
+    "oracle_age_s": 113.83921504020691,
     "navi_reserve": 3
    },
    "0xb7844e289a8410e50fb3ca48d69eb9cf29e27d223ef90353fe1bd8e27ff8f3f8::coin::COIN": {
     "label": "SOL",
     "price_source": "oracle",
-    "price": 105.26172437,
-    "oracle_age_s": 2318.950490951538,
+    "price": 105.88724279,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 22
    },
    "0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI": {
     "label": "haSUI",
     "price_source": "oracle",
-    "price": 1.03503963,
-    "oracle_age_s": 701.2364909648895,
+    "price": 1.03405997,
+    "oracle_age_s": 49.944215059280396,
     "navi_reserve": 6
    },
    "0xc060006111016b8a020ad5b33834984a437aaa7d3c74c18e09a95d48aceab08c::coin::COIN": {
     "label": "USDT",
     "price_source": "oracle",
-    "price": 0.998873,
-    "oracle_age_s": 1795.6914908885956,
+    "price": 0.998846,
+    "oracle_age_s": 502.60121512413025,
     "navi_reserve": 2
    },
    "0xce7ff77a83ea0cb6fd39bd8748e2ec89a3f41e8efdc3f4eb123e0ca37b184db2::buck::BUCK": {
     "label": "BUCK",
     "price_source": "oracle",
-    "price": 0.99834524,
-    "oracle_age_s": 701.2364909648895,
+    "price": 0.99817282,
+    "oracle_age_s": 1218.6002151966095,
     "navi_reserve": 18
    },
    "0xd0e89b2af5e4910726fbcd8b8dd37bb79b29e5f83f7491bca830e94f7f226d29::eth::ETH": {
     "label": "suiETH",
     "price_source": "oracle",
-    "price": 2435.28425467,
-    "oracle_age_s": 2318.950490951538,
+    "price": 2456.72253619,
+    "oracle_age_s": 1218.6002151966095,
     "navi_reserve": 11
    },
    "0xd1a91b46bd6d966b62686263609074ad16cfdffc63c31a4775870a2d54d20c6b::mbtc::MBTC": {
     "label": "MBTC",
     "price_source": "oracle",
-    "price": 82021.16268465,
-    "oracle_age_s": 2318.950490951538,
+    "price": 82213.11541291,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 29
    },
    "0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI": {
     "label": "stSUI",
     "price_source": "oracle",
-    "price": 1.03329601,
-    "oracle_age_s": 964.522490978241,
+    "price": 1.03381667,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 20
    },
    "0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC": {
     "label": "USDC",
     "price_source": "oracle",
     "price": 0.99985,
-    "oracle_age_s": 304.3504910469055,
+    "oracle_age_s": 49.944215059280396,
     "navi_reserve": 10
    },
    "0xdeeb7a4662eec9f2f3def03fb937a663dddaa2e215b8078a284d026b7946c270::deep::DEEP": {
     "label": "DEEP",
     "price_source": "oracle",
-    "price": 0.023296,
-    "oracle_age_s": 1054.1134910583496,
+    "price": 0.023098,
+    "oracle_age_s": 49.944215059280396,
     "navi_reserve": 15
    },
    "0xe14726c336e81b32328e92afc37345d159f5b550b09fa92bd43640cfdd0a0cfd::usdb::USDB": {
     "label": "USDB",
     "price_source": "derived",
-    "price": 0.9983477265588125
+    "price": 0.9981751389307006
    },
    "0xe1b45a0e641b9955a20aa0ad1c1f4ad86aad8afb07296d4085e349a50e90bdca::blue::BLUE": {
     "label": "BLUE",
     "price_source": "oracle",
-    "price": 0.0097,
-    "oracle_age_s": 1482.6984910964966,
+    "price": 0.00959219,
+    "oracle_age_s": 49.944215059280396,
     "navi_reserve": 17
    },
    "0xf16e6b723f242ec745dfd7634ad072c42d5c1d9ac9d62a39c381303eaa57693a::fdusd::FDUSD": {
     "label": "FDUSD",
     "price_source": "oracle",
-    "price": 0.997976,
-    "oracle_age_s": 2318.950490951538,
+    "price": 0.997946,
+    "oracle_age_s": 1324.0652151107788,
     "navi_reserve": 16
    }
   },
@@ -378,19 +370,19 @@
   "skipped_pools": []
  },
  "positions": {
-  "borrowers": 77167,
-  "positions": 9853,
-  "dust_borrowers": 67314,
-  "dust_debt_usd": 4025.6907843651156,
-  "debt_usd": 68567505.60892071,
+  "borrowers": 77168,
+  "positions": 9851,
+  "dust_borrowers": 67317,
+  "dust_debt_usd": 4025.5001893558374,
+  "debt_usd": 68230044.05016641,
   "min_debt_usd": 1.0,
   "requests": {
    "borrow_pages": 5362,
    "lookup_batches": 1462
   },
-  "seconds": 1557.6,
-  "checkpoint_start": 334387703,
-  "checkpoint_end": 334393302,
+  "seconds": 30157.9,
+  "checkpoint_start": 334432658,
+  "checkpoint_end": 334558814,
   "emode_positions": 62,
   "protected_positions": 5,
   "hf_check": {
@@ -398,39 +390,39 @@
    "min_debt_usd": 1000.0,
    "positions": [
     {
-     "user": "0x88bc2c273a52129ca9f9aa270b9cfe969dbd562abe130b74fe5bef6da1987850",
-     "emode": 1,
-     "navi_hf": 1.0400450147617368,
-     "computed_hf": 1.0400450147618336,
-     "rel_diff": 9.308390153621583e-14
+     "user": "0x624922c713e8c2ed13005fb8b871df3c83e7972651ea82e0873e2a68e523dfcf",
+     "emode": 0,
+     "navi_hf": 1.814642371171087,
+     "computed_hf": 1.8146424378785564,
+     "rel_diff": 3.676066997327013e-08
     },
     {
-     "user": "0x4358a951e855e353219400158f9f98a02f49db8142324b0325f41a4879ce3f8d",
+     "user": "0x1f65774991d8bbcb57e7b3e34aeb47623e939c064030d8b7657d107ec0d19932",
      "emode": null,
-     "navi_hf": 2.67546438681803,
-     "computed_hf": 2.6754643868183496,
-     "rel_diff": 1.1950980647225945e-13
+     "navi_hf": 2.6063599778320476,
+     "computed_hf": 2.6063602191799067,
+     "rel_diff": 9.259958757962701e-08
     },
     {
-     "user": "0x15806544cb4191e825db382d464d45eaf26e90e311451a5dbee8d31462a5da3b",
+     "user": "0xe65f11ff8ea02b5db1c1f0983e33e6bfd0a75207c4e4a7d0ab5091ebbe27fb67",
      "emode": null,
-     "navi_hf": 2.5854793818507256,
-     "computed_hf": 2.5854793803848817,
-     "rel_diff": 5.669524580250512e-10
+     "navi_hf": 1.4577820381973472,
+     "computed_hf": 1.4577820566161763,
+     "rel_diff": 1.2634830616612509e-08
     },
     {
-     "user": "0xbaee359f8e0c392c0aa3aa940631f7fd2842079c0314987ae0999b971e77220f",
+     "user": "0x5264a3e826d70e285493a33c4741df3fb68e5d39e2d8080522ccdf1be0fbc0b4",
      "emode": null,
-     "navi_hf": 0.9288677458929379,
-     "computed_hf": 0.9288677458930535,
-     "rel_diff": 1.2454436024660425e-13
+     "navi_hf": 9.114763532697257,
+     "computed_hf": 9.114763665398604,
+     "rel_diff": 1.4558945640657915e-08
     },
     {
-     "user": "0x58eb5610fb4193f52ba1fb1c1a5f498c9c945472769fac86f20c3614ec9282c4",
+     "user": "0x14a1d7c1102905e476e436fd25544f12ab12b742a9042db1a76aabcd3cc56a36",
      "emode": null,
-     "navi_hf": 3.1484133661025417,
-     "computed_hf": 3.1484133658930986,
-     "rel_diff": 6.652338976873233e-11
+     "navi_hf": 1.150174717912255,
+     "computed_hf": 1.1501747600839254,
+     "rel_diff": 3.6665447189239844e-08
     }
    ]
   },
@@ -456,7 +448,7 @@
    "r2": {
     "reserve": 2,
     "group": "stable (unshocked)",
-    "why": "price 0.9989 within 2% of $1: stable"
+    "why": "price 0.9987 within 2% of $1: stable"
    },
    "r3": {
     "reserve": 3,
@@ -486,7 +478,7 @@
    "r8": {
     "reserve": 8,
     "group": "BTC family",
-    "why": "price 82,021.16 within 10% of wBTC"
+    "why": "price 82,281.95 within 10% of wBTC"
    },
    "AUSD": {
     "reserve": 9,
@@ -516,7 +508,7 @@
    "r14": {
     "reserve": 14,
     "group": "BTC family",
-    "why": "price 82,021.16 within 10% of wBTC"
+    "why": "price 82,281.95 within 10% of wBTC"
    },
    "DEEP": {
     "reserve": 15,
@@ -596,7 +588,7 @@
    "YBTC": {
     "reserve": 30,
     "group": "BTC family",
-    "why": "price 82,424.92 within 10% of wBTC"
+    "why": "price 81,970.55 within 10% of wBTC"
    },
    "XAUm": {
     "reserve": 31,
