@@ -14,6 +14,8 @@ Fetches live pool state, builds the capacity matrix at Navi's current defaults
     stress.csv      every (scenario, shock, collateral, debt) with liquidations:
                     debt of positions pushed below HF 1, the collateral it puts
                     on the market, and the pair's capacity
+    config.json     the run's parameters, treasury factors, the debt set and the
+                    excluded debts with reasons, and the Q_cap formula
     coverage.json   pools needed and read, each failed pool with its reason,
                     Navi reserves the matrix does not track, and the positions
                     read with the health-factor check against Navi's own
@@ -33,9 +35,19 @@ Status, per pair and per collateral (worst pair):
     amber  Q_now <= Q* < Q_cap   fine now, not at the caps
     green  Q_cap <= Q*           fine even at the caps
 
-Signal 1 (summary.json "signal_1"), per collateral: fails if the market filled
-to its supply cap at max LTV, Q_cap = beta·CF·(1+b)·LTV·S·P, exceeds Q* for any
-debt asset. No debt-side bound; that is what the adequacy status adds.
+Q_cap, one definition for adequacy and signal 1 (pair_demand):
+    Q_cap(B, A) = beta·CF·(1+b_B)·min(LTV_B·S_B·P_B, max(borrowed_A, cap_A·S_A)·P_A)
+with b_B = (1 - treasury_factor_B)·LB_B. Q_now uses current supply and current
+user debt in A.
+
+Signal 1 (summary.json "signal_1"), per collateral: fails if any pair's Q_cap
+exceeds its Q*.
+
+Debt set: Q* (row minima), adequacy and signal 1 range over borrowable assets
+plus any non-borrowable asset that still carries user debt. Assets that can't
+be borrowed and carry no debt keep their cells in matrix.csv but are left out;
+config.json lists both sets with reasons. Every Navi asset is in the matrix:
+one with no pool has capacity 0 in every pair.
 
 Stress (summary.json "breaking_shock"): every Navi borrower with at least $1 of
 debt is read from chain (positions.py). Prices drop by s in {0.10, ..., 0.40},
@@ -180,6 +192,9 @@ def fetch_navi_live() -> dict:
             "treasury_factor": int(v["treasury_factor"]) / RAY,
             "supply_cap": int(v["supply_cap_ceiling"]) / scale,
             "borrow_cap_ratio": int(v["borrow_cap_ceiling"]) / RAY,
+            "is_isolated": bool(v["is_isolated"]),
+            # new borrowing allowed: a positive borrow cap and not isolated
+            "borrowable": int(v["borrow_cap_ceiling"]) > 0 and not v["is_isolated"],
             "supplied": (int(v["supply_balance"]["total_supply"])
                          * int(v["current_supply_index"]) / scale),
             "borrowed": (int(v["borrow_balance"]["total_supply"])
@@ -310,7 +325,29 @@ def compute():
     pos["hf_check"] = check_health_factors(state, pos["positions"])
     pos["state"] = state
     live["oracle"] = {"info": oracle_info}
+
+    # The debt set: borrowable assets, plus any that still carry user debt
+    # (a liquidation of that debt must buy it). The rest leave row minima
+    # and Q*; their cells stay in matrix.csv.
+    sym = reserve_symbols(state)
+    pos["borrowed"] = {sym[rid]: t for rid, t in pos["debt_tokens_all"].items() if rid in sym}
+    live["debt_set"] = debt_set(live, pos["borrowed"])
+    params.excluded_debts = tuple(sorted(live["debt_set"]["excluded"]))
     return params, M, book, live, pos
+
+
+def debt_set(live: dict, borrowed: dict) -> dict:
+    """Which assets count as debt for row minima and Q_cap, and why."""
+    included, excluded = {}, {}
+    for s, a in sorted(live["assets"].items()):
+        owed = borrowed.get(s, 0.0)
+        if a["borrowable"]:
+            included[s] = "borrowable"
+        elif owed > 0:
+            included[s] = f"not borrowable, {owed:,.6g} tokens of user debt outstanding"
+        else:
+            excluded[s] = ("isolated" if a["is_isolated"] else "borrow cap 0") + ", no user debt"
+    return {"included": included, "excluded": excluded}
 
 
 def check_health_factors(state: dict, positions: list) -> dict:
@@ -353,6 +390,28 @@ def check_health_factors(state: dict, positions: list) -> dict:
 STATUS_RANK = {"red": 3, "amber": 2, "green": 1, "unknown": 0}
 
 
+def pair_demand(k: float, q_now_B, q_cap_B, pA, la: dict, borrowed_A: float) -> tuple:
+    """
+    (Q_now, Q_cap) for one (collateral B, debt A) pair: the one definition used
+    by adequacy and signal 1.
+
+        Q(B, A) = beta·CF·(1+b_B) · min(LTV_B·S_B·P_B,  debt_A·P_A)
+
+    k = beta·CF·(1+b_B); q_now_B / q_cap_B are k·LTV_B·S_B·P_B at current
+    supply and at the supply cap. debt_A is the user debt outstanding in A
+    for Q_now, and for Q_cap the most A can be borrowed:
+    max(borrowed_A, borrow_cap_ratio_A·S_A), since existing debt can exceed a
+    lowered cap. With no price for A the debt side is left unbounded
+    (conservative).
+    """
+    if q_now_B is None or q_cap_B is None:
+        return None, None
+    if pA is None:
+        return q_now_B, q_cap_B
+    maxdebt = max(borrowed_A, la["borrow_cap_ratio"] * la["supply_cap"])
+    return min(q_now_B, k * borrowed_A * pA), min(q_cap_B, k * maxdebt * pA)
+
+
 def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
     """
     Per pair: demand now and at caps against the pair's capacity.
@@ -372,6 +431,7 @@ def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
     debt held by a user can be liquidated.
     """
     a_live = live["assets"]
+    excluded = set(params.excluded_debts or ())
     pairs, per_coll = [], {}
     for B in sorted({b for b, _ in M.cells}):
         a = M.assets[B]
@@ -381,18 +441,11 @@ def adequacy(params, M, live: dict, unverified, borrowed: dict) -> tuple:
         for (b, A), qs in sorted(M.cells.items()):
             if b != B:
                 continue
+            if A in excluded:
+                continue
             pA = M.price(A)
-            la = a_live[A]
-            b_A = borrowed.get(A, 0.0)
-            maxdebt = max(b_A, la["borrow_cap_ratio"] * la["supply_cap"])
-            if q_now_B is None or q_cap_B is None:
-                q_now = q_cap = None
-            elif pA is None:
-                # no debt price: leave the collateral side unbounded (conservative)
-                q_now, q_cap = q_now_B, q_cap_B
-            else:
-                q_now = min(q_now_B, k * b_A * pA)
-                q_cap = min(q_cap_B, k * maxdebt * pA)
+            q_now, q_cap = pair_demand(k, q_now_B, q_cap_B, pA, a_live[A],
+                                       borrowed.get(A, 0.0))
             if q_now is None:
                 status = "unknown"
             elif q_now > qs:
@@ -442,8 +495,9 @@ def s_max_debt_bounded(params, M, borrowed: dict, B: str):
         return None
     k = params.beta * params.close_factor * params.seized_factor(a.lb, params.tf(B))
     bounds = []
+    excluded = set(params.excluded_debts or ())
     for (b, A), qs in M.cells.items():
-        if b != B:
+        if b != B or A in excluded:
             continue
         pA = M.price(A)
         debt_lim = k * borrowed.get(A, 0.0) * pA if pA else float("inf")
@@ -452,24 +506,24 @@ def s_max_debt_bounded(params, M, borrowed: dict, B: str):
     return min(bounds) if bounds else None
 
 
-def signal_1(params, M) -> dict:
+def signal_1(pairs: list) -> dict:
     """
-    Per collateral: Q_cap = Matrix.demand(B, "cap") against each pair's Q*,
-    with no debt-side bound. Fails if any pair's Q* is below Q_cap; the
-    binding pair is the one with the smallest Q*.
+    Per collateral: each pair's debt-bounded Q_cap (pair_demand, as in
+    adequacy) against its Q*, over the debt set. Fails if any pair's Q* is
+    below its Q_cap; the binding pair is the one with the smallest Q*.
     """
     out = {}
-    for B in sorted({b for b, _ in M.cells}):
-        q_cap = M.demand(B, "cap")
-        row = M.row(B)
-        if q_cap is None or not row:
-            out[B] = {"status": "unknown", "Q_cap": q_cap}
+    for B in sorted({r["collateral"] for r in pairs}):
+        rows = [r for r in pairs if r["collateral"] == B]
+        if any(r["Q_cap"] is None for r in rows):
+            out[B] = {"status": "unknown"}
             continue
-        A = min(row, key=row.get)
-        failing = sorted(D for D, qs in row.items() if q_cap > qs)
-        out[B] = {"status": "fail" if failing else "pass", "Q_cap": q_cap,
-                  "binding_debt": A, "binding_Q_star": row[A],
-                  "failing_debts": len(failing)}
+        failing = sorted(r["debt"] for r in rows if r["Q_cap"] > r["Q_star"])
+        bind = min(rows, key=lambda r: r["Q_star"])
+        out[B] = {"status": "fail" if failing else "pass",
+                  "binding_debt": bind["debt"], "binding_Q_star": bind["Q_star"],
+                  "binding_Q_cap": bind["Q_cap"],
+                  "failing_debts": failing}
     return out
 
 
@@ -627,10 +681,9 @@ def write(params, M, book, live, pos, out_dir: str):
                         " → ".join(path) if path else "",
                         str(unverified(path)).lower()])
 
-    sym = reserve_symbols(pos["state"])
-    borrowed = {sym[rid]: t for rid, t in pos["debt_tokens_all"].items()}
+    borrowed = pos["borrowed"]
     pairs, per_coll = adequacy(params, M, live, unverified, borrowed)
-    sig1 = signal_1(params, M)
+    sig1 = signal_1(pairs)
     s_rows, s_coll, groups_how, n_scen = stress(params, M, pos, unverified)
     s_cols = ["scenario", "shock", "collateral", "debt", "D_usd", "Q", "Q_star",
               "Q_star_saturated", "fails",
@@ -655,7 +708,7 @@ def write(params, M, book, live, pos, out_dir: str):
     collaterals = {}
     for B in sorted({b for b, _ in M.cells}):
         q, binding = M.row_min(B)
-        row = M.row(B)
+        row = M.debt_row(B)          # excluded (never-borrowed) debts left out
         positive = {D: v for D, v in row.items() if v}
         D_ex = min(positive, key=positive.get) if positive else None
         collaterals[B] = {"Q_star": q, "binding_debt": binding,
@@ -681,10 +734,23 @@ def write(params, M, book, live, pos, out_dir: str):
     navi_live = {"storage": NAVI_STORAGE, "assets": live["assets"],
                  "diffs_from_navi_py": param_diffs(live),
                  "unpriced": sorted(s for s in navi.COIN_TYPES if M.price(s) is None),
+                 "debt_set": live["debt_set"],
+                 "no_pool": M.no_pool,
                  "anomalies": anomalies}
     with open(os.path.join(out_dir, "summary.json"), "w") as fh:
         json.dump({"run": run, "navi_live": navi_live, "collaterals": collaterals},
                   fh, indent=1)
+
+    config = {"params": run["params"], "venues": run["venues"],
+              "treasury_factors": params.treasury_factors,
+              "debt_set": sorted(live["debt_set"]["included"]),
+              "debt_set_reasons": live["debt_set"]["included"],
+              "excluded_debts": live["debt_set"]["excluded"],
+              "no_pool": M.no_pool,
+              "q_cap": "beta*CF*(1+b_B)*min(LTV_B*S_B*P_B, max(borrowed_A, "
+                       "borrow_cap_ratio_A*S_A)*P_A); b_B = (1-treasury_factor_B)*LB_B"}
+    with open(os.path.join(out_dir, "config.json"), "w") as fh:
+        json.dump(config, fh, indent=1)
 
     labels = price_labels(M, book)
     empty = [{"pool_id": key[0], "venue": meta.get(key, {}).get("venue"),

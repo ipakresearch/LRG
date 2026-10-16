@@ -22,6 +22,12 @@ The quantity that has to clear is the collateral a full liquidation would put on
 
 with `CF` the close factor, `S` the supply cap, `P` the oracle price, and `beta` the share of the book liquidatable at once. `beta = 1` is adversarial and is the default.
 
+A liquidation also cannot repay more debt than exists, so the daily run bounds demand per pair by the debt asset `A`:
+
+    Q_cap(B, A) = beta * CF * (1 + b_B) * min(LTV_B * S_B * P_B,  max(borrowed_A, borrow_cap_ratio_A * S_A) * P_A)
+
+with `borrowed_A` the users' outstanding debt in `A` (existing debt can exceed a lowered borrow cap). Row minima and this bound range over the debt set: assets that can be borrowed, plus any that still carry debt. An asset with no pool stays in the matrix with capacity 0.
+
 **Capacity** `Q*` is the inverse: the largest `Q` whose route cost stays inside the budget. Comparing `Q` against `Q*` is the question the tool exists to answer.
 
 ---

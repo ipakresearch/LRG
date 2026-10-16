@@ -51,6 +51,10 @@ class Params:
     max_hops: int = 4
     max_pools_per_leg: int = 4
     max_candidates: Optional[int] = 20     # paths kept per pair after ranking; None keeps all
+    # Debt assets left out of row minima and Q*: ones that cannot be borrowed
+    # and carry no debt, so no liquidation will ever have to buy them. Their
+    # cells are still computed.
+    excluded_debts: Sequence[str] = ()
     pick: str = "split"
 
     def tf(self, symbol: str) -> float:
@@ -141,6 +145,7 @@ class Matrix:
     tokens: Dict[str, str] = field(default_factory=dict)        # symbol -> normalized coin type
     skipped_pools: List[str] = field(default_factory=list)      # pools not holding a leg's coin
     saturated: List[Tuple[str, str]] = field(default_factory=list)  # capacity >= GRID_HI: "at least"
+    no_pool: List[str] = field(default_factory=list)   # assets with no pool: every pair is 0
 
     def price(self, symbol: str) -> Optional[float]:
         """USD price of the asset named `symbol`, looked up by its coin type."""
@@ -152,8 +157,13 @@ class Matrix:
     def row(self, B: str) -> Dict[str, Optional[float]]:
         return {A: v for (b, A), v in self.cells.items() if b == B}
 
+    def debt_row(self, B: str) -> Dict[str, Optional[float]]:
+        """B's row over the debt set: excluded debts left out."""
+        ex = set(self.params.excluded_debts or ())
+        return {A: v for A, v in self.row(B).items() if A not in ex}
+
     def row_min(self, B: str) -> Tuple[Optional[float], Optional[str]]:
-        r = {A: v for A, v in self.row(B).items() if v is not None}
+        r = {A: v for A, v in self.debt_row(B).items() if v is not None}
         if not r:
             return None, None
         A = min(r, key=r.get)
@@ -179,8 +189,9 @@ class Matrix:
         tau = self.params.budget(lb, self.params.tf(B))
         if tau <= 0:
             return 0.0
+        ex = set(self.params.excluded_debts or ())
         vals = [_best_route(cands, tau)[0] or 0.0
-                for (b, A), cands in self.candidates.items() if b == B]
+                for (b, A), cands in self.candidates.items() if b == B and A not in ex]
         return min(vals) if vals else None
 
     def curve(self, B: str, lbs: Sequence[float] = None) -> List[Tuple[float, float]]:
@@ -351,6 +362,7 @@ class Matrix:
             "pools_read": self.pools_read, "pools_failed": self.pools_failed,
             "pools_empty": self.pools_empty,
             "saturated": [f"{b}|{a}" for b, a in self.saturated],
+            "no_pool": self.no_pool,
         }
         with open(path, "w") as fh:
             json.dump(d, fh, indent=1)
@@ -429,16 +441,17 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         tname.setdefault(r["coin_type_a"], r["symbol_a"])
         tname.setdefault(r["coin_type_b"], r["symbol_b"])
 
-    present = [s for s in A if s in name and name[s] in adj]
-    colls = [s for s in (collaterals or present)
-             if s in A and A[s].is_collateral and s in present]
-    dbts = [s for s in (debts or present) if s in present]
+    # Every asset is in the matrix. One with no pool has no path, so all its
+    # pairs get capacity 0: no exit is the worst case, not a missing datum.
+    known = [s for s in A if s in name]
+    no_pool = [s for s in known if name[s] not in adj]
+    colls = [s for s in (collaterals or known) if s in A and A[s].is_collateral and s in name]
+    dbts = [s for s in (debts or known) if s in name]
     if verbose:
-        absent = [s for s in A if s not in present]
         print(f"{len(colls)} collaterals x {len(dbts)} debts "
               f"= {len(colls)*len(dbts) - len(set(colls) & set(dbts))} pairs")
-        if absent:
-            print(f"absent from the pool set: {', '.join(absent)}")
+        if no_pool:
+            print(f"no pool, capacity 0 in every pair: {', '.join(no_pool)}")
 
     # Every path up to max_hops; they are ranked once pools are read (by
     # route cost at reference sizes), not by listed TVL beforehand.
@@ -548,4 +561,5 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
                   pools_empty=len(book.empty),
                   derived_prices=derived, price_source=price_source,
                   tokens=name, skipped_pools=sorted(set(skipped)),
-                  saturated=sorted(k for k, v in cells.items() if is_saturated(v)))
+                  saturated=sorted(k for k, v in cells.items() if is_saturated(v)),
+                  no_pool=no_pool)

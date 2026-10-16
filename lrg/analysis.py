@@ -103,8 +103,12 @@ class LoadedMatrix:
     def row(self, B):
         return {A: v for (b, A), v in self.cells.items() if b == B}
 
+    def debt_row(self, B):
+        ex = set(getattr(self.params, "excluded_debts", ()) or ())
+        return {A: v for A, v in self.row(B).items() if A not in ex}
+
     def row_min(self, B):
-        r = {A: v for A, v in self.row(B).items() if v is not None}
+        r = {A: v for A, v in self.debt_row(B).items() if v is not None}
         if not r:
             return None, None
         A = min(r, key=r.get)
