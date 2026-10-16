@@ -24,4 +24,4 @@
 - [x] 19. Coverage flag (complete/incomplete per pair; overtaking test; coverage share)
 - [x] 20. Stress corrections (borrowing-power split, CF cap on collateral, E-Mode, beta, unpriced/bad debt, 5% grid, LST depeg)
 - [x] 21. LST mint exit (SUI->LST mint venue; redemption not modelled by decision)
-- [ ] 22. Rerun
+- [x] 22. Rerun (2026-10-16; see inconsistencies.md)

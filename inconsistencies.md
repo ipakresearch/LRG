@@ -677,9 +677,16 @@ No reserve is isolated. `reserve_field_a/b/c` are 0 and unlabeled, and no other 
 - **Signal 1 / adequacy.** E-Mode-eligible pairs (B collateral and A debt in an active E-Mode pair) are also checked at the E-Mode LTV and bonus, against Q\* at the E-Mode budget (`Q_cap_emode`, `Q_star_emode`). `positions.read_state` now reads the E-Mode `ltv`.
 - **`tests/test_stress.py`:** a synthetic state with single-collateral, two-collateral/two-debt, E-Mode, protected, unpriced and zero-collateral positions, checked against hand calculations. All 29 tests pass.
 
-## Live run
+## Live run (`data/navi/2026-10-16`, exit 0; before the mint venue)
 
-Pending: breaking shock per collateral before and after.
+- **Breaking shock, unchanged for every collateral:**
+  - 0% for 18 collaterals, with binding debt vSUI or haSUI
+  - none for enzoBTC, haSUI, stSUI and vSUI
+  - 20% for wBTC (suiETH scenario)
+- **Why so many 0%:** 838 positions are already below HF 1 at current prices. Their vSUI/haSUI debt meets pairs with capacity 0, so those pairs fail with no shock.
+- **Depeg results:** uninformative while the baseline fails (2% for every LST in those rows). vSUI's own row first fails at a 10% vSUI depeg.
+- **Bad debt at baseline:** $68 (SUI). No shock adds any, since shocks scale collateral value but never reach zero. No positions are unpriced.
+- **Protected users:** 6, all with a designated liquidator.
 
 # LST mint venue (2026-10-16)
 
@@ -727,3 +734,111 @@ Pending: breaking shock per collateral before and after.
   - haSUI debt stays 0 everywhere, as expected from its 8.5% premium.
   - The 4.22%-budget collaterals (SOL, DEEP, WAL, enzoBTC and others) still have 0 against stSUI: their legs to SUI cost more than the 0.6 points left after the 3.6% premium.
 - **Conclusion:** the zero LST-debt cells are mostly real. They come from Navi's oracle pricing, not from missing routes.
+
+# Rerun with all fixes (2026-10-16)
+
+Run: `run.py`, `data/navi/2026-10-16`, exit 0, at commit `e0c1092` with steps 1–12 in. Compared with the 2026-10-13 run and the original 2026-10-15 run (commit `09152df`, which the review used). No code was changed in this step.
+
+**Not run:** `lrg_stress_view.py` doesn't exist in the repo, so only `run.py` was run.
+
+## Pools and coverage
+
+| run | needed | read | failed | empty | coverage share | incomplete pairs |
+|---|---|---|---|---|---|---|
+| 2026-10-13 | 117 | 96 | 21 (Turbos 13, Bluefin 4, Cetus 4) | — | — | — |
+| 2026-10-15 (orig.) | 117 | 96 | 21 (Turbos 13, Bluefin 4, Cetus 4) | — | — | — |
+| 2026-10-16 | 149 | 149 | 0 | 0 | 100% | 0 |
+
+- **Where the 149 pools come from:** the current CSV (step 3), with DeepBook, Aftermath and the three `lst-mint` pools (vSUI 1.0689, haSUI 1.0829 and stSUI 1.0398 SUI per LST). Every pool on every used leg is read (step 8).
+- **What happened to the old failures:**
+  - the 13 Turbos failures now read (step 4)
+  - the 8 Cetus/Bluefin failures were empty pools, dropped by the on-chain floor (steps 3 and 5)
+- **Truncation:** none. The largest tick table was 3,534 ticks.
+- **Matrix:** 506 cells (MBTC back, step 9). 44 have no route; MBTC is the only asset with no pool.
+
+## Q* per collateral
+
+Q* (row minimum over the debt set) / row minimum excluding zeros:
+
+| collateral | 10-13 | 10-15 | 10-16 | binding (Q* / excl. zeros) |
+|---|---|---|---|---|
+| BUCK | 0 / 988 | 0 / 1,325 | 0 / 88 | haSUI / vSUI |
+| DEEP | 0 / 5,989 | 0 / 4,971 | 0 / 976 | haSUI / stSUI |
+| FDUSD | 0 / 1,605 | 0 / 1,104 | 0 / 76 | haSUI / vSUI |
+| LBTC | 0 / 1,698 | 0 / 1,731 | 0 / 78 | haSUI / stSUI |
+| MBTC | 0 / 0 | 0 / 0 | 0 / 0 | no pool |
+| NAVX | 0 / 2,179 | 0 / 2,132 | 0 / 925 | haSUI / SOL |
+| SOL | 0 / 1,185 | 0 / 637 | 0 / 1,710 | haSUI / NAVX |
+| SUI | 0 / 1,175 | 0 / 1,181 | 0 / 2,207 | haSUI / SOL |
+| USDC | 0 / 4,840 | 0 / 4,928 | 0 / 830 | haSUI / stSUI |
+| USDSUI | 0 / 5,463 | 0 / 5,607 | 0 / 822 | haSUI / stSUI |
+| USDY | 0 / 5,495 | 0 / 5,571 | 0 / 755 | haSUI / stSUI |
+| WAL | 0 / 5,999 | 0 / 5,589 | 0 / 1,775 | haSUI / SOL |
+| WBTC.lz | 0 / 1,664 | 0 / 1,704 | 0 / 373 | haSUI / stSUI |
+| enzoBTC | 0 / 5,994 | 0 / 5,977 | 0 / 2,668 | haSUI / SOL |
+| haSUI | 0 / 6,030 | 0 / 10,016 | **7,105** / 7,105 | SOL |
+| stSUI | 0 / 732 | 0 / 1,737 | **1,118** / 1,118 | haSUI |
+| suiETH | 0 / 8,772 | 0 / 8,475 | 0 / 88 | haSUI / stSUI |
+| suiUSDT | 0 / 5,501 | 0 / 5,606 | 0 / 835 | haSUI / stSUI |
+| suiUSDe | 0 / 5,998 | 0 / 6,027 | 0 / 83 | haSUI / vSUI |
+| vSUI | 0 / 5,931 | 0 / 9,339 | **6,470** / 6,470 | SOL |
+| wBTC | 0 / 1,692 | 0 / 1,705 | 0 / 1,194 | haSUI / SOL |
+| xBTC | 0 / 1,718 | 0 / 1,710 | 0 / 469 | haSUI / stSUI |
+
+- **Q\* is 0 for 19 of 22 collaterals, now set by haSUI debt rather than MBTC.**
+  - MBTC isn't borrowable and carries no debt, so it left the debt set (step 9).
+  - haSUI debt can't be liquidated at a profit at any size: buying haSUI costs 8.5% against Navi's oracle, by DEX or by mint, above every budget (steps 1 and 12).
+- **The minimum excluding zeros fell for most collaterals.** The main cause is the halved budgets (step 1) and the exact curves (step 7).
+- **Some of these minimums are price-gap artifacts.** The $76–$88 cells (BUCK, FDUSD, suiUSDe → vSUI; LBTC, suiETH → stSUI) all run through USDC→WAL→SUI, where a small WAL cross-pool gap offsets the LST premium for a few hundred dollars only. In substance these pairs are zero.
+- **Every collateral is red on adequacy and fails signal 1.**
+
+## 20 largest pair changes vs 2026-10-15 (attributed where the path or the cause is clear)
+
+| pair | 10-15 | 10-16 | main cause |
+|---|---|---|---|
+| haSUI→stSUI | 13,251 | 2,249,549 | mint venue (step 12): haSUI→SUI→mint stSUI |
+| haSUI→vSUI | 11,570 | 2,180,277 | mint venue (step 12) |
+| SUI→USDC | 635,771 | 2,215,725 | DeepBook (step 3), Turbos read (step 4), pools by output (step 8); despite budget 8.17% → 3.29% (step 1) |
+| haSUI→USDC | 897,265 | 2,263,741 | same SUI→USDC leg |
+| SUI→haSUI | 1,365,980 | 0 | budget 3.29% (step 1) is below haSUI's 8.5% premium against the oracle |
+| SUI→BUCK | 650,936 | 1,967,760 | SUI→USDC leg (steps 3, 4, 8) |
+| SUI→USDSUI | 649,052 | 1,786,085 | SUI→USDC leg; DeepBook USDSUI/USDC (step 3); USDSUI/USDC side fixed (step 2) |
+| haSUI→BUCK | 908,659 | 2,009,383 | SUI→USDC leg |
+| haSUI→DEEP | 1,192,048 | 249,623 | budget 8.17% → 3.29% (step 1) on DEEP's leg; exact curves (step 7) |
+| haSUI→USDSUI | 907,055 | 1,831,358 | as SUI→USDSUI |
+| USDC→USDSUI | 1,073,131 | 1,827,024 | DeepBook USDSUI/USDC (step 3), side fixed (step 2) |
+| SUI→DEEP | 726,135 | 219,163 | budget (step 1), exact curves (step 7) |
+| SUI→USDY | 643,052 | 1,118,158 | SUI→USDC leg |
+| USDC→SUI | 1,211,759 | 1,610,068 | SUI–USDC leg pools (steps 3, 4, 8) |
+| DEEP→SUI | 578,190 | 183,490 | budget (step 1) |
+| USDSUI→SUI | 1,265,906 | 1,608,119 | SUI–USDC leg |
+| wBTC→LBTC | 44,054 | 374,420 | direct wBTC→LBTC path (step 8) and Aftermath LBTC/wBTC (step 3) |
+| USDY→DEEP | 479,363 | 211,541 | budget (step 1) |
+| USDSUI→DEEP | 484,435 | 216,749 | budget (step 1) |
+| USDC→DEEP | 479,125 | 217,029 | budget (step 1) |
+
+These runs are a day apart, so every change also includes market movement.
+
+## Stress pairs that failed before
+
+Breaking shock = smallest grid shock at which the pair fails.
+
+| pair | capacity 10-15 → 10-16 | coverage | breaking shock 10-15 → 10-16 | note |
+|---|---|---|---|---|
+| SUI→USDC | 635,771 → 2,215,725 | complete | 40% → none up to 50% | baseline Q $9 |
+| MBTC→SUI | 0 → 0 | complete | not reported → 40% (BTC family) | Q $411,980 against Q\* 0 |
+| MBTC→WBTC.lz | 0 → 0 | complete | not reported → 40% | Q $127,437 against 0 |
+| MBTC→wBTC | 0 → 0 | complete | not reported → 40% | Q $2,286 against 0 |
+| xBTC→vSUI | 11,980 → 0 | complete | not reported → 0% (baseline) | Q under $1 against 0; the vSUI premium (7.0%) exceeds xBTC's 2.83% budget |
+
+## MBTC (D4, its only pool ever listed)
+
+| pool | venue | order on chain | decimals | pool price | oracle ratio | deviation | liquidity | balances | sell at 5% |
+|---|---|---|---|---|---|---|---|---|---|
+| `0x2a3657a387` | momentum | wBTC/MBTC | 8/8 | 1.009933 | 0.998329 | +1.16% | 0 | 0.0000059 wBTC, 0.00014847 MBTC (about $12) | about 0 |
+
+MBTC's zero capacity is real, not a read bug: the price is within 1.2% of the oracle and the decimals are right, but there is no liquidity. MBTC has no on-chain market. It is collateral only (no borrowing), with 200 MBTC supplied (about $16M at an $81k oracle price). Liquidating it would leave nowhere to sell.
+
+## Stress baseline
+
+838 positions are below HF 1 at current prices, so 18 collaterals break at 0% on pairs with zero capacity. vSUI holds until a 10% vSUI depeg, and wBTC until a 20% shock. Bad debt at baseline is $68; no positions are unpriced.

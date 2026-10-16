@@ -1,0 +1,3723 @@
+{
+ "run": {
+  "timestamp_utc": "2026-10-16T08:39:26+00:00",
+  "commit": "e0c1092cbd7ca1e8827eadaac62d3df809a9581a",
+  "lrg_dirty": false,
+  "params": {
+   "close_factor": 0.35,
+   "beta": 1.0,
+   "treasury_factors": {
+    "WBTC.lz": 0.8,
+    "DEEP": 0.55,
+    "haSUI": 0.65,
+    "MBTC": 0.55,
+    "LBTC": 0.85,
+    "suiUSDT": 0.55,
+    "NAVX": 0.55,
+    "SOL": 0.55,
+    "USDSUI": 0.55,
+    "suiETH": 0.85,
+    "USDC": 0.55,
+    "XAUm": 0.55,
+    "suiUSDe": 0.55,
+    "xBTC": 0.8,
+    "stSUI": 0.55,
+    "SUI": 0.65,
+    "wBTC": 0.85,
+    "vSUI": 0.65,
+    "USDY": 0.55,
+    "enzoBTC": 0.55,
+    "BUCK": 0.55,
+    "WAL": 0.55,
+    "wUSDC": 0.55,
+    "FDUSD": 0.55
+   },
+   "treasury_share": null,
+   "flash_fee": 0.0009,
+   "lb_max": 0.15,
+   "max_hops": 4,
+   "max_pools_per_leg": 4,
+   "max_candidates": 20,
+   "excluded_debts": [
+    "MBTC",
+    "enzoBTC"
+   ],
+   "pick": "split"
+  },
+  "venues": [
+   "aftermath",
+   "bluefin",
+   "cetus",
+   "deepbook",
+   "lst-mint",
+   "momentum",
+   "turbos-finance"
+  ],
+  "coverage_share": 1.0,
+  "pairs_incomplete": 0
+ },
+ "navi_live": {
+  "storage": "0xbb4e2f4b6205c2e2a2db47aeb4f830796ec7c005f88537ee775986639bc442fe",
+  "assets": {
+   "WBTC.lz": {
+    "reserve_id": 32,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.8,
+    "supply_cap": 100.0,
+    "borrow_cap_ratio": 0.5,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 39.232192494193214,
+    "borrowed": 19.462871809665042,
+    "borrowed_in_positions": 19.462874565170615
+   },
+   "DEEP": {
+    "reserve_id": 15,
+    "ltv": 0.47,
+    "lt": 0.52,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 450000000.0,
+    "borrow_cap_ratio": 0.86,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 369154106.636656,
+    "borrowed": 87288235.77515991,
+    "borrowed_in_positions": 87288802.3552466
+   },
+   "haSUI": {
+    "reserve_id": 6,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.65,
+    "supply_cap": 27500000.0,
+    "borrow_cap_ratio": 0.15,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 22499482.677850902,
+    "borrowed": 489527.6716604907,
+    "borrowed_in_positions": 472340.7967924759
+   },
+   "MBTC": {
+    "reserve_id": 29,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 200.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 199.99006019,
+    "borrowed": 0.0,
+    "borrowed_in_positions": 0.0
+   },
+   "LBTC": {
+    "reserve_id": 23,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.85,
+    "supply_cap": 70.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 32.867015995771965,
+    "borrowed": 0.9615347746706616,
+    "borrowed_in_positions": 0.961534903189486
+   },
+   "suiUSDT": {
+    "reserve_id": 19,
+    "ltv": 0.8,
+    "lt": 0.85,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 10000000.0,
+    "borrow_cap_ratio": 0.96,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 2102984.3292655405,
+    "borrowed": 426347.12502305,
+    "borrowed_in_positions": 426348.5160456716
+   },
+   "NAVX": {
+    "reserve_id": 7,
+    "ltv": 0.45,
+    "lt": 0.65,
+    "lb": 0.05,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 300000000.0,
+    "borrow_cap_ratio": 0.05,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 241333645.86440456,
+    "borrowed": 2008722.6269700378,
+    "borrowed_in_positions": 2014578.3305824
+   },
+   "SOL": {
+    "reserve_id": 22,
+    "ltv": 0.6,
+    "lt": 0.65,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 1000.0,
+    "borrow_cap_ratio": 0.4,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 627.8038606478435,
+    "borrowed": 0.8306364068122578,
+    "borrowed_in_positions": 0.8306392679487454
+   },
+   "USDSUI": {
+    "reserve_id": 34,
+    "ltv": 0.75,
+    "lt": 0.78,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 15000000.0,
+    "borrow_cap_ratio": 0.92,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 9043492.311038898,
+    "borrowed": 7612582.093492052,
+    "borrowed_in_positions": 7612604.051160325
+   },
+   "suiETH": {
+    "reserve_id": 11,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.85,
+    "supply_cap": 1500.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 771.7119110869232,
+    "borrowed": 25.625172384935862,
+    "borrowed_in_positions": 25.625176270317688
+   },
+   "USDC": {
+    "reserve_id": 10,
+    "ltv": 0.8,
+    "lt": 0.85,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 50000000.0,
+    "borrow_cap_ratio": 0.96,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 32348985.82808734,
+    "borrowed": 24325190.70978792,
+    "borrowed_in_positions": 24326534.54148889
+   },
+   "XAUm": {
+    "reserve_id": 31,
+    "ltv": 0.0,
+    "lt": 0.45,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 10.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 123.9768976602102,
+    "borrowed": 0.2822882725904152,
+    "borrowed_in_positions": 0.2822895696329231
+   },
+   "suiUSDe": {
+    "reserve_id": 33,
+    "ltv": 0.75,
+    "lt": 0.8,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 5000000.0,
+    "borrow_cap_ratio": 0.92,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 84728.5453829067,
+    "borrowed": 10030.69056367796,
+    "borrowed_in_positions": 10030.694632693692
+   },
+   "xBTC": {
+    "reserve_id": 26,
+    "ltv": 0.67,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.8,
+    "supply_cap": 205.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 112.8212038745996,
+    "borrowed": 51.80922098718209,
+    "borrowed_in_positions": 51.809229474477135
+   },
+   "stSUI": {
+    "reserve_id": 20,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 40000.0,
+    "borrow_cap_ratio": 0.15,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 9258.756542944882,
+    "borrowed": 667.3517923456346,
+    "borrowed_in_positions": 667.3521585221459
+   },
+   "SUI": {
+    "reserve_id": 0,
+    "ltv": 0.75,
+    "lt": 0.8,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.65,
+    "supply_cap": 55000000.0,
+    "borrow_cap_ratio": 0.96,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 26664681.961328365,
+    "borrowed": 21926213.19122663,
+    "borrowed_in_positions": 20947721.783787742
+   },
+   "wBTC": {
+    "reserve_id": 21,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.85,
+    "supply_cap": 50.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 13.04566594014793,
+    "borrowed": 2.4839390218113175,
+    "borrowed_in_positions": 2.483939426732073
+   },
+   "vSUI": {
+    "reserve_id": 5,
+    "ltv": 0.75,
+    "lt": 0.8,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.65,
+    "supply_cap": 25000000.0,
+    "borrow_cap_ratio": 0.15,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 17508688.89509384,
+    "borrowed": 598560.4513893672,
+    "borrowed_in_positions": 563728.0144103934
+   },
+   "USDY": {
+    "reserve_id": 12,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 5000000.0,
+    "borrow_cap_ratio": 0.92,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 2779141.4204987697,
+    "borrowed": 1122614.4091244864,
+    "borrowed_in_positions": 1122615.9629745423
+   },
+   "enzoBTC": {
+    "reserve_id": 28,
+    "ltv": 0.62,
+    "lt": 0.77,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 435.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 434.99994225,
+    "borrowed": 0.0,
+    "borrowed_in_positions": 0.0
+   },
+   "BUCK": {
+    "reserve_id": 18,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 20000000.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 19434199.53218859,
+    "borrowed": 1961126.201492594,
+    "borrowed_in_positions": 1961131.4221884797
+   },
+   "WAL": {
+    "reserve_id": 24,
+    "ltv": 0.6,
+    "lt": 0.65,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 160000000.0,
+    "borrow_cap_ratio": 0.86,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 79275034.95802124,
+    "borrowed": 20915683.030298974,
+    "borrowed_in_positions": 20915820.99594637
+   },
+   "wUSDC": {
+    "reserve_id": 1,
+    "ltv": 0.0,
+    "lt": 0.85,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 2500000.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 2289690.232170436,
+    "borrowed": 2142437.137947163,
+    "borrowed_in_positions": 184194.69623201375
+   },
+   "FDUSD": {
+    "reserve_id": 16,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 52000.0,
+    "borrow_cap_ratio": 0.9,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 23934.81150697158,
+    "borrowed": 3486.9550802834283,
+    "borrowed_in_positions": 3486.96476657772
+   }
+  },
+  "diffs_from_navi_py": [
+   {
+    "asset": "suiUSDT",
+    "field": "supply_cap",
+    "navi_py": 15000000,
+    "chain": 10000000.0
+   },
+   {
+    "asset": "suiUSDe",
+    "field": "supply_cap",
+    "navi_py": 10000000,
+    "chain": 5000000.0
+   },
+   {
+    "asset": "USDSUI",
+    "field": "supply_cap",
+    "navi_py": 10000000,
+    "chain": 15000000.0
+   },
+   {
+    "asset": "suiETH",
+    "field": "supply_cap",
+    "navi_py": 2900,
+    "chain": 1500.0
+   },
+   {
+    "asset": "BUCK",
+    "field": "supply_cap",
+    "navi_py": 22000000,
+    "chain": 20000000.0
+   },
+   {
+    "asset": "wBTC",
+    "field": "supply_cap",
+    "navi_py": 200,
+    "chain": 50.0
+   },
+   {
+    "asset": "MBTC",
+    "field": "supply_cap",
+    "navi_py": 300,
+    "chain": 200.0
+   },
+   {
+    "asset": "DEEP",
+    "field": "supply_cap",
+    "navi_py": 385000000,
+    "chain": 450000000.0
+   }
+  ],
+  "unpriced": [],
+  "debt_set": {
+   "included": {
+    "BUCK": "borrowable",
+    "DEEP": "borrowable",
+    "FDUSD": "borrowable",
+    "LBTC": "borrowable",
+    "NAVX": "borrowable",
+    "SOL": "borrowable",
+    "SUI": "borrowable",
+    "USDC": "borrowable",
+    "USDSUI": "borrowable",
+    "USDY": "borrowable",
+    "WAL": "borrowable",
+    "WBTC.lz": "borrowable",
+    "XAUm": "not borrowable, 0.28229 tokens of user debt outstanding",
+    "haSUI": "borrowable",
+    "stSUI": "borrowable",
+    "suiETH": "borrowable",
+    "suiUSDT": "borrowable",
+    "suiUSDe": "borrowable",
+    "vSUI": "borrowable",
+    "wBTC": "borrowable",
+    "wUSDC": "not borrowable, 184,195 tokens of user debt outstanding",
+    "xBTC": "borrowable"
+   },
+   "excluded": {
+    "MBTC": "borrow cap 0, no user debt",
+    "enzoBTC": "borrow cap 0, no user debt"
+   }
+  },
+  "no_pool": [
+   "MBTC"
+  ],
+  "anomalies": [
+   {
+    "asset": "XAUm",
+    "issue": "supplied exceeds supply cap",
+    "supplied": 123.9768976602102,
+    "supply_cap": 10.0
+   }
+  ]
+ },
+ "collaterals": {
+  "BUCK": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 87.79,
+   "binding_debt_ex_zero": "vSUI",
+   "zero_debts": [
+    "haSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1576947.4625953124,
+    "failing_debts": [
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 0.046290646259879734,
+    "Q_star": 0.0,
+    "D_usd": 0.10189895566017586,
+    "base_usd": 0.04429726914821027,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 180571.30205627708,
+    "binding_Q_cap": 1576947.4625953124,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 14,
+     "amber": 4,
+     "incomplete": 0,
+     "green": 3,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "DEEP": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 976.42,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1576947.4625953124,
+    "failing_debts": [
+     "BUCK",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 1.0563608740271395,
+    "Q_star": 0.0,
+    "D_usd": 1.755750186332106,
+    "base_usd": 1.0108716497867363,
+    "n_positions": 7,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 180571.30205627708,
+    "binding_Q_cap": 1576947.4625953124,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 13,
+     "amber": 6,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "FDUSD": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 75.76,
+   "binding_debt_ex_zero": "vSUI",
+   "zero_debts": [
+    "haSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 13287.272498499997,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 0.0026598655196175655,
+    "Q_star": 0.0,
+    "D_usd": 0.006299678910106481,
+    "base_usd": 0.0025453258560933644,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 6115.930051795475,
+    "binding_Q_cap": 13287.272498499997,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 18,
+     "amber": 2,
+     "incomplete": 0,
+     "green": 1,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "LBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 77.86,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1338867.2896798453,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.012229790266594065,
+    "Q_star": 0.0,
+    "D_usd": 0.027629148096980805,
+    "base_usd": 0.01196067507735361,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 176683.4032081754,
+    "binding_Q_cap": 1338867.2896798453,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 15,
+     "amber": 4,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "MBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "WBTC.lz",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": null,
+   "binding_debt_ex_zero": null,
+   "zero_debts": [
+    "BUCK",
+    "DEEP",
+    "FDUSD",
+    "LBTC",
+    "NAVX",
+    "SOL",
+    "SUI",
+    "USDC",
+    "USDSUI",
+    "USDY",
+    "WAL",
+    "WBTC.lz",
+    "XAUm",
+    "haSUI",
+    "stSUI",
+    "suiETH",
+    "suiUSDT",
+    "suiUSDe",
+    "vSUI",
+    "wBTC",
+    "wUSDC",
+    "xBTC"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "BUCK",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 3912301.2221282236,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "XAUm",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.28813565567934274,
+    "Q_star": 0.0,
+    "D_usd": 0.5565814620673964,
+    "base_usd": 0.27572790017161986,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "BUCK",
+    "binding_Q_now": 716037.9889210479,
+    "binding_Q_cap": 3912301.2221282236,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 22,
+     "amber": 0,
+     "incomplete": 0,
+     "green": 0,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "NAVX": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 925.42,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 538157.9668499999,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 0.5462474778196337,
+    "Q_star": 0.0,
+    "D_usd": 1.3046641044546388,
+    "base_usd": 0.5342273621707909,
+    "n_positions": 16,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 176683.4032081754,
+    "binding_Q_cap": 538157.9668499999,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 18,
+     "amber": 2,
+     "incomplete": 0,
+     "green": 1,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "SOL": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1710.03,
+   "binding_debt_ex_zero": "NAVX",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 23331.062926479,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "NAVX",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.006103600021689966,
+    "Q_star": 0.0,
+    "D_usd": 0.012480650017010984,
+    "base_usd": 0.005840765570995183,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 14647.331378261288,
+    "binding_Q_cap": 23331.062926479,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 19,
+     "amber": 1,
+     "incomplete": 0,
+     "green": 1,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "SUI": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2206.61,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1561857.0562546875,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 15.893506245762607,
+    "Q_star": 0.0,
+    "D_usd": 37.44020610440263,
+    "base_usd": 15.35604468189624,
+    "n_positions": 30,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 178843.34701267636,
+    "binding_Q_cap": 1561857.0562546875,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 12,
+     "amber": 7,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "USDC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 829.8,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1563366.09688875,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.6705509291926275,
+    "Q_star": 0.0,
+    "D_usd": 1.6981878846790899,
+    "base_usd": 0.6472499316531153,
+    "n_positions": 3,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 179016.14251703644,
+    "binding_Q_cap": 1563366.09688875,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 11,
+     "amber": 8,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "USDSUI": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 822.42,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1563366.09688875,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.009832879748595362,
+    "Q_star": 0.0,
+    "D_usd": 0.02435739359418572,
+    "base_usd": 0.00949119666852834,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 179016.14251703644,
+    "binding_Q_cap": 1563366.09688875,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 11,
+     "amber": 8,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "USDY": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 754.82,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1458766.995,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.6316043939882686,
+    "Q_star": 0.0,
+    "D_usd": 1.5586993003626717,
+    "base_usd": 0.6096567509539274,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 179016.14251703644,
+    "binding_Q_cap": 1458766.995,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 9,
+     "amber": 10,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "WAL": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1775.36,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1576947.4625953124,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 7.112568595792085,
+    "Q_star": 0.0,
+    "D_usd": 14.486346497471086,
+    "base_usd": 6.806285737600081,
+    "n_positions": 17,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 180571.30205627708,
+    "binding_Q_cap": 1576947.4625953124,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 17,
+     "amber": 2,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "WBTC.lz": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 372.76,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1554311.8530843752,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 1.9108817764043764,
+    "Q_star": 0.0,
+    "D_usd": 4.5169218657176575,
+    "base_usd": 1.8552250256353169,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 177979.36949087598,
+    "binding_Q_cap": 1554311.8530843752,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 13,
+     "amber": 6,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "enzoBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2668.03,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1576947.4625953124,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no complete pair fails up to 50%",
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": null,
+     "haSUI": null,
+     "stSUI": null
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 180571.30205627708,
+    "binding_Q_cap": 1576947.4625953124,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 15,
+     "amber": 5,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "haSUI": {
+   "Q_star": 7105.18,
+   "binding_debt": "SOL",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 7105.18,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "SOL",
+    "binding_Q_star": 7105.18,
+    "binding_Q_cap": 15405.199444277998,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no complete pair fails up to 50%",
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": null,
+     "haSUI": null,
+     "stSUI": null
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "xBTC",
+    "binding_Q_now": 1541678.0814071167,
+    "binding_Q_cap": 4880119.0041886605,
+    "binding_Q_star": 244465.44,
+    "coverage": "complete",
+    "pairs": {
+     "red": 9,
+     "amber": 8,
+     "incomplete": 0,
+     "green": 4,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 26807.72592198532,
+    "s_max_debt_bounded": 165230.27418507566
+   }
+  },
+  "stSUI": {
+   "Q_star": 1117.94,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1117.94,
+   "binding_debt_ex_zero": "haSUI",
+   "zero_debts": [],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 1117.94,
+    "binding_Q_cap": 10643.921494359998,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no complete pair fails up to 50%",
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": null,
+     "haSUI": null,
+     "stSUI": null
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 2463.736944462433,
+    "binding_Q_cap": 10643.921494359998,
+    "binding_Q_star": 1117.94,
+    "coverage": "complete",
+    "pairs": {
+     "red": 2,
+     "amber": 18,
+     "incomplete": 0,
+     "green": 1,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 4201.218478521979,
+    "s_max_debt_bounded": 4201.233541951147
+   }
+  },
+  "suiETH": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 87.56,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 920208.6680428042,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 1.4004025725387602e-05,
+    "Q_star": 0.0,
+    "D_usd": 2.9541257189514786e-05,
+    "base_usd": 1.3695868680085675e-05,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 176683.4032081754,
+    "binding_Q_cap": 920208.6680428042,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 17,
+     "amber": 2,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "suiUSDT": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 834.87,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1563366.09688875,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 4.504176347742331,
+    "Q_star": 0.0,
+    "D_usd": 14.776166379728846,
+    "base_usd": 4.347660567318853,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 179016.14251703644,
+    "binding_Q_cap": 1563366.09688875,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 14,
+     "amber": 5,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "suiUSDe": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 82.97,
+   "binding_debt_ex_zero": "vSUI",
+   "zero_debts": [
+    "haSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1371384.196875,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no complete pair fails up to 50%",
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": null,
+     "haSUI": null,
+     "stSUI": null
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 23239.077632464894,
+    "binding_Q_cap": 1371384.196875,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 3,
+     "amber": 15,
+     "incomplete": 0,
+     "green": 3,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "vSUI": {
+   "Q_star": 6470.37,
+   "binding_debt": "SOL",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 6470.37,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "SOL",
+    "binding_Q_star": 6470.37,
+    "binding_Q_cap": 15405.199444277998,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no complete pair fails up to 50%",
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.1,
+     "haSUI": null,
+     "stSUI": null
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "USDC",
+    "binding_Q_now": 4962664.069973163,
+    "binding_Q_cap": 7086001.841296873,
+    "binding_Q_star": 94018.17,
+    "coverage": "complete",
+    "pairs": {
+     "red": 13,
+     "amber": 5,
+     "incomplete": 0,
+     "green": 3,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 22827.983959906305,
+    "s_max_debt_bounded": 128604.68010169413
+   }
+  },
+  "wBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1193.51,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 955416.8413923908,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wUSDC",
+     "xBTC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.2,
+   "stress": {
+    "breaking_shock": 0.2,
+    "scenario": "suiETH",
+    "binding_debt": "vSUI",
+    "Q": 54.50737887528951,
+    "Q_star": 0.0,
+    "D_usd": 111.20234566998401,
+    "base_usd": 53.30795000028314,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": null,
+     "haSUI": null,
+     "stSUI": null
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 176683.4032081754,
+    "binding_Q_cap": 955416.8413923908,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 15,
+     "amber": 4,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "xBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 469.36,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1554311.8530843752,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC"
+    ],
+    "failing_debts_incomplete": []
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.12156038115094545,
+    "Q_star": 0.0,
+    "D_usd": 0.27262559736963854,
+    "base_usd": 0.11801978752518975,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "failed_on_emode": false,
+    "breaking_shock_incomplete": null,
+    "incomplete_debts": [],
+    "depeg": {
+     "vSUI": 0.02,
+     "haSUI": 0.02,
+     "stSUI": 0.02
+    }
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 177979.36949087598,
+    "binding_Q_cap": 1554311.8530843752,
+    "binding_Q_star": 0.0,
+    "coverage": "complete",
+    "pairs": {
+     "red": 13,
+     "amber": 6,
+     "incomplete": 0,
+     "green": 2,
+     "unknown": 0
+    },
+    "incomplete_pairs": [],
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  }
+ },
+ "stress_scenarios": [
+  {
+   "scenario": "baseline",
+   "shock": 0.0,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BLUE",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 837,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 842,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 844,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 854,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 862,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 876,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 892,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "BTC family",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 900,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 842,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 847,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 849,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 853,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 857,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 859,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 865,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 870,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "CETUS",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 876,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 845,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 848,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 849,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 854,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 861,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 870,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "DEEP",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 877,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "HAEDAL",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "IKA",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 843,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 847,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 848,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 857,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NAVX",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 862,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "NS",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 846,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SOL",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 834,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 826,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 833,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 855,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 876,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 934,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 1287,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 1682,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "SUI family",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 1875,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 842,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 844,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 843,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 846,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 849,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 857,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 864,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "WAL",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 870,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 840,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "XAUm",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 844,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 848,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "r3",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 849,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.05,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.1,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.15,
+   "kind": "grid",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.2,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.25,
+   "kind": "grid",
+   "liquidatable": 839,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.3,
+   "kind": "grid",
+   "liquidatable": 841,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.35,
+   "kind": "grid",
+   "liquidatable": 843,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.4,
+   "kind": "grid",
+   "liquidatable": 850,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.45,
+   "kind": "grid",
+   "liquidatable": 857,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "suiETH",
+   "shock": 0.5,
+   "kind": "grid",
+   "liquidatable": 859,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg vSUI",
+   "shock": 0.02,
+   "kind": "depeg",
+   "liquidatable": 843,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg vSUI",
+   "shock": 0.05,
+   "kind": "depeg",
+   "liquidatable": 868,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg vSUI",
+   "shock": 0.1,
+   "kind": "depeg",
+   "liquidatable": 908,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg haSUI",
+   "shock": 0.02,
+   "kind": "depeg",
+   "liquidatable": 837,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg haSUI",
+   "shock": 0.05,
+   "kind": "depeg",
+   "liquidatable": 847,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg haSUI",
+   "shock": 0.1,
+   "kind": "depeg",
+   "liquidatable": 872,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg stSUI",
+   "shock": 0.02,
+   "kind": "depeg",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg stSUI",
+   "shock": 0.05,
+   "kind": "depeg",
+   "liquidatable": 838,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  },
+  {
+   "scenario": "depeg stSUI",
+   "shock": 0.1,
+   "kind": "depeg",
+   "liquidatable": 837,
+   "unpriced": 0,
+   "unpriced_users": [],
+   "bad_debt_usd": 0,
+   "bad_debt_by_debt": {}
+  }
+ ]
+}
