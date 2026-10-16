@@ -200,6 +200,7 @@ def read_state() -> dict:
                 continue
             emode_pairs[int(n["name"]["json"])] = {
                 int(a["assetId"]): {"collateral": a["isCollateral"], "debt": a["isDebt"],
+                                    "ltv": int(a["ltv"]) / RAY,
                                     "lt": int(a["lt"]) / RAY,
                                     "lb": int(a["liquidation_bonus"]) / RAY}
                 for a in (v["assetA"], v["assetB"])}
@@ -215,11 +216,21 @@ def read_state() -> dict:
         protected = {n["name"]["json"]
                      for n in page_all(extra["PROTECTED_LIQUIDATION_USERS_KEY"]["id"])
                      if n["value"]["json"] is True}
+    # storage::is_liquidatable: a protected user can be liquidated only by a
+    # liquidator designated for them (DESIGNATED_LIQUIDATORS_KEY:
+    # liquidator -> {user: bool}); anyone else may liquidate everyone else
+    designated: Dict[str, List[str]] = {}
+    if "DESIGNATED_LIQUIDATORS_KEY" in extra:
+        for n in page_all(extra["DESIGNATED_LIQUIDATORS_KEY"]["id"]):
+            for u in page_all(n["value"]["json"]["id"]):
+                if u["value"]["json"] is True:
+                    designated.setdefault(u["name"]["json"], []).append(n["name"]["json"])
     market = extra.get("MARKET_KEY", {})
     return {"reserves": reserves, "prices": prices, "price_ms": price_ms,
             "price_table": price_table, "prices_read_at": time.time(),
             "emode_pairs": emode_pairs, "user_emode": user_emode,
             "borrow_weights": weights, "protected": protected,
+            "designated_liquidators": designated,
             "user_info": st["user_info"]["id"], "market": market}
 
 

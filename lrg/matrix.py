@@ -200,6 +200,19 @@ class Matrix:
         lbs = lbs or [i / 100 for i in range(2, 21)]
         return [(lb, self.q_star(B, lb) or 0.0) for lb in lbs]
 
+    def pair_capacity(self, B: str, A: str, lb: float) -> Optional[float]:
+        """One pair's capacity at the budget for bonus lb (e.g. an E-Mode
+        bonus), from the cached curves: best of its candidate paths. None if
+        the pair is not in the matrix; 0 if it has no priced path."""
+        if (B, A) not in self.cells:
+            return None
+        key = (B, A, round(lb, 12))
+        cache = self.__dict__.setdefault("_pair_cap", {})
+        if key not in cache:
+            tau = self.params.budget(lb, self.params.tf(B))
+            cache[key] = _best_route(self.candidates.get((B, A), []), tau)[0] or 0.0
+        return cache[key]
+
     # ---- demand and risk --------------------------------------------------
 
     def demand(self, B: str, at: str = "cap") -> Optional[float]:

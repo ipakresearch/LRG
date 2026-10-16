@@ -22,6 +22,6 @@
 - [x] 17. Path ranking (paths by route cost at $1k/$10k/$250k; pools per leg by output at $10k)
 - [x] 18. Matrix completeness and borrowable debts (open: close factor applies to collateral value, see inconsistencies.md)
 - [x] 19. Coverage flag (complete/incomplete per pair; overtaking test; coverage share)
-- [ ] 20. Stress corrections
+- [x] 20. Stress corrections (borrowing-power split, CF cap on collateral, E-Mode, beta, unpriced/bad debt, 5% grid, LST depeg)
 - [ ] 21. LST mint exit
 - [ ] 22. Rerun

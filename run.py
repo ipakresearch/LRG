@@ -51,13 +51,24 @@ config.json lists both sets with reasons. Every Navi asset is in the matrix:
 one with no pool has capacity 0 in every pair.
 
 Stress (summary.json "breaking_shock"): every Navi borrower with at least $1 of
-debt is read from chain (positions.py). Prices drop by s in {0.10, ..., 0.40},
+debt is read from chain (positions.py). Prices drop by s = 5%, 10%, ..., 50%,
 one price group at a time: the SUI family, the BTC family, each other volatile
-asset alone; stables never drop. s = 0 is the baseline. A position whose HF
-falls below 1 puts CF·(1+b_B) times its debt in A, split across its collateral
-by value, on the market as D[B,A]. The breaking shock is the smallest s, over
-all scenarios, at which some pair in B's row has Q[B,A] > Q*[B,A]. Q* is
-measured before the shock, so breaking shocks are upper bounds.
+asset alone; stables never drop. s = 0 is the baseline. Separately, each of
+vSUI, haSUI and stSUI depegs by 2/5/10% against a flat SUI (the "depeg" block).
+A position whose HF falls below 1 is liquidated (position_flows): its debt is
+split across its collateral by borrowing power c·P·LT (E-Mode LT where it
+applies); a liquidator repays at most min(that share, CF x the collateral's
+value) per pair, as Navi caps a call; the collateral seized is
+beta·(1+(1-tf)·LB)·base, with the E-Mode bonus for E-Mode positions, whose
+tranche is also checked against Q* at the E-Mode budget. Protected positions
+stay in (only a designated liquidator may liquidate them, and each has one).
+A position with an unpriced reserve is counted as unpriced, and one with no
+collateral value as bad debt (summary.json "stress_scenarios"); neither is
+silently dropped. The breaking shock is the smallest s at which a pair with
+complete coverage in B's row fails. Q* is measured before the shock, so
+breaking shocks are upper bounds.
+
+Signal 1 also checks E-Mode-eligible pairs at the E-Mode LTV and bonus.
 
 Exit codes: 0 success, 1 the computation raised (including a health factor
 that disagrees with Navi's own), 2 it finished but the result is unusable (a
@@ -101,7 +112,9 @@ NAVI_DECIMALS = 9               # Navi stores every balance and cap at 9 decimal
 
 # Stress grid and price groups. Reserves not in navi.py are classed by their
 # oracle price: within BTC_BAND of wBTC is BTC, within STABLE_BAND of $1 stable.
-SHOCKS = (0.10, 0.20, 0.30, 0.40)
+SHOCKS = tuple(round(0.05 * i, 2) for i in range(1, 11))     # 5% steps to 50%
+LSTS = ("vSUI", "haSUI", "stSUI")
+DEPEGS = (0.02, 0.05, 0.10)      # one LST down against SUI, SUI flat
 SUI_FAMILY = {"SUI", "vSUI", "haSUI", "stSUI"}
 BTC_FAMILY = {"wBTC", "xBTC", "LBTC", "MBTC", "WBTC.lz", "enzoBTC"}
 STABLES = {"USDC", "suiUSDT", "suiUSDe", "USDSUI", "USDY", "FDUSD", "BUCK", "wUSDC"}
@@ -415,7 +428,22 @@ def pair_demand(k: float, q_now_B, q_cap_B, pA, la: dict, borrowed_A: float) -> 
     return min(q_now_B, k * borrowed_A * pA), min(q_cap_B, k * maxdebt * pA)
 
 
-def adequacy(params, M, live: dict, coverage_of, borrowed: dict) -> tuple:
+def emode_terms(state: dict, sym: dict) -> dict:
+    """(collateral, debt) symbol pairs that an active E-Mode pair allows ->
+    [(ltv, lb)] of the collateral in each such pair."""
+    out = {}
+    for pair in state["emode_pairs"].values():
+        coll = [r for r, a in pair.items() if a["collateral"]]
+        debt = [r for r, a in pair.items() if a["debt"]]
+        for b in coll:
+            for a in debt:
+                if b in sym and a in sym:
+                    out.setdefault((sym[b], sym[a]), []).append(
+                        (pair[b]["ltv"], pair[b]["lb"]))
+    return out
+
+
+def adequacy(params, M, live: dict, coverage_of, borrowed: dict, state: dict) -> tuple:
     """
     Per pair: demand now and at caps against the pair's capacity.
 
@@ -435,6 +463,7 @@ def adequacy(params, M, live: dict, coverage_of, borrowed: dict) -> tuple:
     """
     a_live = live["assets"]
     excluded = set(params.excluded_debts or ())
+    emode = emode_terms(state, reserve_symbols(state))
     pairs, per_coll = [], {}
     for B in sorted({b for b, _ in M.cells}):
         a = M.assets[B]
@@ -449,6 +478,19 @@ def adequacy(params, M, live: dict, coverage_of, borrowed: dict) -> tuple:
             pA = M.price(A)
             q_now, q_cap = pair_demand(k, q_now_B, q_cap_B, pA, a_live[A],
                                        borrowed.get(A, 0.0))
+            # E-Mode: users may enter it, so an eligible pair is also checked
+            # at the E-Mode LTV and bonus, against Q* at the E-Mode budget
+            q_cap_e = q_star_e = None
+            pB = M.price(B)
+            for ltv_e, lb_e in emode.get((B, A), []):
+                if pB is None or not ltv_e:
+                    continue
+                k_e = params.beta * params.close_factor * params.seized_factor(lb_e, params.tf(B))
+                _, qc = pair_demand(k_e, 0.0, k_e * ltv_e * a.supply_cap * pB, pA,
+                                    a_live[A], borrowed.get(A, 0.0))
+                qs_e = M.pair_capacity(B, A, lb_e)
+                if q_cap_e is None or (qs_e is not None and qc - qs_e > q_cap_e - (q_star_e or 0)):
+                    q_cap_e, q_star_e = qc, qs_e
             if q_now is None:
                 status = "unknown"
             elif q_now > qs:
@@ -464,6 +506,7 @@ def adequacy(params, M, live: dict, coverage_of, borrowed: dict) -> tuple:
             path = M.paths.get((B, A))
             rows.append({"collateral": B, "debt": A, "Q_now": q_now, "Q_cap": q_cap,
                          "Q_star": qs, "Q_star_saturated": is_saturated(qs),
+                         "Q_cap_emode": q_cap_e, "Q_star_emode": q_star_e,
                          "status": status, "status_if_complete": status_if_complete,
                          "coverage": cov["status"], "failed_pools": cov["failed_pools"],
                          "debt_price_missing": pA is None,
@@ -528,10 +571,12 @@ def signal_1(pairs: list) -> dict:
         if any(r["Q_cap"] is None for r in rows):
             out[B] = {"status": "unknown"}
             continue
-        failing = sorted(r["debt"] for r in rows if r["Q_cap"] > r["Q_star"]
-                         and r["coverage"] == "complete")
-        failing_inc = sorted(r["debt"] for r in rows if r["Q_cap"] > r["Q_star"]
-                             and r["coverage"] == "incomplete")
+        def fails(r):
+            emode = (r.get("Q_cap_emode") is not None and r.get("Q_star_emode") is not None
+                     and r["Q_cap_emode"] > r["Q_star_emode"])
+            return r["Q_cap"] > r["Q_star"] or emode
+        failing = sorted(r["debt"] for r in rows if fails(r) and r["coverage"] == "complete")
+        failing_inc = sorted(r["debt"] for r in rows if fails(r) and r["coverage"] == "incomplete")
         bind = min(rows, key=lambda r: r["Q_star"])
         status = "fail" if failing else ("unresolved" if failing_inc else "pass")
         out[B] = {"status": status,
@@ -582,58 +627,124 @@ def price_groups(state: dict, sym: dict) -> tuple:
     return groups, how
 
 
+def position_flows(state: dict, p: dict, factor: dict, cf: float) -> tuple:
+    """
+    What one liquidatable position puts on the market, at prices x factor.
+
+    Returns ("unpriced", None) if any of its reserves has no oracle price,
+    ("bad_debt", {debt rid: USD}) if its collateral is worth nothing, else
+    ("ok", [(b, a, D, base, lb, emode)]) with, per (collateral b, debt a):
+      D      the debt in a assigned to b, split across collateral by borrowing
+             power c·P·LT (the E-Mode LT for an E-Mode position)
+      base   what a liquidator can repay on (b, a): Navi caps one call at
+             CF x the user's collateral value in b (logic::calculate_liquidation)
+             and at the debt, so base = min(D, CF·value_b·d_a/sum d), the
+             collateral cap shared across debts in proportion to them
+      lb     the bonus paid in b: the E-Mode bonus when b is collateral in the
+             position's E-Mode pair, else the reserve's
+    """
+    px = state["prices"]
+    if any(r not in px for r in list(p["collateral"]) + list(p["debt"])):
+        return "unpriced", None
+    cval = {b: t * px[b] * factor.get(b, 1.0) for b, t in p["collateral"].items()}
+    dval = {a: t * px[a] * factor.get(a, 1.0) for a, t in p["debt"].items()}
+    total_c, total_d = sum(cval.values()), sum(dval.values())
+    if total_c <= 0:
+        return "bad_debt", dval
+    power = {b: v * navi_positions.collateral_lt(state, p, b) for b, v in cval.items()}
+    total_p = sum(power.values()) or total_c
+    pair = state["emode_pairs"].get(p["emode"]) if p["emode"] is not None else None
+    flows = []
+    for a, d in dval.items():
+        for b, cv in cval.items():
+            if cv <= 0:
+                continue
+            D = d * (power[b] if sum(power.values()) else cv) / total_p
+            base = min(D, cf * cv * d / total_d) if total_d else 0.0
+            emode = bool(pair and b in pair and pair[b]["collateral"])
+            lb = pair[b]["lb"] if emode else state["reserves"][b]["lb"]
+            flows.append((b, a, D, base, lb, emode))
+    return "ok", flows
+
+
 def stress(params, M, pos: dict, coverage_of) -> tuple:
     """
-    stress.csv rows and per-collateral breaking shock. See the module docstring.
-    Q uses the reserve's normal bonus for every position, as specified; the
-    share of D from e-mode positions, which liquidate at the e-mode bonus, is
-    reported alongside.
+    stress.csv rows, per-collateral breaking shock and LST depeg results, and
+    per-scenario counts of unpriced positions and bad debt.
+
+    Every position with HF < 1 under a scenario is liquidated through
+    position_flows. Per (B, A): Q = beta·sum (1 + (1-tf_B)·lb)·base over its
+    positions, against Q*[B, A]; the E-Mode tranche, at its own bonus, is also
+    checked against the pair's capacity at the E-Mode budget, and the pair
+    fails if either check fails. Protected positions stay in: they can be
+    liquidated, but only by their designated liquidator
+    (storage::is_liquidatable); their share is reported as D_protected_usd.
     """
     state = pos["state"]
     sym = reserve_symbols(state)
+    rid_of = {s_: r for r, s_ in sym.items()}
     groups, how = price_groups(state, sym)
-    px = state["prices"]
-    lb = {rid: (M.assets[s].lb if s in M.assets else state["reserves"][rid]["lb"])
-          for rid, s in sym.items()}
     tf = {rid: state["reserves"][rid]["treasury_factor"] for rid in sym}
+    cf, beta = params.close_factor, params.beta
 
-    scenarios = [("baseline", 0.0, {})]
+    scenarios = [("baseline", 0.0, {}, "grid")]
     for g, members in sorted(groups.items()):
         for s in SHOCKS:
-            scenarios.append((g, s, {rid: 1 - s for rid in members}))
+            scenarios.append((g, s, {rid: 1 - s for rid in members}, "grid"))
+    for lst in LSTS:
+        if lst in rid_of:
+            for s in DEPEGS:
+                scenarios.append((f"depeg {lst}", s, {rid_of[lst]: 1 - s}, "depeg"))
 
-    rows = []
-    for name, s, factor in scenarios:
-        acc = {}
+    rows, scen_stats = [], []
+    for name, s, factor, kind in scenarios:
+        acc, n_liq, unpriced, bad = {}, 0, [], {}
         for p in pos["positions"]:
             if navi_positions.health_factor(state, p, factor) >= 1:
                 continue
-            cval = {rid: t * px.get(rid, 0.0) * factor.get(rid, 1.0)
-                    for rid, t in p["collateral"].items()}
-            total = sum(cval.values())
-            if total <= 0:
+            status, flows = position_flows(state, p, factor, cf)
+            if status == "unpriced":
+                unpriced.append(p["user"])
                 continue
-            for a_rid, t in p["debt"].items():
-                d_usd = t * px.get(a_rid, 0.0) * factor.get(a_rid, 1.0)
-                for b_rid, cv in cval.items():
-                    if cv <= 0:
-                        continue
-                    x = acc.setdefault((b_rid, a_rid), {"D": 0.0, "n": 0, "D_protected": 0.0,
-                                                        "D_emode": 0.0})
-                    share = d_usd * cv / total
-                    x["D"] += share
-                    x["n"] += 1
-                    x["D_protected"] += share if p["protected"] else 0.0
-                    x["D_emode"] += share if p["emode"] is not None else 0.0
+            if status == "bad_debt":
+                for a, v in flows.items():
+                    bad[sym.get(a, str(a))] = bad.get(sym.get(a, str(a)), 0.0) + v
+                continue
+            n_liq += 1
+            for b, a, D, base, lb, emode in flows:
+                x = acc.setdefault((b, a), {"D": 0.0, "base": 0.0, "Q": 0.0, "n": 0,
+                                            "D_protected": 0.0, "D_emode": 0.0, "Q_emode": {}})
+                q = beta * (1 + (1 - tf[b]) * lb) * base
+                x["D"] += D
+                x["base"] += base
+                x["Q"] += q
+                x["n"] += 1
+                x["D_protected"] += D if p["protected"] else 0.0
+                if emode:
+                    x["D_emode"] += D
+                    x["Q_emode"][lb] = x["Q_emode"].get(lb, 0.0) + q
+        scen_stats.append({"scenario": name, "shock": s, "kind": kind,
+                           "liquidatable": n_liq, "unpriced": len(unpriced),
+                           "unpriced_users": unpriced[:50],
+                           "bad_debt_usd": sum(bad.values()), "bad_debt_by_debt": bad})
         for (b_rid, a_rid), x in acc.items():
             B, A = sym[b_rid], sym[a_rid]
-            q = params.close_factor * params.seized_factor(lb[b_rid], tf[b_rid]) * x["D"]
             qs = M.cells.get((B, A))
+            fails = (x["Q"] > qs) if qs is not None else None
+            q_e = sum(x["Q_emode"].values())
+            qs_e, fails_e = None, None
+            for lb_e, qe in x["Q_emode"].items():
+                cap_e = M.pair_capacity(B, A, lb_e)
+                if cap_e is None:
+                    continue
+                qs_e = cap_e if qs_e is None else min(qs_e, cap_e)
+                fails_e = bool(fails_e) or qe > cap_e
             path = M.paths.get((B, A))
-            rows.append({"scenario": name, "shock": s, "collateral": B, "debt": A,
-                         "D_usd": x["D"], "Q": q, "Q_star": qs,
+            rows.append({"scenario": name, "kind": kind, "shock": s, "collateral": B, "debt": A,
+                         "D_usd": x["D"], "base_usd": x["base"], "Q": x["Q"], "Q_star": qs,
                          "Q_star_saturated": is_saturated(qs),
-                         "fails": (q > qs) if qs is not None else None,
+                         "Q_emode": q_e, "Q_star_emode": qs_e, "fails_emode": fails_e,
+                         "fails": (bool(fails) or bool(fails_e)) if qs is not None else None,
                          "no_capacity_data": qs is None,
                          "n_positions": x["n"], "D_protected_usd": x["D_protected"],
                          "D_emode_usd": x["D_emode"],
@@ -642,17 +753,19 @@ def stress(params, M, pos: dict, coverage_of) -> tuple:
 
     per_coll = {}
     for B in sorted({b for b, _ in M.cells}):
+        mine = [r for r in rows if r["collateral"] == B and r["fails"]]
         # an incomplete pair never sets the breaking shock; its own lowest
         # failing shock is reported apart
-        fail_inc = [r for r in rows if r["collateral"] == B and r["fails"]
-                    and r["coverage"] == "incomplete"]
-        inc = {"breaking_shock_incomplete": min((r["shock"] for r in fail_inc), default=None),
-               "incomplete_debts": sorted({r["debt"] for r in fail_inc})}
-        failing = [r for r in rows if r["collateral"] == B and r["fails"]
-                   and r["coverage"] != "incomplete"]
+        fail_inc = [r for r in mine if r["kind"] == "grid" and r["coverage"] == "incomplete"]
+        extra = {"breaking_shock_incomplete": min((r["shock"] for r in fail_inc), default=None),
+                 "incomplete_debts": sorted({r["debt"] for r in fail_inc}),
+                 "depeg": {lst: min((r["shock"] for r in mine if r["scenario"] == f"depeg {lst}"
+                                     and r["coverage"] != "incomplete"), default=None)
+                           for lst in LSTS}}
+        failing = [r for r in mine if r["kind"] == "grid" and r["coverage"] != "incomplete"]
         if not failing:
             per_coll[B] = {"breaking_shock": None, "scenario": None, "binding_debt": None,
-                           "note": f"no complete pair fails up to {max(SHOCKS):.0%}", **inc}
+                           "note": f"no complete pair fails up to {max(SHOCKS):.0%}", **extra}
             continue
         s_min = min(r["shock"] for r in failing)
         worst = max((r for r in failing if r["shock"] == s_min),
@@ -660,9 +773,10 @@ def stress(params, M, pos: dict, coverage_of) -> tuple:
         per_coll[B] = {"breaking_shock": s_min, "scenario": worst["scenario"],
                        "binding_debt": worst["debt"], "Q": worst["Q"],
                        "Q_star": worst["Q_star"], "D_usd": worst["D_usd"],
-                       "n_positions": worst["n_positions"],
-                       "D_emode_usd": worst["D_emode_usd"], **inc}
-    return rows, per_coll, how, len(scenarios)
+                       "base_usd": worst["base_usd"], "n_positions": worst["n_positions"],
+                       "D_emode_usd": worst["D_emode_usd"],
+                       "failed_on_emode": bool(worst["fails_emode"]), **extra}
+    return rows, per_coll, how, scen_stats
 
 
 def write(params, M, book, live, pos, out_dir: str):
@@ -706,11 +820,12 @@ def write(params, M, book, live, pos, out_dir: str):
                                  for f in cov["failed_pools"])])
 
     borrowed = pos["borrowed"]
-    pairs, per_coll = adequacy(params, M, live, coverage_of, borrowed)
+    pairs, per_coll = adequacy(params, M, live, coverage_of, borrowed, pos["state"])
     sig1 = signal_1(pairs)
-    s_rows, s_coll, groups_how, n_scen = stress(params, M, pos, coverage_of)
-    s_cols = ["scenario", "shock", "collateral", "debt", "D_usd", "Q", "Q_star",
-              "Q_star_saturated", "fails",
+    s_rows, s_coll, groups_how, scen_stats = stress(params, M, pos, coverage_of)
+    n_scen = len(scen_stats)
+    s_cols = ["scenario", "kind", "shock", "collateral", "debt", "D_usd", "base_usd", "Q",
+              "Q_star", "Q_star_saturated", "Q_emode", "Q_star_emode", "fails_emode", "fails",
               "no_capacity_data", "n_positions", "D_protected_usd", "D_emode_usd",
               "coverage", "path"]
     with open(os.path.join(out_dir, "stress.csv"), "w", newline="") as fh:
@@ -721,7 +836,7 @@ def write(params, M, book, live, pos, out_dir: str):
             w.writerow({k: (str(v).lower() if isinstance(v, bool) else
                             "" if v is None else v) for k, v in r.items()})
     cols = ["collateral", "debt", "Q_now", "Q_cap", "Q_star", "Q_star_saturated",
-            "status", "status_if_complete", "coverage", "failed_pools",
+            "Q_cap_emode", "Q_star_emode", "status", "status_if_complete", "coverage", "failed_pools",
             "debt_price_missing", "path"]
     with open(os.path.join(out_dir, "adequacy.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=cols)
@@ -767,8 +882,8 @@ def write(params, M, book, live, pos, out_dir: str):
     run["coverage_share"] = coverage_share
     run["pairs_incomplete"] = n_incomplete
     with open(os.path.join(out_dir, "summary.json"), "w") as fh:
-        json.dump({"run": run, "navi_live": navi_live, "collaterals": collaterals},
-                  fh, indent=1)
+        json.dump({"run": run, "navi_live": navi_live, "collaterals": collaterals,
+                   "stress_scenarios": scen_stats}, fh, indent=1)
 
     config = {"params": run["params"], "venues": run["venues"],
               "treasury_factors": params.treasury_factors,
@@ -812,6 +927,9 @@ def write(params, M, book, live, pos, out_dir: str):
                               "market": pos["state"]["market"],
                               "emode_users": len(pos["state"]["user_emode"]),
                               "protected_users": len(pos["state"]["protected"]),
+                              "protected_with_designated_liquidator": sum(
+                                  1 for u in pos["state"]["protected"]
+                                  if pos["state"]["designated_liquidators"].get(u)),
                               "stress_scenarios": n_scen,
                               "price_groups": groups_how}}
     with open(os.path.join(out_dir, "coverage.json"), "w") as fh:

@@ -653,3 +653,26 @@ No reserve is isolated. `reserve_field_a/b/c` are 0 and unlabeled, and no other 
 
 - **Without the overtaking test:** 455 of 506 pairs were incomplete. Almost every pair keeps some candidate path through SUI→USDC. One failed pool on a leg holding about $6.7M flagged pairs whose winning path never uses that leg. Too broad to mean anything.
 - **With the overtaking test:** result pending (see the next run).
+
+# Stress corrections (2026-10-16)
+
+## Changes
+
+- **`run.position_flows`:**
+  - each liquidatable position's debt is split across its collateral by borrowing power c·P·LT, using the E-Mode LT where it applies
+  - repayment per (B, A) is `min(D, CF·value_B·d_A/Σd)`, Navi's cap of CF × collateral value per call (open since step 1; now applied in stress)
+  - the bonus is the E-Mode bonus for an E-Mode position's E-Mode collateral
+  - returns `unpriced` when any reserve has no price, and `bad_debt` when collateral is worth 0
+- **`run.stress`:**
+  - Q = β·Σ(1+(1−tf_B)·lb)·base
+  - the E-Mode tranche is also checked against `Matrix.pair_capacity(B, A, LB_e)` (new: one pair's capacity at another bonus), and the pair fails if either check fails
+  - shocks run from 5% to 50% in 5% steps, plus a depeg of vSUI, haSUI and stSUI by 2/5/10% against a flat SUI, reported per collateral under `depeg`
+  - unpriced positions and bad debt are counted per scenario (`summary.json` `stress_scenarios`)
+  - `stress.csv` gains `kind`, `base_usd`, `Q_emode`, `Q_star_emode` and `fails_emode`
+- **Protected users.** `storage::is_liquidatable` lets anyone liquidate an unprotected user. A protected user can be liquidated only by a liquidator designated for them in `DESIGNATED_LIQUIDATORS_KEY`. All 6 protected users have one, so they stay in D, reported as `D_protected_usd`. `positions.read_state` reads the designated table, and `coverage.json` gets `protected_with_designated_liquidator`.
+- **Signal 1 / adequacy.** E-Mode-eligible pairs (B collateral and A debt in an active E-Mode pair) are also checked at the E-Mode LTV and bonus, against Q\* at the E-Mode budget (`Q_cap_emode`, `Q_star_emode`). `positions.read_state` now reads the E-Mode `ltv`.
+- **`tests/test_stress.py`:** a synthetic state with single-collateral, two-collateral/two-debt, E-Mode, protected, unpriced and zero-collateral positions, checked against hand calculations. All 29 tests pass.
+
+## Live run
+
+Pending: breaking shock per collateral before and after.
