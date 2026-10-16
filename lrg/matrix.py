@@ -7,7 +7,9 @@ LB, supply cap; column minima govern the debt side — borrow cap.
 
 The budget is the exact profitability condition rather than its first-order
 approximation. A liquidator repaying D receives (1+b)D of collateral, where
-b = (1 - platform_share)*LB, sells it at cost c, and must end with (1+phi)D:
+b = (1 - tf)*LB and tf is the collateral's treasury factor (the protocol's cut
+of the bonus, kept in the pool and never sold), sells it at cost c, and must
+end with (1+phi)D:
 
     (1 + b)(1 - c) >= 1 + phi      ->      c <= 1 - (1 + phi)/(1 + b)
 
@@ -22,8 +24,9 @@ from dataclasses import dataclass, field, asdict
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from . import clmm
-from .book import PoolBook
-from .curves import LegCurve, route_capacity
+from .coins import norm_type
+from .book import PoolBook, pool_key
+from .curves import LegCurve, grid_capacity, is_saturated, route_capacity
 from . import graph as _graph
 
 
@@ -35,27 +38,43 @@ from . import graph as _graph
 class Params:
     close_factor: float = 0.35
     beta: float = 1.00
-    platform_share: float = 0.10
+    # Protocol's cut of the liquidation bonus, per collateral symbol. It is
+    # taken from the seized collateral and kept, so the liquidator neither
+    # earns nor sells it. treasury_share is the fallback for an asset with no
+    # entry; with neither, tf() raises rather than assume a split.
+    treasury_factors: Optional[Dict[str, float]] = None
+    treasury_share: Optional[float] = None
     flash_fee: float = 0.0009
     lb_max: float = 0.15
-    prices: Optional[Dict[str, float]] = None
+    prices: Optional[Dict[str, float]] = None    # override derived prices, by coin type
     venues: Optional[set] = None
     max_hops: int = 4
     max_pools_per_leg: int = 4
-    max_candidates: int = 20
+    max_candidates: Optional[int] = 20     # paths kept per pair after ranking; None keeps all
+    # Debt assets left out of row minima and Q*: ones that cannot be borrowed
+    # and carry no debt, so no liquidation will ever have to buy them. Their
+    # cells are still computed.
+    excluded_debts: Sequence[str] = ()
     pick: str = "split"
 
-    def bonus_to_liquidator(self, lb: float) -> float:
-        """The share of the bonus the liquidator keeps, after the protocol's cut."""
-        return (1 - self.platform_share) * lb
+    def tf(self, symbol: str) -> float:
+        """The treasury factor for collateral `symbol`."""
+        tf = (self.treasury_factors or {}).get(symbol, self.treasury_share)
+        if tf is None:
+            raise ValueError(f"no treasury factor for {symbol} and no treasury_share fallback")
+        return tf
 
-    def budget(self, lb: float, exact: bool = True) -> float:
+    def bonus_to_liquidator(self, lb: float, tf: float) -> float:
+        """The share of the bonus the liquidator keeps, after the treasury's cut."""
+        return (1 - tf) * lb
+
+    def budget(self, lb: float, tf: float, exact: bool = True) -> float:
         """
         Largest total route cost a liquidation can bear.
 
         The liquidator repays D, receives (1 + b)·D of collateral where
-        b = (1 - platform_share)·LB, sells it at cost c, and must end with at
-        least (1 + phi)·D:
+        b = (1 - tf)·LB, sells it at cost c, and must end with at least
+        (1 + phi)·D:
 
             (1 + b)(1 - c) >= 1 + phi      ->      c <= 1 - (1 + phi)/(1 + b)
 
@@ -63,15 +82,15 @@ class Params:
         measures the loss against the pre-bonus base while the quantity sold is
         the post-bonus one. Pass exact=False to use it.
         """
-        b = self.bonus_to_liquidator(lb)
+        b = self.bonus_to_liquidator(lb, tf)
         if not exact:
             return b - self.flash_fee
         return 1 - (1 + self.flash_fee) / (1 + b)
 
-    def seized_factor(self, lb: float) -> float:
-        """Collateral reaching the DEX per unit of debt repaid. The protocol's
-        share of the incentive is retained, not sold."""
-        return 1 + self.bonus_to_liquidator(lb)
+    def seized_factor(self, lb: float, tf: float) -> float:
+        """Collateral reaching the DEX per unit of debt repaid. The treasury's
+        cut of the bonus is retained in the pool, not sold."""
+        return 1 + self.bonus_to_liquidator(lb, tf)
 
 
 @dataclass
@@ -110,22 +129,43 @@ def load_assets(table: Dict[str, tuple],
 class Matrix:
     params: Params
     assets: Dict[str, Asset]
-    prices: Dict[str, float]
+    prices: Dict[str, float]                           # normalized coin type -> USD
     cells: Dict[Tuple[str, str], Optional[float]]      # (B, A) -> capacity USD
     paths: Dict[Tuple[str, str], Optional[List[str]]]
     curves: Dict[Tuple[str, str], object] = field(default_factory=dict)
+    candidates: Dict[Tuple[str, str], List[list]] = field(default_factory=dict)
+    candidate_paths: Dict[Tuple[str, str], List[list]] = field(default_factory=dict)  # coin types, same order
     unreachable: List[Tuple[str, str]] = field(default_factory=list)
     dead_leg: Dict[Tuple[str, str], Optional[str]] = field(default_factory=dict)
     pools_read: int = 0
     pools_failed: int = 0
+    pools_empty: int = 0          # read, but no liquidity: zero depth, not a failure
+    derived_prices: Dict[str, float] = field(default_factory=dict)
+    price_source: Dict[str, str] = field(default_factory=dict)   # "supplied" | "derived"
+    tokens: Dict[str, str] = field(default_factory=dict)        # symbol -> normalized coin type
+    skipped_pools: List[str] = field(default_factory=list)      # pools not holding a leg's coin
+    saturated: List[Tuple[str, str]] = field(default_factory=list)  # capacity >= GRID_HI: "at least"
+    no_pool: List[str] = field(default_factory=list)   # assets with no pool: every pair is 0
+    # (B, A) -> {"status": "complete" | "incomplete", "failed": [pool keys]}
+    coverage: Dict[Tuple[str, str], dict] = field(default_factory=dict)
+
+    def price(self, symbol: str) -> Optional[float]:
+        """USD price of the asset named `symbol`, looked up by its coin type."""
+        t = self.tokens.get(symbol)
+        return self.prices.get(t) if t else None
 
     # ---- collateral side -------------------------------------------------
 
     def row(self, B: str) -> Dict[str, Optional[float]]:
         return {A: v for (b, A), v in self.cells.items() if b == B}
 
+    def debt_row(self, B: str) -> Dict[str, Optional[float]]:
+        """B's row over the debt set: excluded debts left out."""
+        ex = set(self.params.excluded_debts or ())
+        return {A: v for A, v in self.row(B).items() if A not in ex}
+
     def row_min(self, B: str) -> Tuple[Optional[float], Optional[str]]:
-        r = {A: v for A, v in self.row(B).items() if v is not None}
+        r = {A: v for A, v in self.debt_row(B).items() if v is not None}
         if not r:
             return None, None
         A = min(r, key=r.get)
@@ -139,22 +179,39 @@ class Matrix:
         return c[B], B
 
     def q_star(self, B: str, lb: Optional[float] = None) -> Optional[float]:
-        """Row minimum at an arbitrary bonus, recomputing from the cached curves."""
+        """
+        Row minimum at an arbitrary bonus, recomputing from the cached curves.
+
+        Each pair takes the best of all its candidate paths at the new budget,
+        since the path that wins at one bonus need not win at another. A pair
+        with no priced path counts as zero, as it does in row_min.
+        """
         a = self.assets[B]
         lb = a.lb if lb is None else lb
-        tau = self.params.budget(lb)
+        tau = self.params.budget(lb, self.params.tf(B))
         if tau <= 0:
             return 0.0
-        vals = []
-        for (b, A), cv in self.curves.items():
-            if b != B or cv is None:
-                continue
-            vals.append(route_capacity(cv, tau))
+        ex = set(self.params.excluded_debts or ())
+        vals = [_best_route(cands, tau)[0] or 0.0
+                for (b, A), cands in self.candidates.items() if b == B and A not in ex]
         return min(vals) if vals else None
 
     def curve(self, B: str, lbs: Sequence[float] = None) -> List[Tuple[float, float]]:
         lbs = lbs or [i / 100 for i in range(2, 21)]
         return [(lb, self.q_star(B, lb) or 0.0) for lb in lbs]
+
+    def pair_capacity(self, B: str, A: str, lb: float) -> Optional[float]:
+        """One pair's capacity at the budget for bonus lb (e.g. an E-Mode
+        bonus), from the cached curves: best of its candidate paths. None if
+        the pair is not in the matrix; 0 if it has no priced path."""
+        if (B, A) not in self.cells:
+            return None
+        key = (B, A, round(lb, 12))
+        cache = self.__dict__.setdefault("_pair_cap", {})
+        if key not in cache:
+            tau = self.params.budget(lb, self.params.tf(B))
+            cache[key] = _best_route(self.candidates.get((B, A), []), tau)[0] or 0.0
+        return cache[key]
 
     # ---- demand and risk --------------------------------------------------
 
@@ -165,10 +222,10 @@ class Matrix:
         if not a.is_collateral:
             return None
         S = a.supply_cap if at == "cap" else (a.supplied or 0.0)
-        px = self.prices.get(B)
+        px = self.price(B)
         if px is None:
             return None
-        return (p.beta * p.close_factor * p.seized_factor(a.lb)
+        return (p.beta * p.close_factor * p.seized_factor(a.lb, p.tf(B))
                 * a.ltv * S * px)
 
     def car(self, B: str, at: str = "cap") -> Optional[dict]:
@@ -186,17 +243,17 @@ class Matrix:
         """Largest supply cap, in tokens, adequate at (ltv, lb)."""
         a, p = self.assets[B], self.params
         qs = self.q_star(B, lb)
-        px = self.prices.get(B)
+        px = self.price(B)
         if qs is None or not px or ltv <= 0:
             return None
-        return qs / (p.beta * p.close_factor * p.seized_factor(lb) * ltv * px)
+        return qs / (p.beta * p.close_factor * p.seized_factor(lb, p.tf(B)) * ltv * px)
 
     def feasible(self, B: str, ltvs: Sequence[float] = None,
                  S: Optional[float] = None) -> List[dict]:
         """(LTV, LB) region at a fixed supply cap: required bonus vs ceiling."""
         a, p = self.assets[B], self.params
         S = S if S is not None else a.supply_cap
-        px = self.prices.get(B) or 0.0
+        px = self.price(B) or 0.0
         ltvs = ltvs or [i / 100 for i in range(5, 86, 5)]
         delta = a.lt - (a.ltv or a.lt)
         out = []
@@ -205,7 +262,7 @@ class Matrix:
             need = None
             for _ in range(40):
                 mid = 0.5 * (lo + hi)
-                q = (p.beta * p.close_factor * p.seized_factor(mid)
+                q = (p.beta * p.close_factor * p.seized_factor(mid, p.tf(B))
                      * ltv * S * px)
                 qs = self.q_star(B, mid)
                 if qs is None:
@@ -227,7 +284,7 @@ class Matrix:
         debts = syms or sorted({A for (_, A) in self.cells})
         print(f"capacity matrix C[B][A], USD, each row at its own budget "
               f"(CF={self.params.close_factor}, β={self.params.beta}, "
-              f"platform share={self.params.platform_share:.0%})\n")
+              f"bonus net of each collateral's treasury factor)\n")
         label = "coll \\ debt"
         print(f"{label:<11}" + "".join(f"{d[:8]:>{width}}" for d in debts))
         for B in colls:
@@ -254,7 +311,7 @@ class Matrix:
         p = self.params
         print(f"capacity at risk, demand at {at}  "
               f"(CF={p.close_factor}, β={p.beta}, LB_eff = "
-              f"{1-p.platform_share:.0%}·LB − {p.flash_fee:.2%})\n")
+              f"(1 − tf)·LB, φ = {p.flash_fee:.2%})\n")
         print(f"  {'asset':<10}{'LB':>5}{'budget':>8}{'Q':>13}{'Q*':>13}"
               f"{'ratio':>8}{'binding':>9}")
         rows = []
@@ -265,7 +322,7 @@ class Matrix:
         for a, r in sorted(rows, key=lambda x: -(x[1]["ratio"] or 0)):
             flag = "  ◀" if r["ratio"] > 1 else ""
             print(f"  {a.symbol:<10}{a.lb*100:>4.0f}%"
-                  f"{p.budget(a.lb)*100:>7.2f}%{_fmt(r['Q']):>13}"
+                  f"{p.budget(a.lb, p.tf(a.symbol))*100:>7.2f}%{_fmt(r['Q']):>13}"
                   f"{_fmt(r['Q_star']):>13}{r['ratio']:>8.2f}"
                   f"{r['binding'] or '—':>9}{flag}")
         print("\n◀ demand exceeds the capacity the routes support at that budget")
@@ -285,7 +342,7 @@ class Matrix:
         print(f"  {'LB':>6}{'budget':>9}{'Q*':>14}{'S_max at LTV=' + f'{a.ltv:.0%}':>20}")
         for lb, q in self.curve(B, lbs):
             s = self.s_max(B, a.ltv, lb) if a.ltv else None
-            print(f"  {lb*100:>5.0f}%{self.params.budget(lb)*100:>8.2f}%"
+            print(f"  {lb*100:>5.0f}%{self.params.budget(lb, self.params.tf(B))*100:>8.2f}%"
                   f"{_fmt(q):>14}{(f'{s:,.0f}' if s else '—'):>20}")
 
     def feasible_table(self, B: str, S: Optional[float] = None):
@@ -311,20 +368,137 @@ class Matrix:
             "params": {k: v for k, v in asdict(self.params).items()
                        if k not in ("venues",)},
             "prices": self.prices,
+            "price_source": self.price_source,
+            "tokens": self.tokens,
             "cells": {f"{b}|{a}": v for (b, a), v in self.cells.items()},
             "paths": {f"{b}|{a}": p for (b, a), p in self.paths.items()},
             "unreachable": [f"{b}|{a}" for b, a in self.unreachable],
             "dead_leg": {f"{b}|{a}": v for (b, a), v in self.dead_leg.items() if v},
             "pools_read": self.pools_read, "pools_failed": self.pools_failed,
+            "pools_empty": self.pools_empty,
+            "saturated": [f"{b}|{a}" for b, a in self.saturated],
+            "no_pool": self.no_pool,
+            "coverage": {f"{b}|{a}": {"status": v["status"], "failed": [list(k) for k in v["failed"]]}
+                         for (b, a), v in self.coverage.items()},
         }
         with open(path, "w") as fh:
             json.dump(d, fh, indent=1)
         print(f"saved {path}")
 
 
+REFINE_WITHIN = 0.10     # refine every path within this share of the grid best
+
+
+def _coverage(cells, cands, kept, curve, leg_ids, adj, key_of, tvl_of, failed,
+              n_slots, name, budgets=None, kept_curves=None, winners=None
+              ) -> Dict[Tuple[str, str], dict]:
+    """
+    Per pair: whether a failed (or truncated) read could have changed its
+    capacity. Empty pools are zero depth and never count. A failed pool
+    counts on a leg if it could have been one of the leg's n_slots pools:
+    the leg ended up with fewer readable pools than slots, or its listed
+    (on-chain) TVL is at least that of the weakest pool chosen. Ranking by
+    output is not possible for a pool that did not read.
+
+    A pair is incomplete when
+      1. a leg of its winning path has a counting failed pool; or a leg of
+         another kept path does and that path could overtake the winner:
+         capacity at a given cost scales at most linearly with a leg's depth
+         (exactly so for constant-product pools), so a failed pool of TVL T
+         on a leg holding L lifts the path by at most (1 + T/L);
+      2. one of its enumerated paths went unpriced on a leg that has a failed
+         pool (a better path may have been lost); or
+      3. its capacity is 0 and any failed pool holds either of its coins.
+    budgets, kept_curves and winners enable the overtaking test in 1;
+    without them every kept path counts.
+    """
+    leg_cache: Dict[Tuple[str, str, bool], List[tuple]] = {}
+
+    def leg_failed(x, y, counting=True):
+        k = (x, y, counting)
+        if k not in leg_cache:
+            on_leg = [key_of(r) for r in adj[x][y] if key_of(r) in failed]
+            if counting and on_leg:
+                chosen = leg_ids(x, y)
+                if len(chosen) >= n_slots:
+                    floor = min(tvl_of.get(c, 0.0) for c in chosen)
+                    on_leg = [f for f in on_leg if tvl_of.get(f, 0.0) >= floor]
+            leg_cache[k] = on_leg
+        return leg_cache[k]
+
+    def lift(x, y, fails):
+        held = sum(tvl_of.get(c, 0.0) for c in leg_ids(x, y))
+        add = sum(tvl_of.get(f, 0.0) for f in fails)
+        return float("inf") if held <= 0 else 1 + add / held
+
+    out = {}
+    for (B, D), cap in cells.items():
+        bad = set()
+        paths_k = kept.get((B, D), [])
+        win = (winners or {}).get((B, D))
+        for j, path in enumerate(paths_k):
+            legs = [(path[i], path[i + 1]) for i in range(len(path) - 1)]
+            hits = {lg: leg_failed(*lg) for lg in legs}
+            if not any(hits.values()):
+                continue
+            if budgets is None or win is None or j == win:
+                for f in hits.values():
+                    bad.update(f)
+                continue
+            # a losing path counts only if the missing depth could lift it
+            # past the winner
+            factor = 1.0
+            for lg, f in hits.items():
+                if f:
+                    factor *= lift(*lg, f)
+            mine = grid_capacity(kept_curves[(B, D)][j], budgets[(B, D)])
+            if mine * factor >= (cap or 0.0):
+                for f in hits.values():
+                    bad.update(f)
+        for path in cands.get((B, D), []):
+            for i in range(len(path) - 1):
+                if curve(path[i], path[i + 1]) is None:
+                    bad.update(leg_failed(path[i], path[i + 1], counting=False))
+        if not cap and name.get(B) and name.get(D):
+            bad.update(f for f in failed if name[B] in f[1:] or name[D] in f[1:])
+        out[(B, D)] = {"status": "incomplete" if bad else "complete",
+                       "failed": sorted(bad)}
+    return out
+
+
+def _best_route(cands: Sequence[list], tau: float, refine: bool = True
+                ) -> Tuple[Optional[float], Optional[int]]:
+    """
+    Highest capacity over a pair's candidate paths at budget tau, and the
+    index of the path that achieves it. (None, None) if there are none.
+    Paths are ranked on the grid; every path within REFINE_WITHIN of the
+    grid best is refined on the exact composition, so a near tie on the grid
+    cannot pick the wrong path.
+    """
+    if not cands:
+        return None, None
+    if tau <= 0:
+        return 0.0, 0
+    grid = [grid_capacity(cs, tau) for cs in cands]
+    if not refine:
+        i = max(range(len(grid)), key=lambda k: grid[k])
+        return grid[i], i
+    top = max(grid)
+    best_cap, best_i = None, None
+    for i, cs in enumerate(cands):
+        if grid[i] < top * (1 - REFINE_WITHIN):
+            continue
+        cap = route_capacity(cs, tau, start=grid[i])
+        if best_cap is None or cap > best_cap:
+            best_cap, best_i = cap, i
+    return best_cap, best_i
+
+
 def _fmt(v: Optional[float]) -> str:
     if v is None:
         return "—"
+    if is_saturated(v):
+        return "≥50M"
     if v >= 1e9:
         return f"{v/1e9:.2f}B"
     if v >= 1e6:
@@ -353,87 +527,106 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
 
     rows = _graph.load_pool_rows(csv_path, venues)
     adj = _graph.build_adjacency(rows)
-    vol_of = {r["pool_id"]: float(r["volume_24h"] or 0) for r in rows}
-    tvl_of = {r["pool_id"]: float(r["tvl_usd"] or 0) for r in rows}
-    name = dict(tokens)
+    key_of = lambda r: pool_key(r["pool_id"], r["coin_type_a"], r["coin_type_b"])
+    vol_of = {key_of(r): float(r["volume_24h"] or 0) for r in rows}
+    tvl_of = {key_of(r): float(r["tvl_usd"] or 0) for r in rows}
+    name = {s: norm_type(t) for s, t in tokens.items()}
     tname = {v: k for k, v in name.items()}
     for r in rows:
         tname.setdefault(r["coin_type_a"], r["symbol_a"])
         tname.setdefault(r["coin_type_b"], r["symbol_b"])
 
-    present = [s for s in A if s in name and name[s] in adj]
-    colls = [s for s in (collaterals or present)
-             if s in A and A[s].is_collateral and s in present]
-    dbts = [s for s in (debts or present) if s in present]
+    # Every asset is in the matrix. One with no pool has no path, so all its
+    # pairs get capacity 0: no exit is the worst case, not a missing datum.
+    known = [s for s in A if s in name]
+    no_pool = [s for s in known if name[s] not in adj]
+    colls = [s for s in (collaterals or known) if s in A and A[s].is_collateral and s in name]
+    dbts = [s for s in (debts or known) if s in name]
     if verbose:
-        absent = [s for s in A if s not in present]
         print(f"{len(colls)} collaterals x {len(dbts)} debts "
               f"= {len(colls)*len(dbts) - len(set(colls) & set(dbts))} pairs")
-        if absent:
-            print(f"absent from the pool set: {', '.join(absent)}")
+        if no_pool:
+            print(f"no pool, capacity 0 in every pair: {', '.join(no_pool)}")
 
-    # candidate paths, same selection as the network build
+    # Every path up to max_hops; they are ranked once pools are read (by
+    # route cost at reference sizes), not by listed TVL beforehand.
+    readable: Dict[frozenset, list] = {}     # filled by read_legs below
+    chosen: Dict[Tuple[str, str], list] = {}
+
     def leg_ids(x, y):
-        return [(c["pool_id"], "a" if c["coin_type_a"] == x else "b")
-                for c in adj[x][y][:p.max_pools_per_leg]]
-
-    def bottleneck(path):
-        return min(float(adj[path[i]][path[i + 1]][0]["tvl_usd"])
-                   for i in range(len(path) - 1))
+        """The leg's chosen pools for x -> y: the max_pools_per_leg readable
+        pools giving the most USD out at REF_USD, best first."""
+        if (x, y) not in chosen:
+            chosen[(x, y)] = _graph.choose_pools(
+                pools, readable.get(frozenset((x, y)), []), x, prices,
+                p.max_pools_per_leg)
+        return chosen[(x, y)]
 
     cands = {}
     for B in colls:
         for D in dbts:
             if B == D:
                 continue
-            ps = _graph.all_paths(adj, name[B], name[D], p.max_hops)
-            ps.sort(key=lambda x: (-bottleneck(x), len(x)))
-            cands[(B, D)] = ps[:p.max_candidates]
+            cands[(B, D)] = _graph.all_paths(adj, name[B], name[D], p.max_hops)
+    if verbose:
+        print(f"{sum(len(v) for v in cands.values())} paths (≤{p.max_hops} hops)")
 
-    need = sorted({pid for ps in cands.values() for path in ps
-                   for i in range(len(path) - 1) for pid, _ in leg_ids(path[i], path[i + 1])})
+    legs = sorted({(path[i], path[i + 1]) for ps in cands.values() for path in ps
+                   for i in range(len(path) - 1)})
     venue_of = {r["pool_id"]: r["venue"] for r in rows}
-    type_of = {r["pool_id"]: (r["coin_type_a"], r["coin_type_b"]) for r in rows}
     book = PoolBook(cache=cache, verbose=verbose, venue_of=venue_of,
                     tokens=tokens)
     if verbose:
-        print(f"reading {len(need)} pools…")
-    pools = {}
-    for pid in need:
-        ca, cb = type_of.get(pid, (None, None))
-        q = book.get(pid, coin_a=ca, coin_b=cb)
-        if q:
-            pools[pid] = q
-    prices = p.prices or _graph.derive_prices(pools)
+        print(f"reading pools for {len(legs)} legs…")
+    # every pool on every leg is read; failed and empty ones are left out, and
+    # leg_ids() then keeps the best max_pools_per_leg by output
+    pools, legs_read = _graph.read_legs(adj, legs, book, key_of)
+    readable.update(legs_read)
     if verbose:
-        print(f"{len(pools)} readable, {len(book.failed)} failed; "
+        print(f"largest tick table read: {clmm.max_ticks_seen} ticks")
+    # Supplied prices win; coins they do not cover get a price derived from
+    # pool spot rates, seeded with the supplied ones, so routes through
+    # unpriced intermediates stay usable.
+    supplied = {norm_type(t): v for t, v in (p.prices or {}).items()}
+    derived = _graph.derive_prices(pools, seed=supplied)
+    prices = {**derived, **supplied}
+    price_source = {t: "supplied" if t in supplied else "derived" for t in prices}
+    if verbose:
+        print(f"{len(pools)} readable, {len(book.failed)} failed, "
+              f"{len(book.empty)} empty; "
               f"prices for {len(prices)} tokens")
 
     curve_cache: Dict[Tuple[str, str], object] = {}
+    skipped: List[str] = []
 
     def curve(x, y):
         if (x, y) not in curve_cache:
-            lp = [(pools[pid], sd) for pid, sd in leg_ids(x, y) if pid in pools]
+            lp = _graph.leg_pools(pools, leg_ids(x, y), x, skipped)
             curve_cache[(x, y)] = (LegCurve(lp, prices, pick=p.pick)
                                    if lp else None)
         return curve_cache[(x, y)]
 
     cells, paths, curves, unreachable = {}, {}, {}, []
+    candidates: Dict[Tuple[str, str], List[list]] = {}
+    candidate_paths: Dict[Tuple[str, str], List[list]] = {}
+    budgets: Dict[Tuple[str, str], float] = {}
+    winners: Dict[Tuple[str, str], Optional[int]] = {}
     dead_leg: Dict[Tuple[str, str], Optional[str]] = {}
 
     def leg_volume(x, y):
         """Total 24h volume across the pools used on this leg."""
-        return sum(vol_of.get(pid, 0.0) for pid, _ in leg_ids(x, y))
+        return sum(vol_of.get(pid, 0.0) for pid in leg_ids(x, y))
+    # up to max_candidates paths: the cheapest few at each reference size
+    k = (None if p.max_candidates is None
+         else max(1, p.max_candidates // len(_graph.RANK_SIZES)))
     for (B, D), ps in cands.items():
-        tau = p.budget(A[B].lb)
-        best_cap, best_path, best_curves = None, None, None
-        for path in ps:
-            cs = [curve(path[i], path[i + 1]) for i in range(len(path) - 1)]
-            if not all(cs):
-                continue
-            cap = route_capacity(cs, tau) if tau > 0 else 0.0
-            if best_cap is None or cap > best_cap:
-                best_cap, best_path, best_curves = cap, path, cs
+        tau = p.budget(A[B].lb, p.tf(B))
+        priced = _graph.rank_paths(ps, curve, k=k)
+        candidates[(B, D)] = [cs for _, cs in priced]
+        candidate_paths[(B, D)] = [path for path, _ in priced]
+        best_cap, i = _best_route(candidates[(B, D)], tau)
+        budgets[(B, D)], winners[(B, D)] = tau, i
+        best_path, best_curves = priced[i] if i is not None else (None, None)
         if best_cap is None:
             # No priced path. That is worse than a thin one, so it enters the
             # row minimum as zero rather than being skipped.
@@ -452,13 +645,25 @@ def build(csv_path: str, tokens: Dict[str, str], asset_table: Dict[str, tuple],
         if verbose and len(cells) % 100 == 0:
             print(f"  {len(cells)} cells…", flush=True)
 
+    coverage = _coverage(cells, cands, candidate_paths, curve, leg_ids, adj, key_of,
+                         tvl_of, set(book.failed), p.max_pools_per_leg, name,
+                         budgets=budgets, kept_curves=candidates, winners=winners)
+
     if verbose:
-        print(f"\n{len(cells)} cells, {len(unreachable)} with no route")
+        n_inc = sum(1 for c in coverage.values() if c["status"] == "incomplete")
+        print(f"\n{len(cells)} cells, {len(unreachable)} with no route, "
+              f"{n_inc} with incomplete coverage")
 
     if verbose and dead_leg:
         n = sum(1 for v in dead_leg.values() if v)
         print(f"{n} routes have a leg with no 24h volume")
 
     return Matrix(params=p, assets=A, prices=prices, cells=cells, paths=paths,
-                  curves=curves, unreachable=unreachable, dead_leg=dead_leg,
-                  pools_read=len(pools), pools_failed=len(book.failed))
+                  curves=curves, candidates=candidates, candidate_paths=candidate_paths,
+                  unreachable=unreachable, dead_leg=dead_leg,
+                  pools_read=len(pools), pools_failed=len(book.failed),
+                  pools_empty=len(book.empty),
+                  derived_prices=derived, price_source=price_source,
+                  tokens=name, skipped_pools=sorted(set(skipped)),
+                  saturated=sorted(k for k, v in cells.items() if is_saturated(v)),
+                  no_pool=no_pool, coverage=coverage)

@@ -19,15 +19,31 @@ from __future__ import annotations
 
 from typing import Dict, Optional, Sequence
 
-# Protocol's share of the liquidation incentive.
-PLATFORM_SHARE = 0.10
+# Treasury factor per collateral: the protocol's cut of the liquidation bonus,
+# read from each reserve's `treasury_factor` (ray) in Storage on 2026-10-15.
+# Navi's logic::calculate_liquidation sets bonus = base * LB and
+# treasury = bonus * treasury_factor(collateral reserve); the liquidator gets
+# base + bonus - treasury and the treasury share stays in the pool. The
+# LiquidationEvent's collateral_amount is gross (liquidator + treasury): in 20
+# events on 2026-10-15 the gross bonus equals LB and treasury / bonus equals
+# this factor. run.py reads the live values; these are the static fallback.
+TREASURY_FACTORS: Dict[str, float] = {
+    "SUI": .65, "vSUI": .65, "haSUI": .65,
+    "stSUI": .55, "SOL": .55, "MBTC": .55, "DEEP": .55, "WAL": .55,
+    "enzoBTC": .55, "FDUSD": .55, "BUCK": .55, "suiUSDe": .55,
+    "USDC": .55, "suiUSDT": .55, "USDSUI": .55, "USDY": .55, "NAVX": .55,
+    "WBTC.lz": .80, "xBTC": .80,
+    "LBTC": .85, "wBTC": .85, "suiETH": .85,
+}
 
 # "up to 35%" per the parameters page; the docs hub states 50%.
 CLOSE_FACTOR = 0.35
 
 # Venues carrying enough depth on Sui to matter for routing.
 VENUES = {"cetus", "bluefin", "turbos-finance", "momentum", "deepbook",
-          "aftermath"}
+          "aftermath",
+          # SUI -> vSUI/haSUI/stSUI by minting at the protocol rate; one way only
+          "lst-mint"}
 
 COIN_TYPES: Dict[str, str] = {
     "SUI":     "0x2::sui::SUI",

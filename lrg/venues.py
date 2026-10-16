@@ -8,10 +8,8 @@ sym_a/sym_b, dec_a/dec_b, coin_a/coin_b, fee, venue, pool_id.
     import venues
     venues.probe_deepbook_orderbook("SUI_USDC")      # run this first
 
-    af = venues.aftermath_pools(min_usd=25_000, prices=prices)
-    db = venues.deepbook_pools()
-    rows = venues.to_csv_rows(af + db)
-    venues.append_to_csv(rows, "navi_pools.csv")
+    # prices: USD by normalized coin type (e.g. Navi's oracle)
+    rows = venues.discovery_rows(navi.COIN_TYPES, prices)   # CSV rows for both venues
 """
 from __future__ import annotations
 
@@ -19,6 +17,8 @@ import csv
 import json
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
+
+from .coins import norm_type
 
 import requests
 
@@ -109,11 +109,12 @@ def aftermath_pools(tokens: Dict[str, str], min_usd: float = 25_000.0,
                     prices: Dict[str, float] = None, verbose: bool = True
                     ) -> List[AftermathPool]:
     """
-    Pull Aftermath pools, keep only two-coin pools where both coins are in
-    `tokens` (symbol -> coin type) and TVL clears min_usd.
-    Multi-coin pools are split into all two-leg combinations.
+    Pull Aftermath pools, keep the coin pairs where both coins are in
+    `tokens` (symbol -> coin type) and, when prices (USD by coin type) are
+    given, TVL clears min_usd. Multi-coin pools are split into all two-coin
+    combinations, which share the pool's object id.
     """
-    by_type = {v: k for k, v in tokens.items()}
+    by_type = {norm_type(v): k for k, v in tokens.items()}
     prices = prices or {}
 
     data = requests.get(AF_POOLS, headers=UA, timeout=60).json()
@@ -125,7 +126,7 @@ def aftermath_pools(tokens: Dict[str, str], min_usd: float = 25_000.0,
         coins = p.get("coins") or {}
         legs = []
         for ctype, c in coins.items():
-            t = ctype if ctype.startswith("0x") else "0x" + ctype
+            t = norm_type(ctype if ctype.startswith("0x") else "0x" + ctype)
             if t not in by_type:
                 continue
             dec = c.get("decimals")
@@ -148,7 +149,7 @@ def aftermath_pools(tokens: Dict[str, str], min_usd: float = 25_000.0,
                     dec_a=da, dec_b=db, bal_a=ba, bal_b=bb,
                     w_a=wa / tot, w_b=wb / tot, fee=max(fa, fb),
                     flatness=flat, name=p.get("name", ""))
-                tvl = pool.tvl(prices.get(sa, 0), prices.get(sb, 0))
+                tvl = pool.tvl(prices.get(ta, 0), prices.get(tb, 0))
                 if prices and tvl < min_usd:
                     continue
                 out.append(pool)
@@ -204,6 +205,7 @@ class DeepBookPool:
     bids: List[Tuple[float, float]] = field(default_factory=list)   # (price, base qty)
     asks: List[Tuple[float, float]] = field(default_factory=list)
     name: str = ""
+    levels: int = 0        # book levels fetched per side; depth beyond them is unseen
 
     @property
     def liquidity(self) -> float:
@@ -300,21 +302,24 @@ def _parse_book(d) -> Tuple[List[Tuple[float, float]], List[Tuple[float, float]]
     if "bid_prices" in d:
         bids = list(zip(map(float, d["bid_prices"]), map(float, d["bid_quantities"])))
         asks = list(zip(map(float, d["ask_prices"]), map(float, d["ask_quantities"])))
-        return bids, asks
-    bids = pairs(d.get("bids") or d.get("bid"))
-    asks = pairs(d.get("asks") or d.get("ask"))
+    else:
+        bids = pairs(d.get("bids") or d.get("bid"))
+        asks = pairs(d.get("asks") or d.get("ask"))
+    # out() walks from the best level: highest bid first, lowest ask first
+    bids.sort(key=lambda e: -e[0])
+    asks.sort(key=lambda e: e[0])
     return bids, asks
 
 
 def deepbook_pools(tokens: Dict[str, str], taker_fee: float = 0.001,
-                   book_path: str = "/orderbook/{name}?level=2&depth=200",
+                   book_path: str = "/orderbook/{name}?level=2&depth={depth}",
                    verbose: bool = True) -> List[DeepBookPool]:
-    by_type = {v: k for k, v in tokens.items()}
+    by_type = {norm_type(v): k for k, v in tokens.items()}
     out = []
     for p in deepbook_pool_list():
         ta = p["base_asset_id"]; tb = p["quote_asset_id"]
-        ta = ta if ta.startswith("0x") else "0x" + ta
-        tb = tb if tb.startswith("0x") else "0x" + tb
+        ta = norm_type(ta if ta.startswith("0x") else "0x" + ta)
+        tb = norm_type(tb if tb.startswith("0x") else "0x" + tb)
         if ta not in by_type or tb not in by_type:
             continue
         pool = DeepBookPool(
@@ -322,15 +327,25 @@ def deepbook_pools(tokens: Dict[str, str], taker_fee: float = 0.001,
             sym_a=by_type[ta], sym_b=by_type[tb],
             dec_a=int(p["base_asset_decimals"]), dec_b=int(p["quote_asset_decimals"]),
             fee=taker_fee, name=p["pool_name"])
-        try:
-            url = DB_BASE + book_path.format(name=p["pool_name"])
-            d = requests.get(url, headers=UA, timeout=25).json()
-            pool.bids, pool.asks = _parse_book(d)
-        except Exception as e:
+        # the indexer simulates the read and runs out of gas on deep books at
+        # 200 levels, so step down until one depth answers
+        err = None
+        for depth in (200, 100, 50):
+            try:
+                url = DB_BASE + book_path.format(name=p["pool_name"], depth=depth)
+                r = requests.get(url, headers=UA, timeout=25)
+                r.raise_for_status()
+                pool.bids, pool.asks = _parse_book(r.json())
+                pool.levels = depth
+                break
+            except Exception as e:
+                err = e
+        else:
             if verbose:
-                print(f"  book failed for {p['pool_name']}: {e}")
+                print(f"  book failed for {p['pool_name']}: {err}")
         if verbose:
-            print(f"  {p['pool_name']:<16}{len(pool.bids):>4} bids {len(pool.asks):>4} asks")
+            print(f"  {p['pool_name']:<16}{len(pool.bids):>4} bids {len(pool.asks):>4} asks"
+                  f"  (depth {pool.levels})")
         if pool.bids or pool.asks:
             out.append(pool)
     if verbose:
@@ -341,13 +356,15 @@ def deepbook_pools(tokens: Dict[str, str], taker_fee: float = 0.001,
 # ---------------------------------------------------------------------------
 
 def to_csv_rows(pools, prices: Dict[str, float] = None) -> List[dict]:
+    """CSV rows for adapter pools; prices are USD by coin type."""
     prices = prices or {}
     rows = []
     for p in pools:
+        ta, tb = norm_type(p.coin_a), norm_type(p.coin_b)
         rows.append({
             "symbol_a": p.sym_a, "symbol_b": p.sym_b,
-            "coin_type_a": p.coin_a, "coin_type_b": p.coin_b,
-            "tvl_usd": f"{p.tvl(prices.get(p.sym_a, 0), prices.get(p.sym_b, 0)):.2f}",
+            "coin_type_a": ta, "coin_type_b": tb,
+            "tvl_usd": f"{p.tvl(prices.get(ta, 0), prices.get(tb, 0)):.2f}",
             "volume_24h": "0", "venue": p.venue,
             "pool_type": "WEIGHTED" if p.venue == "aftermath" else "ORDERBOOK",
             "fee_tier": f"{p.fee}", "pool_id": p.pool_id,
@@ -355,6 +372,18 @@ def to_csv_rows(pools, prices: Dict[str, float] = None) -> List[dict]:
             "pool_name": f"{p.sym_a} / {p.sym_b}",
         })
     return rows
+
+
+def discovery_rows(tokens: Dict[str, str], prices: Dict[str, float],
+                   min_usd: float = 25_000.0, verbose: bool = True) -> List[dict]:
+    """
+    CSV rows for DeepBook and Aftermath pools between coins in `tokens`.
+    Aftermath pairs below min_usd are dropped. DeepBook pools with a readable
+    book are all kept; their TVL is the depth of the levels fetched.
+    """
+    af = aftermath_pools(tokens, min_usd=min_usd, prices=prices, verbose=verbose)
+    db = deepbook_pools(tokens, verbose=verbose)
+    return to_csv_rows(af + db, prices)
 
 
 def append_to_csv(rows: List[dict], csv_path: str):
@@ -373,3 +402,147 @@ def append_to_csv(rows: List[dict], csv_path: str):
             seen.add(k); added += 1
     print(f"appended {added} pools to {csv_path}")
     return added
+
+
+# ---------------------------------------------------------------------------
+# LST minting: SUI -> LST at the protocol's own rate, one direction only
+# ---------------------------------------------------------------------------
+#
+# Volo (vSUI), Haedal (haSUI) and AlphaFi (stSUI) mint atomically and
+# permissionlessly, with no mint fee and no cap found: the public mint call
+# returns the LST coin in the same transaction. Each LST can also be redeemed
+# atomically, but redemption is deliberately not modelled as an exit (a
+# liquidator's route never sells an LST back to its protocol).
+#
+# The rate is read by simulating a mint of MINT_PROBE_SUI and dividing, so it
+# includes any mint fee and the protocol's refresh at mint time.
+
+MINT_PROBE_SUI = 1_000 * 10 ** 9
+SUI_TYPE = "0x2::sui::SUI"
+
+# symbol -> how to call the protocol's mint (shared objects after the coin
+# are passed in this order; "sys" is the Sui system state, "addr" a zero
+# referral address)
+MINTERS: Dict[str, dict] = {
+    "vSUI": {"package": "0x68d22cf8bdbcd11ecba1e094922873e4080d4d11133e2443fddda0bfd11dae20",
+             "module": "stake_pool", "function": "stake", "type_args": [],
+             "pool_id": "0x2d914e23d82fedef1b5f56a32d5c64bdcc3087ccfea2b4d6ea51a71f587840e5",
+             "args": ["pool", "0x680cd26af32b2bde8d3361e804c53ec1d1cfe24c7f039eb7f549e8dfde389a60",
+                      "sys", "coin"]},
+    "haSUI": {"package": "0x19e6ea7f5ced4f090e20da794cc80349a03e638940ddb95155a4e301f5f4967c",
+              "module": "staking", "function": "request_stake_coin", "type_args": [],
+              "pool_id": "0x47b224762220393057ebf4f70501b6e657c3e56684737568439a04f80849b2ca",
+              "args": ["sys", "pool", "coin", "addr"]},
+    "stSUI": {"package": "0x059f94b85c07eb74d2847f8255d8cc0a67c9a8dcc039eabf9f8b9e23a0de2700",
+              "module": "liquid_staking", "function": "mint",
+              "type_args": ["0xd1b72982e40348d069bb1ff701e634c117bb5f741f44dff91e472d3b01461e55::stsui::STSUI"],
+              "pool_id": "0x1adb343ab351458e151bc392fbf1558b3332467f23bda45ae67cd355a57fd5f5",
+              "args": ["pool", "sys", "coin"]},
+}
+
+_Q_SIMULATE = """query($tx: JSON!) { simulateTransaction(transaction: $tx, checksEnabled: false) {
+  effects { status executionError { abortCode message } }
+  outputs { returnValues { value { json } } } } }"""
+
+
+@dataclass
+class MintPool:
+    """SUI in, LST out at `rate` SUI per LST; no depth limit, no reverse."""
+    pool_id: str
+    venue: str
+    coin_a: str            # SUI
+    coin_b: str            # the LST
+    sym_a: str
+    sym_b: str
+    dec_a: int
+    dec_b: int
+    rate: float            # SUI per LST, fee included
+    fee: float = 0.0
+    one_way: str = "a"     # only coin_a (SUI) is accepted as input
+    name: str = ""
+
+    @property
+    def liquidity(self) -> float:
+        return float("inf")
+
+    def price(self) -> float:
+        """LST per SUI."""
+        return 1.0 / self.rate
+
+    def out(self, q: float, side: str = "a") -> float:
+        if side != "a":
+            raise ValueError(f"{self.name}: minting only takes SUI in")
+        if q <= 0:
+            return 0.0
+        return q / 10 ** self.dec_a / self.rate * 10 ** self.dec_b
+
+    def tvl(self, price_a_usd: float, price_b_usd: float) -> float:
+        return 0.0             # not a pool of reserves; depth is unlimited
+
+    def size_for_slippage(self, target: float, side: str = "a") -> Optional[float]:
+        return None            # no price impact
+
+
+def mint_rate(sym: str, coin_type: str) -> float:
+    """SUI per LST from a simulated mint of MINT_PROBE_SUI."""
+    import base64
+    import struct
+    from .clmm import gql
+    m = MINTERS[sym]
+    inputs = [{"kind": "PURE", "pure": base64.b64encode(struct.pack("<Q", MINT_PROBE_SUI)).decode()}]
+    args = []
+    for a in m["args"]:
+        if a == "coin":
+            args.append({"kind": "RESULT", "result": 0, "subresult": 0})
+            continue
+        if a == "addr":
+            inputs.append({"kind": "PURE", "pure": base64.b64encode(bytes(32)).decode()})
+        else:
+            oid = {"pool": m["pool_id"], "sys": "0x5"}.get(a, a)
+            inputs.append({"kind": "SHARED", "objectId": oid, "mutable": True})
+        args.append({"kind": "INPUT", "input": len(inputs) - 1})
+    tx = {"sender": "0x" + "ab" * 32, "kind": {"programmableTransaction": {
+        "inputs": inputs,
+        "commands": [{"splitCoins": {"coin": {"kind": "GAS"}, "amounts": [{"kind": "INPUT", "input": 0}]}},
+                     {"moveCall": {"package": m["package"], "module": m["module"],
+                                   "function": m["function"], "typeArguments": m["type_args"],
+                                   "arguments": args}}]}}}
+    r = gql(_Q_SIMULATE, {"tx": tx})["simulateTransaction"]
+    if r["effects"]["status"] != "SUCCESS":
+        raise RuntimeError(f"{sym} mint simulation failed: {r['effects']['executionError']}")
+    minted = int(r["outputs"][1]["returnValues"][0]["value"]["json"]["balance"])
+    if minted <= 0:
+        raise RuntimeError(f"{sym} mint simulation returned nothing")
+    return MINT_PROBE_SUI / minted
+
+
+def mint_pools(tokens: Dict[str, str], verbose: bool = True) -> List[MintPool]:
+    """A MintPool for each LST in MINTERS that is also in `tokens`."""
+    out = []
+    for sym, m in MINTERS.items():
+        if sym not in tokens or "SUI" not in tokens:
+            continue
+        rate = mint_rate(sym, tokens[sym])
+        out.append(MintPool(pool_id=m["pool_id"], venue="lst-mint",
+                            coin_a=norm_type(tokens["SUI"]), coin_b=norm_type(tokens[sym]),
+                            sym_a="SUI", sym_b=sym, dec_a=9, dec_b=9, rate=rate,
+                            name=f"mint {sym}"))
+        if verbose:
+            print(f"  mint {sym}: {rate:.6f} SUI per {sym}")
+    return out
+
+
+def mint_rows(tokens: Dict[str, str]) -> List[dict]:
+    """CSV rows for the mint venue (one per LST); TVL is not meaningful."""
+    rows = []
+    for sym, m in MINTERS.items():
+        if sym in tokens and "SUI" in tokens:
+            rows.append({"symbol_a": "SUI", "symbol_b": sym,
+                         "coin_type_a": norm_type(tokens["SUI"]),
+                         "coin_type_b": norm_type(tokens[sym]),
+                         "tvl_usd": "0", "volume_24h": "0", "venue": "lst-mint",
+                         "pool_type": "MINT", "fee_tier": "0", "pool_id": m["pool_id"],
+                         "both_in_navi": "True", "has_adapter": "True",
+                         "pool_name": f"mint {sym} (SUI -> {sym} only)",
+                         "tvl_source": "venue"})
+    return rows

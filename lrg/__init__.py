@@ -7,8 +7,9 @@ costs to execute on-chain, and what that implies for risk parameters.
 Layers, bottom up:
 
     pool          the adapter interface every venue implements
+    coins         coin identity: normalized coin types
     clmm          concentrated liquidity (Cetus, Bluefin, Momentum, Turbos)
-    venues        weighted AMM (Aftermath) and order book (DeepBook)
+    venues        weighted AMM (Aftermath), order book (DeepBook), LST minting
     discovery     building the pool universe from public indexers
     book          pool state, fetched once and cached
     topology      which routes exist between two assets

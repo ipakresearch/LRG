@@ -1,0 +1,1992 @@
+{
+ "run": {
+  "timestamp_utc": "2026-10-16T06:31:16+00:00",
+  "commit": "4717ad91ffd61d99f0607665939162751fb442a6",
+  "lrg_dirty": true,
+  "params": {
+   "close_factor": 0.35,
+   "beta": 1.0,
+   "treasury_factors": {
+    "WBTC.lz": 0.8,
+    "DEEP": 0.55,
+    "haSUI": 0.65,
+    "MBTC": 0.55,
+    "LBTC": 0.85,
+    "suiUSDT": 0.55,
+    "NAVX": 0.55,
+    "SOL": 0.55,
+    "USDSUI": 0.55,
+    "suiETH": 0.85,
+    "USDC": 0.55,
+    "XAUm": 0.55,
+    "suiUSDe": 0.55,
+    "xBTC": 0.8,
+    "stSUI": 0.55,
+    "SUI": 0.65,
+    "wBTC": 0.85,
+    "vSUI": 0.65,
+    "USDY": 0.55,
+    "enzoBTC": 0.55,
+    "BUCK": 0.55,
+    "WAL": 0.55,
+    "wUSDC": 0.55,
+    "FDUSD": 0.55
+   },
+   "treasury_share": null,
+   "flash_fee": 0.0009,
+   "lb_max": 0.15,
+   "max_hops": 4,
+   "max_pools_per_leg": 4,
+   "max_candidates": 20,
+   "excluded_debts": [
+    "MBTC",
+    "enzoBTC"
+   ],
+   "pick": "split"
+  },
+  "venues": [
+   "aftermath",
+   "bluefin",
+   "cetus",
+   "deepbook",
+   "momentum",
+   "turbos-finance"
+  ]
+ },
+ "navi_live": {
+  "storage": "0xbb4e2f4b6205c2e2a2db47aeb4f830796ec7c005f88537ee775986639bc442fe",
+  "assets": {
+   "WBTC.lz": {
+    "reserve_id": 32,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.8,
+    "supply_cap": 100.0,
+    "borrow_cap_ratio": 0.5,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 39.62901703808276,
+    "borrowed": 19.46281944946701,
+    "borrowed_in_positions": 19.46282103318484
+   },
+   "DEEP": {
+    "reserve_id": 15,
+    "ltv": 0.47,
+    "lt": 0.52,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 450000000.0,
+    "borrow_cap_ratio": 0.86,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 373862683.5426968,
+    "borrowed": 87277412.1298775,
+    "borrowed_in_positions": 87277740.90193783
+   },
+   "haSUI": {
+    "reserve_id": 6,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.65,
+    "supply_cap": 27500000.0,
+    "borrow_cap_ratio": 0.15,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 22495516.57508226,
+    "borrowed": 489527.28515360487,
+    "borrowed_in_positions": 472340.41485058406
+   },
+   "MBTC": {
+    "reserve_id": 29,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 200.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 199.99006019,
+    "borrowed": 0.0,
+    "borrowed_in_positions": 0.0
+   },
+   "LBTC": {
+    "reserve_id": 23,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.85,
+    "supply_cap": 70.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 32.86740200139699,
+    "borrowed": 0.9615323216207485,
+    "borrowed_in_positions": 0.9615323961903477
+   },
+   "suiUSDT": {
+    "reserve_id": 19,
+    "ltv": 0.8,
+    "lt": 0.85,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 10000000.0,
+    "borrow_cap_ratio": 0.96,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 2102957.785558473,
+    "borrowed": 426320.5839991472,
+    "borrowed_in_positions": 426321.391059254
+   },
+   "NAVX": {
+    "reserve_id": 7,
+    "ltv": 0.45,
+    "lt": 0.65,
+    "lb": 0.05,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 300000000.0,
+    "borrow_cap_ratio": 0.05,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 241290717.34045905,
+    "borrowed": 2018829.1289429583,
+    "borrowed_in_positions": 2017512.054341151
+   },
+   "SOL": {
+    "reserve_id": 22,
+    "ltv": 0.6,
+    "lt": 0.65,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 1000.0,
+    "borrow_cap_ratio": 0.4,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 627.7056925770771,
+    "borrowed": 0.830581797696678,
+    "borrowed_in_positions": 0.8305834577125302
+   },
+   "USDSUI": {
+    "reserve_id": 34,
+    "ltv": 0.75,
+    "lt": 0.78,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 15000000.0,
+    "borrow_cap_ratio": 0.92,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 8983164.032636663,
+    "borrowed": 7611700.600130538,
+    "borrowed_in_positions": 7612174.8895935705
+   },
+   "suiETH": {
+    "reserve_id": 11,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.85,
+    "supply_cap": 1500.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 771.7119076157193,
+    "borrowed": 25.625098180808177,
+    "borrowed_in_positions": 25.625100436476952
+   },
+   "USDC": {
+    "reserve_id": 10,
+    "ltv": 0.8,
+    "lt": 0.85,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 50000000.0,
+    "borrow_cap_ratio": 0.96,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 33109881.885964945,
+    "borrowed": 24312493.44253842,
+    "borrowed_in_positions": 24323068.62287747
+   },
+   "XAUm": {
+    "reserve_id": 31,
+    "ltv": 0.0,
+    "lt": 0.45,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 10.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 123.97687290124792,
+    "borrowed": 0.282263515416859,
+    "borrowed_in_positions": 0.28226426793725995
+   },
+   "suiUSDe": {
+    "reserve_id": 33,
+    "ltv": 0.75,
+    "lt": 0.8,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 5000000.0,
+    "borrow_cap_ratio": 0.92,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 84830.71138978023,
+    "borrowed": 10030.61295935517,
+    "borrowed_in_positions": 10030.61531745716
+   },
+   "xBTC": {
+    "reserve_id": 26,
+    "ltv": 0.67,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.8,
+    "supply_cap": 205.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 112.80089462590783,
+    "borrowed": 51.80905889727916,
+    "borrowed_in_positions": 51.809063825482
+   },
+   "stSUI": {
+    "reserve_id": 20,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 40000.0,
+    "borrow_cap_ratio": 0.15,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 9258.574007239675,
+    "borrowed": 667.3448029058801,
+    "borrowed_in_positions": 667.3450153714967
+   },
+   "SUI": {
+    "reserve_id": 0,
+    "ltv": 0.75,
+    "lt": 0.8,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.65,
+    "supply_cap": 55000000.0,
+    "borrow_cap_ratio": 0.96,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 26612410.45144024,
+    "borrowed": 21919433.59313559,
+    "borrowed_in_positions": 20947451.189491466
+   },
+   "wBTC": {
+    "reserve_id": 21,
+    "ltv": 0.65,
+    "lt": 0.7,
+    "lb": 0.15,
+    "close_factor": 0.35,
+    "treasury_factor": 0.85,
+    "supply_cap": 50.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 13.04565809296031,
+    "borrowed": 2.4839312882874642,
+    "borrowed_in_positions": 2.483931523365719
+   },
+   "vSUI": {
+    "reserve_id": 5,
+    "ltv": 0.75,
+    "lt": 0.8,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.65,
+    "supply_cap": 25000000.0,
+    "borrow_cap_ratio": 0.15,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 17505371.55684729,
+    "borrowed": 598557.4776100259,
+    "borrowed_in_positions": 563725.1493483678
+   },
+   "USDY": {
+    "reserve_id": 12,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 5000000.0,
+    "borrow_cap_ratio": 0.92,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 2778478.2121952046,
+    "borrowed": 1122484.448992014,
+    "borrowed_in_positions": 1122585.6500383345
+   },
+   "enzoBTC": {
+    "reserve_id": 28,
+    "ltv": 0.62,
+    "lt": 0.77,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 435.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 434.99994225,
+    "borrowed": 0.0,
+    "borrowed_in_positions": 0.0
+   },
+   "BUCK": {
+    "reserve_id": 18,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 20000000.0,
+    "borrow_cap_ratio": 0.8,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 19434099.842453286,
+    "borrowed": 1960828.1201738166,
+    "borrowed_in_positions": 1961029.5400031686
+   },
+   "WAL": {
+    "reserve_id": 24,
+    "ltv": 0.6,
+    "lt": 0.65,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 160000000.0,
+    "borrow_cap_ratio": 0.86,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 78459184.79898986,
+    "borrowed": 26331342.796961192,
+    "borrowed_in_positions": 20913104.66874032
+   },
+   "wUSDC": {
+    "reserve_id": 1,
+    "ltv": 0.0,
+    "lt": 0.85,
+    "lb": 0.08,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 2500000.0,
+    "borrow_cap_ratio": 0.0,
+    "is_isolated": false,
+    "borrowable": false,
+    "supplied": 2289217.847357677,
+    "borrowed": 2141964.752958689,
+    "borrowed_in_positions": 184153.18945909516
+   },
+   "FDUSD": {
+    "reserve_id": 16,
+    "ltv": 0.7,
+    "lt": 0.75,
+    "lb": 0.1,
+    "close_factor": 0.35,
+    "treasury_factor": 0.55,
+    "supply_cap": 52000.0,
+    "borrow_cap_ratio": 0.9,
+    "is_isolated": false,
+    "borrowable": true,
+    "supplied": 23934.62665817924,
+    "borrowed": 3486.7701960810095,
+    "borrowed_in_positions": 3486.775816089305
+   }
+  },
+  "diffs_from_navi_py": [
+   {
+    "asset": "suiUSDT",
+    "field": "supply_cap",
+    "navi_py": 15000000,
+    "chain": 10000000.0
+   },
+   {
+    "asset": "suiUSDe",
+    "field": "supply_cap",
+    "navi_py": 10000000,
+    "chain": 5000000.0
+   },
+   {
+    "asset": "USDSUI",
+    "field": "supply_cap",
+    "navi_py": 10000000,
+    "chain": 15000000.0
+   },
+   {
+    "asset": "suiETH",
+    "field": "supply_cap",
+    "navi_py": 2900,
+    "chain": 1500.0
+   },
+   {
+    "asset": "BUCK",
+    "field": "supply_cap",
+    "navi_py": 22000000,
+    "chain": 20000000.0
+   },
+   {
+    "asset": "wBTC",
+    "field": "supply_cap",
+    "navi_py": 200,
+    "chain": 50.0
+   },
+   {
+    "asset": "MBTC",
+    "field": "supply_cap",
+    "navi_py": 300,
+    "chain": 200.0
+   },
+   {
+    "asset": "DEEP",
+    "field": "supply_cap",
+    "navi_py": 385000000,
+    "chain": 450000000.0
+   }
+  ],
+  "unpriced": [],
+  "debt_set": {
+   "included": {
+    "BUCK": "borrowable",
+    "DEEP": "borrowable",
+    "FDUSD": "borrowable",
+    "LBTC": "borrowable",
+    "NAVX": "borrowable",
+    "SOL": "borrowable",
+    "SUI": "borrowable",
+    "USDC": "borrowable",
+    "USDSUI": "borrowable",
+    "USDY": "borrowable",
+    "WAL": "borrowable",
+    "WBTC.lz": "borrowable",
+    "XAUm": "not borrowable, 0.282264 tokens of user debt outstanding",
+    "haSUI": "borrowable",
+    "stSUI": "borrowable",
+    "suiETH": "borrowable",
+    "suiUSDT": "borrowable",
+    "suiUSDe": "borrowable",
+    "vSUI": "borrowable",
+    "wBTC": "borrowable",
+    "wUSDC": "not borrowable, 184,153 tokens of user debt outstanding",
+    "xBTC": "borrowable"
+   },
+   "excluded": {
+    "MBTC": "borrow cap 0, no user debt",
+    "enzoBTC": "borrow cap 0, no user debt"
+   }
+  },
+  "no_pool": [
+   "MBTC"
+  ],
+  "anomalies": [
+   {
+    "asset": "XAUm",
+    "issue": "supplied exceeds supply cap",
+    "supplied": 123.97687290124792,
+    "supply_cap": 10.0
+   }
+  ]
+ },
+ "collaterals": {
+  "BUCK": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2833.74,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1560105.6653634373,
+    "failing_debts": [
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.03795823089907326,
+    "Q_star": 0.0,
+    "D_usd": 0.1037819026632215,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 178642.65628812424,
+    "binding_Q_cap": 1560105.6653634373,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 14,
+     "amber": 4,
+     "green": 3,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "DEEP": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 3678.93,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1560105.6653634373,
+    "failing_debts": [
+     "BUCK",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 0.6959875494445188,
+    "Q_star": 0.0,
+    "D_usd": 1.9029051249337494,
+    "n_positions": 7,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 178642.65628812424,
+    "binding_Q_cap": 1560105.6653634373,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 13,
+     "amber": 5,
+     "green": 3,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "FDUSD": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1292.99,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 13285.954481799998,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.0008751565505895652,
+    "Q_star": 0.0,
+    "D_usd": 0.002392772523826563,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 6115.276159989349,
+    "binding_Q_cap": 13285.954481799998,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 18,
+     "amber": 2,
+     "green": 1,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "LBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1229.24,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1340586.011931094,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.009915821317333876,
+    "Q_star": 0.0,
+    "D_usd": 0.027707499314939234,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 174796.283305844,
+    "binding_Q_cap": 1340586.011931094,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 15,
+     "amber": 4,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "MBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "WBTC.lz",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": null,
+   "binding_debt_ex_zero": null,
+   "zero_debts": [
+    "BUCK",
+    "DEEP",
+    "FDUSD",
+    "LBTC",
+    "NAVX",
+    "SOL",
+    "SUI",
+    "USDC",
+    "USDSUI",
+    "USDY",
+    "WAL",
+    "WBTC.lz",
+    "XAUm",
+    "haSUI",
+    "stSUI",
+    "suiETH",
+    "suiUSDT",
+    "suiUSDe",
+    "vSUI",
+    "wBTC",
+    "wUSDC",
+    "xBTC"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "BUCK",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 3909028.1050953385,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "XAUm",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.1873956672451029,
+    "Q_star": 0.0,
+    "D_usd": 0.5123599924678138,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "BUCK",
+    "binding_Q_now": 715936.015697153,
+    "binding_Q_cap": 3909028.1050953385,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 22,
+     "amber": 0,
+     "green": 0,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "NAVX": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 809.49,
+   "binding_debt_ex_zero": "DEEP",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 536952.0712499999,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 0.4480104403742662,
+    "Q_star": 0.0,
+    "D_usd": 1.2518629140740936,
+    "n_positions": 16,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 174796.283305844,
+    "binding_Q_cap": 536952.0712499999,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 18,
+     "amber": 2,
+     "green": 1,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "SOL": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 54.62,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 23236.955430265498,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "NAVX",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.004921845967557219,
+    "Q_star": 0.0,
+    "D_usd": 0.013456858421209075,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 14585.969201737478,
+    "binding_Q_cap": 23236.955430265498,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 19,
+     "amber": 1,
+     "green": 1,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "SUI": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2164.34,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1545176.4245465621,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 13.409359828318495,
+    "Q_star": 0.0,
+    "D_usd": 37.01686633076189,
+    "n_positions": 30,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 176933.15718488858,
+    "binding_Q_cap": 1545176.4245465621,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 12,
+     "amber": 7,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "USDC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2233.57,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1546669.34862825,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.5974368458208684,
+    "Q_star": 0.0,
+    "D_usd": 1.6476471203002439,
+    "n_positions": 3,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 177104.10709521215,
+    "binding_Q_cap": 1546669.34862825,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 12,
+     "amber": 7,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "USDSUI": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2224.07,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1546669.34862825,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.007953873727625238,
+    "Q_star": 0.0,
+    "D_usd": 0.02193566940878444,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 177104.10709521215,
+    "binding_Q_cap": 1546669.34862825,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 12,
+     "amber": 7,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "USDY": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2141.67,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1458830.45,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.5355241716950142,
+    "Q_star": 0.0,
+    "D_usd": 1.476900638982389,
+    "n_positions": 2,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 177104.10709521215,
+    "binding_Q_cap": 1458830.45,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 10,
+     "amber": 9,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "WAL": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2705.5,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1560105.6653634373,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 3.7858824476099784,
+    "Q_star": 0.0,
+    "D_usd": 10.351011476719012,
+    "n_positions": 16,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 178642.65628812424,
+    "binding_Q_cap": 1560105.6653634373,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 14,
+     "amber": 4,
+     "green": 3,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "WBTC.lz": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1675.19,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1537711.804138125,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 1.6169834347113368,
+    "Q_star": 0.0,
+    "D_usd": 4.485390942333805,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 176078.40763327078,
+    "binding_Q_cap": 1537711.804138125,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 14,
+     "amber": 5,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "enzoBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2770.39,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1560105.6653634373,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no pair fails up to 40%"
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 178642.65628812424,
+    "binding_Q_cap": 1560105.6653634373,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 14,
+     "amber": 5,
+     "green": 3,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "haSUI": {
+   "Q_star": 7110.3,
+   "binding_debt": "SOL",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 7110.3,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "SOL",
+    "binding_Q_star": 7110.3,
+    "binding_Q_cap": 15343.061480270997,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no pair fails up to 40%"
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "vSUI",
+    "binding_Q_now": 211164.80259323338,
+    "binding_Q_cap": 1404705.8404968746,
+    "binding_Q_star": 13883.95,
+    "unverified": false,
+    "pairs": {
+     "red": 10,
+     "amber": 8,
+     "green": 3,
+     "unknown": 0
+    },
+    "s_max": 27116.634656059414,
+    "s_max_debt_bounded": 52949.38016710984
+   }
+  },
+  "stSUI": {
+   "Q_star": 1284.93,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1284.93,
+   "binding_debt_ex_zero": "haSUI",
+   "zero_debts": [],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 1284.93,
+    "binding_Q_cap": 10587.316517469999,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "FDUSD",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no pair fails up to 40%"
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 2450.586337876675,
+    "binding_Q_cap": 10587.316517469999,
+    "binding_Q_star": 1284.93,
+    "unverified": false,
+    "pairs": {
+     "red": 2,
+     "amber": 18,
+     "green": 1,
+     "unknown": 0
+    },
+    "s_max": 4854.619805794733,
+    "s_max_debt_bounded": 4854.6012500136485
+   }
+  },
+  "suiETH": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1156.38,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 923159.556520946,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "haSUI",
+    "Q": 1.1814855768701532e-05,
+    "Q_star": 0.0,
+    "D_usd": 3.301391762124075e-05,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 174796.283305844,
+    "binding_Q_cap": 923159.556520946,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 17,
+     "amber": 2,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "suiUSDT": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2232.39,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1546669.34862825,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 5.158308469007306,
+    "Q_star": 0.0,
+    "D_usd": 14.225892082204375,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 177104.10709521215,
+    "binding_Q_cap": 1546669.34862825,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 15,
+     "amber": 4,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "suiUSDe": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 2818.05,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1371363.6234374999,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "vSUI",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.00012936776214183727,
+    "Q_star": 0.0,
+    "D_usd": 0.00035370543306038904,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 23266.75035005396,
+    "binding_Q_cap": 1371363.6234374999,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 4,
+     "amber": 14,
+     "green": 3,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "vSUI": {
+   "Q_star": 6386.86,
+   "binding_debt": "SOL",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 6386.86,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "SOL",
+    "binding_Q_star": 6386.86,
+    "binding_Q_cap": 15343.061480270997,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "wBTC",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": null,
+   "stress": {
+    "breaking_shock": null,
+    "scenario": null,
+    "binding_debt": null,
+    "note": "no pair fails up to 40%"
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "USDC",
+    "binding_Q_now": 4917979.533194251,
+    "binding_Q_cap": 7023529.202484374,
+    "binding_Q_star": 93527.75,
+    "unverified": false,
+    "pairs": {
+     "red": 13,
+     "amber": 5,
+     "green": 3,
+     "unknown": 0
+    },
+    "s_max": 22733.804427274492,
+    "s_max_debt_bounded": 126336.48617651266
+   }
+  },
+  "wBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1158.95,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 956282.2423031544,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wUSDC",
+     "xBTC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.2,
+   "stress": {
+    "breaking_shock": 0.2,
+    "scenario": "suiETH",
+    "binding_debt": "vSUI",
+    "Q": 42.81037961014761,
+    "Q_star": 0.0,
+    "D_usd": 119.62383404861369,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 174796.283305844,
+    "binding_Q_cap": 956282.2423031544,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 15,
+     "amber": 4,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  },
+  "xBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "haSUI",
+   "Q_star_saturated": false,
+   "Q_star_ex_zero": 1767.72,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "haSUI",
+    "stSUI",
+    "vSUI"
+   ],
+   "signal_1": {
+    "status": "fail",
+    "binding_debt": "haSUI",
+    "binding_Q_star": 0.0,
+    "binding_Q_cap": 1537711.804138125,
+    "failing_debts": [
+     "BUCK",
+     "DEEP",
+     "LBTC",
+     "NAVX",
+     "SOL",
+     "SUI",
+     "USDC",
+     "USDSUI",
+     "USDY",
+     "WAL",
+     "WBTC.lz",
+     "haSUI",
+     "stSUI",
+     "suiETH",
+     "suiUSDT",
+     "suiUSDe",
+     "vSUI",
+     "wBTC",
+     "wUSDC"
+    ]
+   },
+   "adequacy_status": "red",
+   "breaking_shock": 0.0,
+   "stress": {
+    "breaking_shock": 0.0,
+    "scenario": "baseline",
+    "binding_debt": "vSUI",
+    "Q": 0.0985586683648273,
+    "Q_star": 0.0,
+    "D_usd": 0.27339436439619225,
+    "n_positions": 1,
+    "D_emode_usd": 0.0,
+    "unverified": false
+   },
+   "adequacy": {
+    "status": "red",
+    "binding_debt": "haSUI",
+    "binding_Q_now": 176078.40763327078,
+    "binding_Q_cap": 1537711.804138125,
+    "binding_Q_star": 0.0,
+    "unverified": false,
+    "pairs": {
+     "red": 14,
+     "amber": 5,
+     "green": 2,
+     "unknown": 0
+    },
+    "s_max": 0.0,
+    "s_max_debt_bounded": 0.0
+   }
+  }
+ }
+}

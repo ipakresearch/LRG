@@ -4,23 +4,29 @@ What a liquidation actually costs to execute on-chain, and what that implies for
 
 A lending protocol's liquidation bonus has to cover the cost of converting seized collateral back into the debt asset. That conversion is a path through the chain's trading venues, and its cost depends on which pools exist, how deep they are at the current price, how many hops the path takes, and how much is being sold. LRG builds that path graph from live pool state and inverts it: for each collateral and debt asset, how much can clear the routes within the bonus available to a liquidator.
 
-The reference instance is [Navi Protocol](https://naviprotocol.io) on Sui — 24 assets, 506 ordered liquidation pairs, six venues. The engine itself is protocol- and chain-agnostic; everything specific to Navi lives in one file.
+The reference instance is [Navi Protocol](https://naviprotocol.io) on Sui — 24 assets, 506 ordered liquidation pairs, six trading venues plus LST minting. The engine itself is protocol- and chain-agnostic; everything specific to Navi lives under `lrg/protocols/`.
 
 ---
 
 ## The condition
 
-A liquidator repays debt `D` and receives collateral worth `(1 + b)·D`, where `b` is the bonus net of whatever share the protocol retains. They sell that collateral at a total cost `c` — swap fees plus price impact, referenced to the oracle rate — and must end with at least `(1 + φ)·D` to cover the repayment and the flash-loan fee:
+A liquidator repays debt `D` and receives collateral worth `(1 + b)·D`, where `b = (1 − tf)·LB` is the bonus net of the protocol's cut. On Navi, `tf` is the collateral reserve's `treasury_factor` (0.55–0.85): the protocol takes `tf` of the bonus out of the seized collateral and keeps it in the pool, so that part is neither earned nor sold by the liquidator. They sell that collateral at a total cost `c` — swap fees plus price impact, referenced to the oracle rate — and must end with at least `(1 + φ)·D` to cover the repayment and the flash-loan fee:
 
     (1 + b) * (1 - c) >= 1 + phi      which is      c <= 1 - (1 + phi) / (1 + b)
 
-The right-hand side is the **cost budget**. The familiar first-order form `b − φ` overstates it by roughly `b` squared, because it measures the loss against the pre-bonus base while the quantity being sold is the post-bonus amount. At a 10% bonus with a 10% protocol share the exact budget is **8.17%**, not 8.91%; at a 15% bonus the gap is 1.6 percentage points. LRG uses the exact form.
+The right-hand side is the **cost budget**. The familiar first-order form `b − φ` overstates it by roughly `b` squared, because it measures the loss against the pre-bonus base while the quantity being sold is the post-bonus amount. For SUI collateral on Navi (LB 10%, treasury factor 0.65, so `b` = 3.5%) the exact budget is **3.29%**, not 3.41%; the gap grows with `b`, to 1.6 percentage points at `b` = 15%. LRG uses the exact form.
 
 The quantity that has to clear is the collateral a full liquidation would put on the market:
 
     Q = beta * CF * (1 + b) * LTV * S * P
 
 with `CF` the close factor, `S` the supply cap, `P` the oracle price, and `beta` the share of the book liquidatable at once. `beta = 1` is adversarial and is the default.
+
+A liquidation also cannot repay more debt than exists, so the daily run bounds demand per pair by the debt asset `A`:
+
+    Q_cap(B, A) = beta * CF * (1 + b_B) * min(LTV_B * S_B * P_B,  max(borrowed_A, borrow_cap_ratio_A * S_A) * P_A)
+
+with `borrowed_A` the users' outstanding debt in `A` (existing debt can exceed a lowered borrow cap). Row minima and this bound range over the debt set: assets that can be borrowed, plus any that still carry debt. An asset with no pool stays in the matrix with capacity 0.
 
 **Capacity** `Q*` is the inverse: the largest `Q` whose route cost stays inside the budget. Comparing `Q` against `Q*` is the question the tool exists to answer.
 
@@ -50,19 +56,42 @@ data = graph.build("data/navi_pools.csv", navi.COIN_TYPES, navi.VENUES,
 
 # the capacity matrix
 p = matrix.Params(close_factor=navi.CLOSE_FACTOR, beta=1.0,
-                  platform_share=navi.PLATFORM_SHARE)
+                  treasury_factors=navi.TREASURY_FACTORS)
 M = matrix.build("data/navi_pools.csv", navi.COIN_TYPES, navi.ASSETS,
                  navi.VENUES, params=p)
 
 analysis.summary(M)
 ```
 
-Or end to end:
+Prices are keyed by coin type, never by symbol: two coins can share a symbol (native and Wormhole USDC are both "USDC" on chain). `Params(prices=...)` takes `{coin type: USD}`; `M.price(symbol)` looks a Navi asset up through `M.tokens`.
+
+### The daily run
 
 ```bash
-python examples/run_navi.py                    # from the committed pool snapshot
-python examples/run_navi.py --discover         # rebuild the pool universe first
-python examples/run_navi.py --beta 0.4 --pick best
+python run.py
+```
+
+reads Navi's live parameters and oracle prices, every pool on the routes and every borrower's position, and writes `data/navi/YYYY-MM-DD/` (UTC):
+
+| file | contents |
+|---|---|
+| `matrix.csv` | every pair: capacity, path, saturated (capacity at the $50M grid top, i.e. "at least"), coverage and the failed pools |
+| `adequacy.csv` | every pair: demand now and at caps (`Q_cap`, debt-bounded), the E-Mode check, status |
+| `stress.csv` | every (scenario, shock, collateral, debt) with liquidations |
+| `summary.json` | per collateral: Q*, binding debt, signal 1, adequacy status, breaking shock, LST depeg; per-scenario unpriced positions and bad debt; live parameters |
+| `coverage.json` | pools read / failed / empty, coverage share, prices and their source, positions and the health-factor check |
+| `config.json` | parameters, treasury factors, debt set and excluded debts, the `Q_cap` formula |
+
+It exits 2 when the result is unusable (a network failure while reading pools, nothing read). `python -m unittest discover tests` runs the tests.
+
+To rebuild the pool universe (GeckoTerminal, DeepBook, Aftermath and the LST mint rows, TVL checked on chain):
+
+```python
+from lrg import discovery
+from lrg.protocols import navi, navi_oracle
+prices = {ct: v["price"] for ct, v in navi_oracle.quotes().items()}
+rows, dropped = discovery.discover_all(navi.COIN_TYPES, navi.VENUES, prices)
+discovery.write_rows(rows, "data/navi_pools.new.csv")     # diff before replacing navi_pools.csv
 ```
 
 ### Topology alone
@@ -106,7 +135,7 @@ The row minimum is the adversarial capacity — the worst debt asset a liquidati
 A saved run can be reopened without refetching:
 
 ```python
-M = analysis.load("navi_matrix.json", asset_table=navi.ASSETS)
+M = analysis.load("navi_matrix.json", asset_table=navi.ASSETS)   # params, treasury factors included, come from the file
 ```
 
 ---
@@ -116,17 +145,21 @@ M = analysis.load("navi_matrix.json", asset_table=navi.ASSETS)
 | path | what it does |
 |---|---|
 | `lrg/pool.py` | the adapter interface, as a `typing.Protocol` |
+| `lrg/coins.py` | coin identity: normalized coin types |
 | `lrg/clmm.py` | concentrated liquidity: Cetus, Bluefin, Momentum, Turbos |
-| `lrg/venues.py` | weighted AMM (Aftermath) and order book (DeepBook) |
-| `lrg/discovery.py` | pool universe from GeckoTerminal |
-| `lrg/discovery_extra.py` | DeepBook and Aftermath, which it does not index |
+| `lrg/venues.py` | weighted AMM (Aftermath), order book (DeepBook), LST minting (SUI → vSUI/haSUI/stSUI, one way) |
+| `lrg/discovery.py` | pool universe: GeckoTerminal plus DeepBook and Aftermath, TVL checked on chain |
 | `lrg/book.py` | pool state, fetched once and cached, dispatched by venue |
 | `lrg/topology.py` | which routes exist between two assets |
 | `lrg/curves.py` | split execution, leg cost curves, route cost and capacity |
 | `lrg/graph.py` | the route graph and its network view |
 | `lrg/matrix.py` | capacity matrix, cost budget, parameter curves |
 | `lrg/analysis.py` | frames and views over the matrix |
-| `lrg/protocols/navi.py` | Navi's coin types, risk parameters, venue set |
+| `lrg/protocols/navi.py` | Navi's coin types, risk parameters, treasury factors, venue set |
+| `lrg/protocols/navi_oracle.py` | Navi's on-chain oracle prices, decoded per asset |
+| `run.py` | the daily run: live parameters, matrix, adequacy, positions, stress |
+| `positions.py` | every Navi borrower's position from chain, health factors checked against Navi's own |
+| `tests/` | `unittest` suites: reads, curves, coverage, stress, LST mint |
 
 Nothing in `lrg/` imports `lrg.protocols`. Asset sets and parameters are passed in, so adding a protocol means adding a module under `protocols/` and nothing else.
 
@@ -138,13 +171,17 @@ Adding a venue means writing a class that satisfies `lrg.pool.Pool` — five met
 
 | choice | what LRG does | why |
 |---|---|---|
-| route selection | every simple path up to 4 hops, top 20 by bottleneck depth, best by capacity | a thin direct pool loses to a deeper two-hop; shortest-path gets this wrong |
-| per leg | all pools between the two tokens, split by marginal value | what an aggregator does; `pick="best"` gives the single-pool floor |
+| route selection | every simple path up to 4 hops, ranked by route cost at $1k, $10k and $250k; the cheapest 6 at each go to the capacity search | listed TVL is stale and in no common unit; a thin direct pool loses to a deeper two-hop, and thin routes can be best only at small sizes |
+| per leg | every pool between the two tokens is read; the 4 giving the most out at $10k are kept and the trade is split across them by marginal value | what an aggregator does; failed and empty pools never take a slot; `pick="best"` gives the single-pool floor |
+| swap side | from the pool's own on-chain coin order | listings often reverse the pair |
+| capacity | cost interpolated in log size on a grid, then refined on the exact composition | the reported capacity's exact cost is within the budget |
 | multi-hop cost | composed leg by leg, output of one is input to the next | `min` over legs overstates a two-hop by roughly 2x |
-| reference price | oracle, not pool spot | the liquidator was credited at the oracle rate |
+| reference price | Navi's on-chain oracle, each asset decoded with its own decimal; coins it does not price get a price derived from pools | the liquidator is credited at the oracle rate |
 | no route | capacity zero, with a reason | absence of an exit is the worst case, not a missing datum |
 | zero-volume pools | flagged, not filtered | standing liquidity that does not trade is not a demonstrated exit |
-| debt set | adversarial: the worst permitted debt asset | a cap cannot rely on which pair a liquidation resolves into |
+| debt set | adversarial: the worst debt asset that can be borrowed or still carries debt | a cap cannot rely on which pair a liquidation resolves into |
+| coverage | a pair is `incomplete` when a failed read could have changed it; never reported red or amber | a missing pool is not evidence of a thin route |
+| stress | each position below HF 1 is liquidated: debt split by borrowing power, repayment capped at CF x collateral value per Navi, E-Mode bonus where it applies | follows Navi's `calculate_liquidation` |
 
 ### What the numbers are not
 
@@ -166,8 +203,11 @@ Reading pool state directly took some spelunking, recorded here because it is no
 - Tick indices are two's-complement `u32`; `liquidity_net` is two's-complement `u128`.
 - The tick index lives in a different place per venue: in the value for Cetus (wrapped in a `skip_list::Node`) and Bluefin (a plain `Table` entry), and in the **dynamic-field key** for Momentum. Cetus keys by a `u64` score equal to `tick + 443636`.
 - Balances appear as `coin_a`/`coin_b` on Cetus and Bluefin, `reserve_x`/`reserve_y` on Momentum.
-- Turbos keeps ticks as dynamic fields on the pool object itself rather than in a separate table.
-- DeepBook's order books are at `deepbook-indexer.mainnet.mystenlabs.com/orderbook/{PAIR}?level=2&depth=N`; its pool metadata is at `/get_pools`. GeckoTerminal does not index it.
+- Turbos keeps ticks as dynamic fields on the pool object itself, among every LP position (20,000+ on deep pools), so paging finds them too late. Its `tick_map` (`Table<I32, u256>`) marks initialized ticks, (word·256 + bit)·spacing, and each tick is fetched by key with `multiGetDynamicFields`.
+- Cetus, Bluefin and Momentum tick tables record their `size`; a read that returns fewer fields is treated as truncated and the pool is re-read (pages are served at the latest checkpoint, so a busy table can change mid-read).
+- DeepBook's order books are at `deepbook-indexer.mainnet.mystenlabs.com/orderbook/{PAIR}?level=2&depth=N`; its pool metadata is at `/get_pools`. GeckoTerminal does not index it. The indexer runs out of gas at `depth=200` on deep books; the reader steps down to 100 and 50.
+- Navi's `LiquidationEvent.collateral_amount` is gross: liquidator plus treasury. The liquidator's bonus is `LB·(1 − treasury_factor)`.
+- vSUI, haSUI and stSUI mint atomically at their protocol rate (Volo `stake_pool::stake`, Haedal `staking::request_stake_coin`, AlphaFi `liquid_staking::mint`); the rate is read by simulating a mint.
 - Aftermath is a Balancer-style weighted invariant with a `flatness` parameter interpolating toward constant sum. Pools with `flatness > 0` are priced as pure weighted here, which understates them — conservative.
 
 `clmm.inspect(pool_id)` and `clmm.inspect_fields(uid)` dump a pool struct and its dynamic fields, which is how a new venue's layout gets read off.
@@ -177,27 +217,18 @@ Reading pool state directly took some spelunking, recorded here because it is no
 ## Known limitations
 
 - **No multi-path splitting.** One best path per pair, split within legs only.
-- **No position data.** Demand is computed from the supply cap, so the output describes what the parameters permit rather than what the book currently holds. `beta` is the placeholder for this and defaults to the adversarial 1.
-- **No debt-side bound.** A pair's demand should be capped by the debt asset's own borrowable amount as well as the collateral's supply cap. Not yet applied, so demand against thinly-supplied debt assets is overstated.
-- **Derived prices.** USD prices are propagated from USDC through pool spot rates, deepest pools first. Supply oracle prices via `Params(prices=...)` where accuracy matters.
-- **E-Mode not modelled.** Boosted LTV and LT are published; the E-Mode liquidation bonus is not, so rows use normal-mode parameters. `Asset` carries the E-Mode fields for when it is resolved.
-- **Close factor unresolved.** Navi's docs say "up to 35%", the newer hub says 50%. It scales demand linearly. `Params(close_factor=...)`.
-- **Venues not covered.** Magma, fullsail, flowx, kriya and ferra-dlmm are discovered but unpriced — roughly $2-3M of Sui TVL. DLMM is a different model and would need its own adapter.
+- **Close factor on debt in `Q_cap`.** Navi caps a liquidation at CF × the borrower's *collateral* value; `Q = β·CF·(1+b)·LTV·S·P` applies CF to the debt, which understates demand by about 1/LTV at the threshold. Stress applies Navi's form; `Q_cap` does not yet.
+- **LST oracle.** Navi prices vSUI, haSUI and stSUI near the SUI price, 3.6–8.5% below their own redemption rate. Debt in these assets cannot be liquidated at a profit at Navi's bonuses, and LST collateral sells for more than Navi values it. LST redemption (LST → SUI) is atomic on chain but deliberately not modelled as an exit.
+- **Pool universe.** GeckoTerminal's free tier stops at 10 pages per token, so the deepest-traded tokens' lists are truncated (a warning names them). Listed TVL is replaced by on-chain reserves; pools under $5k are dropped.
+- **Coverage heuristic.** A failed pool counts against a leg by its on-chain TVL, since a pool that did not read cannot be ranked by output.
+- **Venues not covered.** Magma, fullsail, flowx, kriya and ferra-dlmm are discovered but not routed. DLMM is a different model and would need its own adapter.
 - **Single protocol.** Liquidations from other lending markets on the same chain compete for the same pools. Not modelled.
-
----
-
-## Methodology
-
-`docs/` holds the written derivation in two parts: the route graph — construction, structure, and how edge weights are formed from fees and per-pool-type slippage — and the parameter system — the constraint set, the capacity matrix, and the curves along which parameters can be traded against one another.
 
 ---
 
 ## License
 
 Code is licensed under Apache-2.0 (see `LICENSE`).
-
-The methodology documents in `docs/` are licensed under **CC BY 4.0** — reuse and adaptation permitted with attribution to Ipak Systems.
 
 ---
 

@@ -34,10 +34,10 @@ def to_frame(M) -> pd.DataFrame:
             "hops": (len(path) - 1) if path else None,
             "no_route": (cap == 0.0),
             "dead_leg": getattr(M, "dead_leg", {}).get((B, A)),
-            "lb": a.lb, "budget": M.params.budget(a.lb),
+            "lb": a.lb, "budget": M.params.budget(a.lb, M.params.tf(B)),
             "ltv": a.ltv, "lt": a.lt,
             "supply_cap_tokens": a.supply_cap,
-            "price": M.prices.get(B),
+            "price": M.price(B),
         })
     df = pd.DataFrame(rows)
     df["supply_cap_usd"] = df["supply_cap_tokens"] * df["price"]
@@ -68,6 +68,9 @@ class LoadedMatrix:
             d = json.load(fh)
         self.raw = d
         self.prices: Dict[str, float] = d.get("prices", {})
+        # symbol -> coin type; files written before prices were keyed by coin
+        # type have no tokens and keep their symbol keys (see price()).
+        self.tokens: Dict[str, str] = d.get("tokens", {})
         self.cells = {tuple(k.split("|")): v for k, v in d["cells"].items()}
         self.paths = {tuple(k.split("|")): v for k, v in d.get("paths", {}).items()}
         self.unreachable = [tuple(k.split("|")) for k in d.get("unreachable", [])]
@@ -91,11 +94,21 @@ class LoadedMatrix:
 
     # ---- same interface as navi_matrix.Matrix ---------------------------
 
+    def price(self, symbol):
+        if self.tokens:
+            t = self.tokens.get(symbol)
+            return self.prices.get(t) if t else None
+        return self.prices.get(symbol)
+
     def row(self, B):
         return {A: v for (b, A), v in self.cells.items() if b == B}
 
+    def debt_row(self, B):
+        ex = set(getattr(self.params, "excluded_debts", ()) or ())
+        return {A: v for A, v in self.row(B).items() if A not in ex}
+
     def row_min(self, B):
-        r = {A: v for A, v in self.row(B).items() if v is not None}
+        r = {A: v for A, v in self.debt_row(B).items() if v is not None}
         if not r:
             return None, None
         A = min(r, key=r.get)
@@ -123,10 +136,11 @@ class LoadedMatrix:
         if a is None or not a.is_collateral:
             return None
         S = a.supply_cap if at == "cap" else (a.supplied or 0.0)
-        px = self.prices.get(B)
+        px = self.price(B)
         if px is None:
             return None
-        return p.beta * p.close_factor * (1 + a.lb) * a.ltv * S * px
+        return (p.beta * p.close_factor * p.seized_factor(a.lb, p.tf(B))
+                * a.ltv * S * px)
 
     def car(self, B, at="cap"):
         q, qs = self.demand(B, at), self.q_star(B)
@@ -144,7 +158,7 @@ def load(path: str, asset_table=None, assets=None, params=None) -> "LoadedMatrix
     priced = sum(1 for v in M.cells.values() if v is not None)
     print(f"{n} cells, {priced} priced, {n - priced} unpriced · "
           f"CF={M.params.close_factor}, β={M.params.beta}, "
-          f"platform share={M.params.platform_share:.0%}")
+          f"treasury factors={M.params.treasury_factors or M.params.treasury_share}")
     if not M.prices:
         print("no prices in the file — Q and the ratios cannot be computed; "
               "pass prices via M.prices = {...}")
@@ -211,9 +225,9 @@ def collateral_view(M, at: str = "cap", flag_low: float = 1.0,
         rows.append({
             "asset": B,
             "ltv": a.ltv, "lt": a.lt, "lb": a.lb,
-            "budget": M.params.budget(a.lb),
+            "budget": M.params.budget(a.lb, M.params.tf(B)),
             "supply_cap_tokens": a.supply_cap,
-            "price": M.prices.get(B),
+            "price": M.price(B),
             "Q_usd": q, "Q_star_usd": qs,
             "ratio": r["ratio"], "car_usd": r["car"],
             "binding_debt": r["binding"],
@@ -226,8 +240,8 @@ def collateral_view(M, at: str = "cap", flag_low: float = 1.0,
             "ratio_median": (q / ser.median()) if ser.median() else None,
             "second_worst": vals[1] if len(vals) > 1 else None,
             "implied_cap_tokens": (qs / (M.params.beta * M.params.close_factor *
-                                         M.params.seized_factor(a.lb) * a.ltv *
-                                         (M.prices.get(B) or 1))
+                                         M.params.seized_factor(a.lb, M.params.tf(B)) * a.ltv *
+                                         (M.price(B) or 1))
                                    if qs and a.ltv else None),
             "routes_priced": sum(1 for v in row.values() if v),
             "routes_none": sum(1 for v in row.values() if v == 0.0),

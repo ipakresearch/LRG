@@ -1,0 +1,507 @@
+collateral,debt,capacity_usd,saturated,path,unverified
+BUCK,DEEP,70509.59,false,BUCK → USDC → SUI → DEEP,false
+BUCK,FDUSD,31768.85,false,BUCK → USDC → FDUSD,false
+BUCK,LBTC,42747.64,false,BUCK → USDC → xBTC → wBTC → LBTC,false
+BUCK,MBTC,0.0,false,,false
+BUCK,NAVX,5985.02,false,BUCK → USDC → SUI → NAVX,false
+BUCK,SOL,2833.74,false,BUCK → USDC → SUI → SOL,false
+BUCK,SUI,77247.25,false,BUCK → USDC → SUI,false
+BUCK,USDC,77327.08,false,BUCK → USDC,false
+BUCK,USDSUI,77322.41,false,BUCK → USDC → USDSUI,false
+BUCK,USDY,77392.47,false,BUCK → USDC → USDY,false
+BUCK,WAL,76039.86,false,BUCK → USDC → WAL,false
+BUCK,WBTC.lz,77066.32,false,BUCK → USDC → xBTC → WBTC.lz,false
+BUCK,XAUm,76922.79,false,BUCK → USDC → XAUm,false
+BUCK,enzoBTC,76939.04,false,BUCK → USDC → xBTC → enzoBTC,false
+BUCK,haSUI,0.0,false,BUCK → USDC → SUI → haSUI,false
+BUCK,stSUI,13542.48,false,BUCK → USDC → SUI → stSUI,false
+BUCK,suiETH,65374.16,false,BUCK → USDC → suiETH,false
+BUCK,suiUSDT,77319.97,false,BUCK → USDC → suiUSDT,false
+BUCK,suiUSDe,77254.4,false,BUCK → USDC → suiUSDe,false
+BUCK,vSUI,0.0,false,BUCK → USDC → SUI → vSUI,false
+BUCK,wBTC,42839.1,false,BUCK → USDC → WBTC.lz → xBTC → wBTC,false
+BUCK,wUSDC,20641.63,false,BUCK → USDC → SUI → wUSDC,false
+BUCK,xBTC,76974.44,false,BUCK → USDC → xBTC,false
+DEEP,BUCK,207927.4,false,DEEP → SUI → USDC → BUCK,false
+DEEP,FDUSD,31768.86,false,DEEP → SUI → USDSUI → USDC → FDUSD,false
+DEEP,LBTC,42745.64,false,DEEP → USDC → xBTC → wBTC → LBTC,false
+DEEP,MBTC,0.0,false,,false
+DEEP,NAVX,7817.19,false,DEEP → SUI → NAVX,false
+DEEP,SOL,3678.93,false,DEEP → SUI → SOL,false
+DEEP,SUI,227944.03,false,DEEP → SUI,false
+DEEP,USDC,209013.44,false,DEEP → SUI → USDC,false
+DEEP,USDSUI,208828.19,false,DEEP → SUI → USDC → USDSUI,false
+DEEP,USDY,209859.15,false,DEEP → SUI → USDC → USDY,false
+DEEP,WAL,80079.48,false,DEEP → SUI → USDC → WAL,false
+DEEP,WBTC.lz,190582.38,false,DEEP → SUI → USDC → WBTC.lz,false
+DEEP,XAUm,171137.23,false,DEEP → SUI → USDC → XAUm,false
+DEEP,enzoBTC,183037.26,false,DEEP → SUI → USDC → xBTC → enzoBTC,false
+DEEP,haSUI,0.0,false,DEEP → USDC → SUI → haSUI,false
+DEEP,stSUI,13542.48,false,DEEP → USDC → USDSUI → SUI → stSUI,false
+DEEP,suiETH,66600.22,false,DEEP → SUI → USDC → suiETH,false
+DEEP,suiUSDT,208123.69,false,DEEP → SUI → USDC → suiUSDT,false
+DEEP,suiUSDe,204157.97,false,DEEP → SUI → USDC → suiUSDe,false
+DEEP,vSUI,0.0,false,DEEP → USDC → SUI → vSUI,false
+DEEP,wBTC,42840.38,false,DEEP → SUI → USDC → xBTC → wBTC,false
+DEEP,wUSDC,24173.5,false,DEEP → SUI → wUSDC,false
+DEEP,xBTC,184895.4,false,DEEP → SUI → USDC → xBTC,false
+FDUSD,BUCK,1346.01,false,FDUSD → USDC → BUCK,false
+FDUSD,DEEP,1322.05,false,FDUSD → USDC → SUI → DEEP,false
+FDUSD,LBTC,1343.79,false,FDUSD → USDC → SUI → WBTC.lz → LBTC,false
+FDUSD,MBTC,0.0,false,,false
+FDUSD,NAVX,1326.82,false,FDUSD → USDC → SUI → NAVX,false
+FDUSD,SOL,1318.4,false,FDUSD → USDC → SUI → SOL,false
+FDUSD,SUI,1346.46,false,FDUSD → USDC → SUI,false
+FDUSD,USDC,1346.3,false,FDUSD → USDC,false
+FDUSD,USDSUI,1346.22,false,FDUSD → USDC → USDSUI,false
+FDUSD,USDY,1347.87,false,FDUSD → USDC → USDY,false
+FDUSD,WAL,1344.48,false,FDUSD → USDC → WAL,false
+FDUSD,WBTC.lz,1345.83,false,FDUSD → USDC → SUI → WBTC.lz,false
+FDUSD,XAUm,1363.24,false,FDUSD → USDC → XAUm,false
+FDUSD,enzoBTC,1343.02,false,FDUSD → USDC → xBTC → enzoBTC,false
+FDUSD,haSUI,0.0,false,FDUSD → USDC → SUI → haSUI,false
+FDUSD,stSUI,1292.99,false,FDUSD → USDC → SUI → stSUI,false
+FDUSD,suiETH,1344.17,false,FDUSD → USDC → xBTC → wBTC → suiETH,false
+FDUSD,suiUSDT,1346.29,false,FDUSD → USDC → suiUSDT,false
+FDUSD,suiUSDe,1345.75,false,FDUSD → USDC → suiUSDe,false
+FDUSD,vSUI,0.0,false,FDUSD → USDC → SUI → vSUI,false
+FDUSD,wBTC,1345.79,false,FDUSD → USDC → xBTC → wBTC,false
+FDUSD,wUSDC,1346.16,false,FDUSD → USDC → wUSDC,false
+FDUSD,xBTC,1343.92,false,FDUSD → USDC → SUI → WBTC.lz → xBTC,false
+LBTC,BUCK,110543.12,false,LBTC → WBTC.lz → USDC → BUCK,false
+LBTC,DEEP,14507.59,false,LBTC → WBTC.lz → xBTC → USDC → DEEP,false
+LBTC,FDUSD,31084.81,false,LBTC → WBTC.lz → USDC → FDUSD,false
+LBTC,MBTC,0.0,false,,false
+LBTC,NAVX,2151.89,false,LBTC → WBTC.lz → USDC → SUI → NAVX,false
+LBTC,SOL,1229.24,false,LBTC → WBTC.lz → USDC → SUI → SOL,false
+LBTC,SUI,110432.79,false,LBTC → WBTC.lz → USDC → SUI,false
+LBTC,USDC,110585.91,false,LBTC → WBTC.lz → USDC,false
+LBTC,USDSUI,110577.19,false,LBTC → WBTC.lz → USDC → USDSUI,false
+LBTC,USDY,110684.85,false,LBTC → WBTC.lz → USDC → USDY,false
+LBTC,WAL,74620.36,false,LBTC → WBTC.lz → USDC → WAL,false
+LBTC,WBTC.lz,111308.93,false,LBTC → WBTC.lz,false
+LBTC,XAUm,109457.8,false,LBTC → WBTC.lz → USDC → XAUm,false
+LBTC,enzoBTC,109774.83,false,LBTC → WBTC.lz → USDC → xBTC → enzoBTC,false
+LBTC,haSUI,0.0,false,LBTC → WBTC.lz → USDC → SUI → haSUI,false
+LBTC,stSUI,0.0,false,LBTC → WBTC.lz → USDC → SUI → stSUI,false
+LBTC,suiETH,30010.9,false,LBTC → wBTC → suiETH,false
+LBTC,suiUSDT,110564.47,false,LBTC → WBTC.lz → USDC → suiUSDT,false
+LBTC,suiUSDe,110418.43,false,LBTC → WBTC.lz → USDC → suiUSDe,false
+LBTC,vSUI,0.0,false,LBTC → WBTC.lz → USDC → SUI → vSUI,false
+LBTC,wBTC,107165.47,false,LBTC → wBTC,false
+LBTC,wUSDC,19721.8,false,LBTC → WBTC.lz → USDC → wUSDC,false
+LBTC,xBTC,109840.09,false,LBTC → WBTC.lz → USDC → xBTC,false
+MBTC,BUCK,0.0,false,,false
+MBTC,DEEP,0.0,false,,false
+MBTC,FDUSD,0.0,false,,false
+MBTC,LBTC,0.0,false,,false
+MBTC,NAVX,0.0,false,,false
+MBTC,SOL,0.0,false,,false
+MBTC,SUI,0.0,false,,false
+MBTC,USDC,0.0,false,,false
+MBTC,USDSUI,0.0,false,,false
+MBTC,USDY,0.0,false,,false
+MBTC,WAL,0.0,false,,false
+MBTC,WBTC.lz,0.0,false,,false
+MBTC,XAUm,0.0,false,,false
+MBTC,enzoBTC,0.0,false,,false
+MBTC,haSUI,0.0,false,,false
+MBTC,stSUI,0.0,false,,false
+MBTC,suiETH,0.0,false,,false
+MBTC,suiUSDT,0.0,false,,false
+MBTC,suiUSDe,0.0,false,,false
+MBTC,vSUI,0.0,false,,false
+MBTC,wBTC,0.0,false,,false
+MBTC,wUSDC,0.0,false,,false
+MBTC,xBTC,0.0,false,,false
+NAVX,BUCK,3360.05,false,NAVX → SUI → USDSUI → USDC → BUCK,false
+NAVX,DEEP,809.49,false,NAVX → SUI → DEEP,false
+NAVX,FDUSD,3393.37,false,NAVX → SUI → USDSUI → USDC → FDUSD,false
+NAVX,LBTC,3368.58,false,NAVX → SUI → WBTC.lz → LBTC,false
+NAVX,MBTC,0.0,false,,false
+NAVX,SOL,1004.51,false,NAVX → SUI → SOL,false
+NAVX,SUI,3696.24,false,NAVX → SUI,false
+NAVX,USDC,3394.23,false,NAVX → SUI → USDSUI → USDC,false
+NAVX,USDSUI,3417.33,false,NAVX → SUI → USDSUI,false
+NAVX,USDY,3581.13,false,NAVX → SUI → USDSUI → USDC → USDY,false
+NAVX,WAL,3175.08,false,NAVX → SUI → USDSUI → USDC → WAL,false
+NAVX,WBTC.lz,3595.54,false,NAVX → SUI → WBTC.lz,false
+NAVX,XAUm,5420.06,false,NAVX → SUI → USDSUI → USDC → XAUm,false
+NAVX,enzoBTC,3313.22,false,NAVX → SUI → WBTC.lz → xBTC → enzoBTC,false
+NAVX,haSUI,0.0,false,NAVX → SUI → haSUI,false
+NAVX,stSUI,0.0,false,NAVX → SUI → stSUI,false
+NAVX,suiETH,3050.5,false,NAVX → SUI → WBTC.lz → wBTC → suiETH,false
+NAVX,suiUSDT,3393.07,false,NAVX → SUI → USDSUI → USDC → suiUSDT,false
+NAVX,suiUSDe,3326.42,false,NAVX → SUI → USDSUI → USDC → suiUSDe,false
+NAVX,vSUI,0.0,false,NAVX → SUI → vSUI,false
+NAVX,wBTC,3646.35,false,NAVX → SUI → WBTC.lz → LBTC → wBTC,false
+NAVX,wUSDC,3374.24,false,NAVX → SUI → USDSUI → USDC → wUSDC,false
+NAVX,xBTC,3384.0,false,NAVX → SUI → WBTC.lz → xBTC,false
+SOL,BUCK,2595.57,false,SOL → SUI → USDC → BUCK,false
+SOL,DEEP,1484.08,false,SOL → SUI → DEEP,false
+SOL,FDUSD,2611.81,false,SOL → SUI → USDC → FDUSD,false
+SOL,LBTC,2599.09,false,SOL → SUI → WBTC.lz → LBTC,false
+SOL,MBTC,0.0,false,,false
+SOL,NAVX,1613.94,false,SOL → SUI → NAVX,false
+SOL,SUI,2735.89,false,SOL → SUI,false
+SOL,USDC,2609.79,false,SOL → SUI → USDC,false
+SOL,USDSUI,2618.43,false,SOL → SUI → USDSUI,false
+SOL,USDY,2688.13,false,SOL → SUI → USDC → USDY,false
+SOL,WAL,2518.34,false,SOL → SUI → USDC → WAL,false
+SOL,WBTC.lz,2702.6,false,SOL → SUI → WBTC.lz,false
+SOL,XAUm,3463.93,false,SOL → SUI → USDSUI → USDC → XAUm,false
+SOL,enzoBTC,2574.92,false,SOL → SUI → WBTC.lz → xBTC → enzoBTC,false
+SOL,haSUI,0.0,false,SOL → SUI → haSUI,false
+SOL,stSUI,54.62,false,SOL → SUI → stSUI,false
+SOL,suiETH,2497.21,false,SOL → SUI → WBTC.lz → wBTC → suiETH,false
+SOL,suiUSDT,2609.36,false,SOL → SUI → USDC → suiUSDT,false
+SOL,suiUSDe,2581.88,false,SOL → SUI → USDC → suiUSDe,false
+SOL,vSUI,0.0,false,SOL → SUI → vSUI,false
+SOL,wBTC,2726.86,false,SOL → SUI → WBTC.lz → LBTC → wBTC,false
+SOL,wUSDC,2602.12,false,SOL → SUI → USDC → wUSDC,false
+SOL,xBTC,2605.85,false,SOL → SUI → WBTC.lz → xBTC,false
+SUI,BUCK,962714.64,false,SUI → USDC → BUCK,false
+SUI,DEEP,50115.68,false,SUI → DEEP,false
+SUI,FDUSD,31464.84,false,SUI → USDC → FDUSD,false
+SUI,LBTC,42328.98,false,SUI → USDC → xBTC → wBTC → LBTC,false
+SUI,MBTC,0.0,false,,false
+SUI,NAVX,4403.24,false,SUI → NAVX,false
+SUI,SOL,2164.34,false,SUI → SOL,false
+SUI,USDC,977236.8,false,SUI → USDC,false
+SUI,USDSUI,973478.94,false,SUI → USDC → USDSUI,false
+SUI,USDY,931747.03,false,SUI → USDC → USDY,false
+SUI,WAL,77777.52,false,SUI → USDC → WAL,false
+SUI,WBTC.lz,329089.21,false,SUI → USDC → WBTC.lz,false
+SUI,XAUm,372758.54,false,SUI → USDC → XAUm,false
+SUI,enzoBTC,223963.99,false,SUI → USDC → xBTC → enzoBTC,false
+SUI,haSUI,0.0,false,SUI → haSUI,false
+SUI,stSUI,0.0,false,SUI → stSUI,false
+SUI,suiETH,47082.48,false,SUI → USDC → suiETH,false
+SUI,suiUSDT,631928.82,false,SUI → USDC → suiUSDT,false
+SUI,suiUSDe,563430.15,false,SUI → USDC → suiUSDe,false
+SUI,vSUI,0.0,false,SUI → vSUI,false
+SUI,wBTC,42420.83,false,SUI → USDC → WBTC.lz → xBTC → wBTC,false
+SUI,wUSDC,20063.77,false,SUI → USDSUI → USDC → wUSDC,false
+SUI,xBTC,225021.01,false,SUI → USDC → xBTC,false
+USDC,BUCK,2007356.44,false,USDC → BUCK,false
+USDC,DEEP,50153.28,false,USDC → SUI → DEEP,false
+USDC,FDUSD,31495.24,false,USDC → FDUSD,false
+USDC,LBTC,42373.38,false,USDC → WBTC.lz → xBTC → wBTC → LBTC,false
+USDC,MBTC,0.0,false,,false
+USDC,NAVX,4539.57,false,USDC → SUI → NAVX,false
+USDC,SOL,2233.57,false,USDC → SUI → SOL,false
+USDC,SUI,1200184.83,false,USDC → SUI,false
+USDC,USDSUI,1845360.28,false,USDC → USDSUI,false
+USDC,USDY,1117518.48,false,USDC → USDY,false
+USDC,WAL,78309.69,false,USDC → WAL,false
+USDC,WBTC.lz,343279.07,false,USDC → WBTC.lz,false
+USDC,XAUm,382483.15,false,USDC → XAUm,false
+USDC,enzoBTC,230742.7,false,USDC → xBTC → enzoBTC,false
+USDC,haSUI,0.0,false,USDC → SUI → haSUI,false
+USDC,stSUI,0.0,false,USDC → SUI → stSUI,false
+USDC,suiETH,52309.5,false,USDC → suiETH,false
+USDC,suiUSDT,637750.0,false,USDC → suiUSDT,false
+USDC,suiUSDe,563981.16,false,USDC → suiUSDe,false
+USDC,vSUI,0.0,false,USDC → SUI → vSUI,false
+USDC,wBTC,42464.8,false,USDC → WBTC.lz → xBTC → wBTC,false
+USDC,wUSDC,20112.29,false,USDC → wUSDC,false
+USDC,xBTC,230893.05,false,USDC → xBTC,false
+USDSUI,BUCK,1915840.72,false,USDSUI → USDC → BUCK,false
+USDSUI,DEEP,49723.02,false,USDSUI → USDC → SUI → DEEP,false
+USDSUI,FDUSD,31495.24,false,USDSUI → USDC → FDUSD,false
+USDSUI,LBTC,42373.1,false,USDSUI → USDC → xBTC → wBTC → LBTC,false
+USDSUI,MBTC,0.0,false,,false
+USDSUI,NAVX,4516.6,false,USDSUI → USDC → SUI → NAVX,false
+USDSUI,SOL,2224.07,false,USDSUI → USDC → SUI → SOL,false
+USDSUI,SUI,1195983.23,false,USDSUI → USDC → SUI,false
+USDSUI,USDC,1918903.5,false,USDSUI → USDC,false
+USDSUI,USDY,1117518.43,false,USDSUI → USDC → USDY,false
+USDSUI,WAL,78293.47,false,USDSUI → USDC → WAL,false
+USDSUI,WBTC.lz,342522.29,false,USDSUI → USDC → WBTC.lz,false
+USDSUI,XAUm,382483.07,false,USDSUI → USDC → XAUm,false
+USDSUI,enzoBTC,230730.21,false,USDSUI → USDC → xBTC → enzoBTC,false
+USDSUI,haSUI,0.0,false,USDSUI → USDC → SUI → haSUI,false
+USDSUI,stSUI,0.0,false,USDSUI → USDC → SUI → stSUI,false
+USDSUI,suiETH,52091.71,false,USDSUI → USDC → suiETH,false
+USDSUI,suiUSDT,637704.22,false,USDSUI → USDC → suiUSDT,false
+USDSUI,suiUSDe,563981.06,false,USDSUI → USDC → suiUSDe,false
+USDSUI,vSUI,0.0,false,USDSUI → USDC → SUI → vSUI,false
+USDSUI,wBTC,42464.69,false,USDSUI → USDC → WBTC.lz → xBTC → wBTC,false
+USDSUI,wUSDC,20111.77,false,USDSUI → USDC → wUSDC,false
+USDSUI,xBTC,230880.58,false,USDSUI → USDC → xBTC,false
+USDY,BUCK,1004749.07,false,USDY → USDC → BUCK,false
+USDY,DEEP,45483.35,false,USDY → USDC → SUI → DEEP,false
+USDY,FDUSD,31495.24,false,USDY → USDC → FDUSD,false
+USDY,LBTC,42371.75,false,USDY → USDC → xBTC → wBTC → LBTC,false
+USDY,MBTC,0.0,false,,false
+USDY,NAVX,4316.06,false,USDY → USDC → SUI → NAVX,false
+USDY,SOL,2141.67,false,USDY → USDC → SUI → SOL,false
+USDY,SUI,982533.75,false,USDY → USDC → SUI,false
+USDY,USDC,1005748.17,false,USDY → USDC,false
+USDY,USDSUI,1005464.77,false,USDY → USDC → USDSUI,false
+USDY,WAL,78119.42,false,USDY → USDC → WAL,false
+USDY,WBTC.lz,341940.07,false,USDY → USDC → WBTC.lz,false
+USDY,XAUm,382479.64,false,USDY → USDC → XAUm,false
+USDY,enzoBTC,230512.03,false,USDY → USDC → xBTC → enzoBTC,false
+USDY,haSUI,0.0,false,USDY → USDC → SUI → haSUI,false
+USDY,stSUI,0.0,false,USDY → USDC → SUI → stSUI,false
+USDY,suiETH,49901.26,false,USDY → USDC → suiETH,false
+USDY,suiUSDT,636583.11,false,USDY → USDC → suiUSDT,false
+USDY,suiUSDe,563979.33,false,USDY → USDC → suiUSDe,false
+USDY,vSUI,0.0,false,USDY → USDC → SUI → vSUI,false
+USDY,wBTC,42463.48,false,USDY → USDC → WBTC.lz → xBTC → wBTC,false
+USDY,wUSDC,20105.98,false,USDY → USDC → wUSDC,false
+USDY,xBTC,230673.72,false,USDY → USDC → xBTC,false
+WAL,BUCK,73547.08,false,WAL → USDC → BUCK,false
+WAL,DEEP,46075.4,false,WAL → USDC → SUI → DEEP,false
+WAL,FDUSD,31768.85,false,WAL → USDC → FDUSD,false
+WAL,LBTC,42740.11,false,WAL → USDC → xBTC → wBTC → LBTC,false
+WAL,MBTC,0.0,false,,false
+WAL,NAVX,5505.65,false,WAL → SUI → NAVX,false
+WAL,SOL,2705.5,false,WAL → SUI → SOL,false
+WAL,SUI,73468.03,false,WAL → USDC → SUI,false
+WAL,USDC,73575.13,false,WAL → USDC,false
+WAL,USDSUI,73568.84,false,WAL → USDC → USDSUI,false
+WAL,USDY,73664.74,false,WAL → USDC → USDY,false
+WAL,WBTC.lz,73227.32,false,WAL → USDC → xBTC → WBTC.lz,false
+WAL,XAUm,73066.02,false,WAL → USDC → XAUm,false
+WAL,enzoBTC,73056.04,false,WAL → USDC → xBTC → enzoBTC,false
+WAL,haSUI,0.0,false,WAL → SUI → haSUI,false
+WAL,stSUI,6693.39,false,WAL → SUI → stSUI,false
+WAL,suiETH,49984.09,false,WAL → USDC → suiETH,false
+WAL,suiUSDT,73566.16,false,WAL → USDC → suiUSDT,false
+WAL,suiUSDe,73479.53,false,WAL → USDC → suiUSDe,false
+WAL,vSUI,0.0,false,WAL → SUI → vSUI,false
+WAL,wBTC,42832.6,false,WAL → USDC → WBTC.lz → xBTC → wBTC,false
+WAL,wUSDC,20287.21,false,WAL → USDC → wUSDC,false
+WAL,xBTC,73103.59,false,WAL → USDC → xBTC,false
+WBTC.lz,BUCK,328663.04,false,WBTC.lz → USDC → BUCK,false
+WBTC.lz,DEEP,24723.52,false,WBTC.lz → USDC → SUI → DEEP,false
+WBTC.lz,FDUSD,31312.83,false,WBTC.lz → xBTC → USDC → FDUSD,false
+WBTC.lz,LBTC,42124.67,false,WBTC.lz → xBTC → wBTC → LBTC,false
+WBTC.lz,MBTC,0.0,false,,false
+WBTC.lz,NAVX,3155.4,false,WBTC.lz → xBTC → USDC → SUI → NAVX,false
+WBTC.lz,SOL,1675.19,false,WBTC.lz → xBTC → USDC → SUI → SOL,false
+WBTC.lz,SUI,327548.46,false,WBTC.lz → USDC → SUI,false
+WBTC.lz,USDC,328868.36,false,WBTC.lz → USDC,false
+WBTC.lz,USDSUI,328839.13,false,WBTC.lz → USDC → USDSUI,false
+WBTC.lz,USDY,328775.29,false,WBTC.lz → USDC → USDY,false
+WBTC.lz,WAL,76152.46,false,WBTC.lz → USDC → WAL,false
+WBTC.lz,XAUm,263093.01,false,WBTC.lz → USDC → XAUm,false
+WBTC.lz,enzoBTC,219000.1,false,WBTC.lz → USDC → xBTC → enzoBTC,false
+WBTC.lz,haSUI,0.0,false,WBTC.lz → xBTC → USDC → SUI → haSUI,false
+WBTC.lz,stSUI,0.0,false,WBTC.lz → xBTC → USDC → SUI → stSUI,false
+WBTC.lz,suiETH,36876.65,false,WBTC.lz → LBTC → wBTC → suiETH,false
+WBTC.lz,suiUSDT,328630.78,false,WBTC.lz → USDC → suiUSDT,false
+WBTC.lz,suiUSDe,327838.22,false,WBTC.lz → USDC → suiUSDe,false
+WBTC.lz,vSUI,0.0,false,WBTC.lz → xBTC → USDC → SUI → vSUI,false
+WBTC.lz,wBTC,42215.9,false,WBTC.lz → xBTC → wBTC,false
+WBTC.lz,wUSDC,19914.08,false,WBTC.lz → USDC → wUSDC,false
+WBTC.lz,xBTC,220327.93,false,WBTC.lz → USDC → xBTC,false
+enzoBTC,BUCK,357888.12,false,enzoBTC → xBTC → WBTC.lz → USDC → BUCK,false
+enzoBTC,DEEP,61181.17,false,enzoBTC → xBTC → USDC → SUI → DEEP,false
+enzoBTC,FDUSD,31768.85,false,enzoBTC → xBTC → WBTC.lz → USDC → FDUSD,false
+enzoBTC,LBTC,42749.51,false,enzoBTC → xBTC → wBTC → LBTC,false
+enzoBTC,MBTC,0.0,false,,false
+enzoBTC,NAVX,5778.88,false,enzoBTC → xBTC → USDC → SUI → NAVX,false
+enzoBTC,SOL,2770.39,false,enzoBTC → xBTC → USDC → SUI → SOL,false
+enzoBTC,SUI,352547.32,false,enzoBTC → xBTC → WBTC.lz → USDC → SUI,false
+enzoBTC,USDC,358129.78,false,enzoBTC → xBTC → WBTC.lz → USDC,false
+enzoBTC,USDSUI,358096.32,false,enzoBTC → xBTC → WBTC.lz → USDC → USDSUI,false
+enzoBTC,USDY,357976.11,false,enzoBTC → xBTC → WBTC.lz → USDC → USDY,false
+enzoBTC,WAL,79882.78,false,enzoBTC → xBTC → WBTC.lz → USDC → WAL,false
+enzoBTC,WBTC.lz,448651.43,false,enzoBTC → xBTC → WBTC.lz,false
+enzoBTC,XAUm,315202.99,false,enzoBTC → xBTC → WBTC.lz → USDC → XAUm,false
+enzoBTC,haSUI,0.0,false,enzoBTC → xBTC → USDC → SUI → haSUI,false
+enzoBTC,stSUI,13542.48,false,enzoBTC → xBTC → USDC → SUI → stSUI,false
+enzoBTC,suiETH,61195.86,false,enzoBTC → xBTC → WBTC.lz → USDC → suiETH,false
+enzoBTC,suiUSDT,357835.1,false,enzoBTC → xBTC → WBTC.lz → USDC → suiUSDT,false
+enzoBTC,suiUSDe,356893.3,false,enzoBTC → xBTC → WBTC.lz → USDC → suiUSDe,false
+enzoBTC,vSUI,0.0,false,enzoBTC → xBTC → USDC → SUI → vSUI,false
+enzoBTC,wBTC,42840.38,false,enzoBTC → xBTC → wBTC,false
+enzoBTC,wUSDC,20287.25,false,enzoBTC → xBTC → USDC → wUSDC,false
+enzoBTC,xBTC,671748.0,false,enzoBTC → xBTC,false
+haSUI,BUCK,1615855.45,false,haSUI → SUI → USDC → BUCK,false
+haSUI,DEEP,195206.17,false,haSUI → SUI → DEEP,false
+haSUI,FDUSD,31464.86,false,haSUI → SUI → USDC → FDUSD,false
+haSUI,LBTC,51072.46,false,haSUI → SUI → LBTC,false
+haSUI,MBTC,0.0,false,,false
+haSUI,NAVX,16795.59,false,haSUI → SUI → NAVX,false
+haSUI,SOL,7110.3,false,haSUI → SUI → SOL,false
+haSUI,SUI,2323036.81,false,haSUI → SUI,false
+haSUI,USDC,1624186.22,false,haSUI → SUI → USDC,false
+haSUI,USDSUI,1615131.66,false,haSUI → SUI → USDC → USDSUI,false
+haSUI,USDY,1116439.8,false,haSUI → SUI → USDC → USDY,false
+haSUI,WAL,113348.48,false,haSUI → SUI → WAL,false
+haSUI,WBTC.lz,361498.65,false,haSUI → SUI → USDC → WBTC.lz,false
+haSUI,XAUm,382118.8,false,haSUI → SUI → USDC → XAUm,false
+haSUI,enzoBTC,236920.06,false,haSUI → SUI → USDC → xBTC → enzoBTC,false
+haSUI,stSUI,13412.89,false,haSUI → SUI → stSUI,false
+haSUI,suiETH,146262.66,false,haSUI → SUI → USDC → suiETH,false
+haSUI,suiUSDT,648665.63,false,haSUI → SUI → USDC → suiUSDT,false
+haSUI,suiUSDe,563471.6,false,haSUI → SUI → USDC → suiUSDe,false
+haSUI,vSUI,13883.95,false,haSUI → SUI → vSUI,false
+haSUI,wBTC,51602.78,false,haSUI → SUI → LBTC → wBTC,false
+haSUI,wUSDC,42728.28,false,haSUI → SUI → wUSDC,false
+haSUI,xBTC,237034.41,false,haSUI → SUI → USDC → xBTC,false
+stSUI,BUCK,4681.65,false,stSUI → USDC → BUCK,false
+stSUI,DEEP,3646.2,false,stSUI → USDC → DEEP,false
+stSUI,FDUSD,4691.01,false,stSUI → USDC → FDUSD,false
+stSUI,LBTC,4550.9,false,stSUI → USDC → xBTC → WBTC.lz → LBTC,false
+stSUI,MBTC,0.0,false,,false
+stSUI,NAVX,3220.25,false,stSUI → USDC → SUI → NAVX,false
+stSUI,SOL,2527.27,false,stSUI → USDC → SUI → SOL,false
+stSUI,SUI,4685.07,false,stSUI → USDC → SUI,false
+stSUI,USDC,4693.71,false,stSUI → USDC,false
+stSUI,USDSUI,4690.41,false,stSUI → USDC → USDSUI,false
+stSUI,USDY,4759.06,false,stSUI → USDC → USDY,false
+stSUI,WAL,4616.68,false,stSUI → USDC → WAL,false
+stSUI,WBTC.lz,4636.68,false,stSUI → USDC → xBTC → WBTC.lz,false
+stSUI,XAUm,5405.4,false,stSUI → USDC → XAUm,false
+stSUI,enzoBTC,4543.06,false,stSUI → USDC → xBTC → enzoBTC,false
+stSUI,haSUI,1284.93,false,stSUI → SUI → haSUI,false
+stSUI,suiETH,4446.64,false,stSUI → USDC → xBTC → wBTC → suiETH,false
+stSUI,suiUSDT,4693.24,false,stSUI → USDC → suiUSDT,false
+stSUI,suiUSDe,4669.37,false,stSUI → USDC → suiUSDe,false
+stSUI,vSUI,1301.65,false,stSUI → SUI → vSUI,false
+stSUI,wBTC,4641.15,false,stSUI → USDC → xBTC → wBTC,false
+stSUI,wUSDC,4685.86,false,stSUI → USDC → wUSDC,false
+stSUI,xBTC,4568.49,false,stSUI → USDC → xBTC,false
+suiETH,BUCK,31703.01,false,suiETH → USDC → BUCK,false
+suiETH,DEEP,1825.38,false,suiETH → USDC → SUI → DEEP,false
+suiETH,FDUSD,30722.6,false,suiETH → USDC → FDUSD,false
+suiETH,LBTC,25460.28,false,suiETH → USDC → WBTC.lz → LBTC,false
+suiETH,MBTC,0.0,false,,false
+suiETH,NAVX,1901.89,false,suiETH → USDC → SUI → NAVX,false
+suiETH,SOL,1156.38,false,suiETH → USDC → SUI → SOL,false
+suiETH,SUI,30725.3,false,suiETH → USDC → SUI,false
+suiETH,USDC,32075.52,false,suiETH → USDC,false
+suiETH,USDSUI,31982.36,false,suiETH → USDC → USDSUI,false
+suiETH,USDY,33676.02,false,suiETH → USDC → USDY,false
+suiETH,WAL,29474.97,false,suiETH → USDC → WAL,false
+suiETH,WBTC.lz,28486.59,false,suiETH → USDC → WBTC.lz,false
+suiETH,XAUm,32461.17,false,suiETH → USDC → XAUm,false
+suiETH,enzoBTC,25752.55,false,suiETH → USDC → xBTC → enzoBTC,false
+suiETH,haSUI,0.0,false,suiETH → USDC → SUI → haSUI,false
+suiETH,stSUI,0.0,false,suiETH → USDC → SUI → stSUI,false
+suiETH,suiUSDT,32024.06,false,suiETH → USDC → suiUSDT,false
+suiETH,suiUSDe,31071.75,false,suiETH → USDC → suiUSDe,false
+suiETH,vSUI,0.0,false,suiETH → USDC → SUI → vSUI,false
+suiETH,wBTC,28244.03,false,suiETH → USDC → WBTC.lz → LBTC → wBTC,false
+suiETH,wUSDC,19633.93,false,suiETH → USDC → wUSDC,false
+suiETH,xBTC,26435.75,false,suiETH → USDC → xBTC,false
+suiUSDT,BUCK,86398.81,false,suiUSDT → USDC → BUCK,false
+suiUSDT,DEEP,49780.94,false,suiUSDT → USDC → SUI → DEEP,false
+suiUSDT,FDUSD,31495.24,false,suiUSDT → USDC → FDUSD,false
+suiUSDT,LBTC,42373.16,false,suiUSDT → USDC → xBTC → wBTC → LBTC,false
+suiUSDT,MBTC,0.0,false,,false
+suiUSDT,NAVX,4536.38,false,suiUSDT → USDC → SUI → NAVX,false
+suiUSDT,SOL,2232.39,false,suiUSDT → USDC → SUI → SOL,false
+suiUSDT,SUI,86310.36,false,suiUSDT → USDC → SUI,false
+suiUSDT,USDC,86431.09,false,suiUSDT → USDC,false
+suiUSDT,USDSUI,86424.09,false,suiUSDT → USDC → USDSUI,false
+suiUSDT,USDY,86523.71,false,suiUSDT → USDC → USDY,false
+suiUSDT,WAL,77615.71,false,suiUSDT → USDC → WAL,false
+suiUSDT,WBTC.lz,86031.98,false,suiUSDT → USDC → xBTC → WBTC.lz,false
+suiUSDT,XAUm,85731.43,false,suiUSDT → USDC → XAUm,false
+suiUSDT,enzoBTC,85840.69,false,suiUSDT → USDC → xBTC → enzoBTC,false
+suiUSDT,haSUI,0.0,false,suiUSDT → USDC → SUI → haSUI,false
+suiUSDT,stSUI,0.0,false,suiUSDT → USDC → SUI → stSUI,false
+suiUSDT,suiETH,52066.86,false,suiUSDT → USDC → suiETH,false
+suiUSDT,suiUSDe,86314.64,false,suiUSDT → USDC → suiUSDe,false
+suiUSDT,vSUI,0.0,false,suiUSDT → USDC → SUI → vSUI,false
+suiUSDT,wBTC,42464.74,false,suiUSDT → USDC → WBTC.lz → xBTC → wBTC,false
+suiUSDT,wUSDC,20112.17,false,suiUSDT → USDC → wUSDC,false
+suiUSDT,xBTC,85894.12,false,suiUSDT → USDC → xBTC,false
+suiUSDe,BUCK,289743.08,false,suiUSDe → USDC → BUCK,false
+suiUSDe,DEEP,68739.0,false,suiUSDe → USDC → SUI → DEEP,false
+suiUSDe,FDUSD,31768.86,false,suiUSDe → USDC → FDUSD,false
+suiUSDe,LBTC,42747.38,false,suiUSDe → USDC → xBTC → wBTC → LBTC,false
+suiUSDe,MBTC,0.0,false,,false
+suiUSDe,NAVX,5943.46,false,suiUSDe → USDC → SUI → NAVX,false
+suiUSDe,SOL,2818.05,false,suiUSDe → USDC → SUI → SOL,false
+suiUSDe,SUI,289100.6,false,suiUSDe → USDC → SUI,false
+suiUSDe,USDC,289872.93,false,suiUSDe → USDC,false
+suiUSDe,USDSUI,289853.4,false,suiUSDe → USDC → USDSUI,false
+suiUSDe,USDY,289862.06,false,suiUSDe → USDC → USDY,false
+suiUSDe,WAL,80351.66,false,suiUSDe → USDC → WAL,false
+suiUSDe,WBTC.lz,286793.04,false,suiUSDe → USDC → WBTC.lz,false
+suiUSDe,XAUm,283994.57,false,suiUSDe → USDC → XAUm,false
+suiUSDe,enzoBTC,233255.05,false,suiUSDe → USDC → xBTC → enzoBTC,false
+suiUSDe,haSUI,0.0,false,suiUSDe → USDC → SUI → haSUI,false
+suiUSDe,stSUI,13542.48,false,suiUSDe → USDC → USDSUI → SUI → stSUI,false
+suiUSDe,suiETH,64436.07,false,suiUSDe → USDC → suiETH,false
+suiUSDe,suiUSDT,289742.69,false,suiUSDe → USDC → suiUSDT,false
+suiUSDe,vSUI,0.0,false,suiUSDe → USDC → SUI → vSUI,false
+suiUSDe,wBTC,42838.87,false,suiUSDe → USDC → WBTC.lz → xBTC → wBTC,false
+suiUSDe,wUSDC,20477.17,false,suiUSDe → USDC → SUI → wUSDC,false
+suiUSDe,xBTC,233407.0,false,suiUSDe → USDC → xBTC,false
+vSUI,BUCK,93500.48,false,vSUI → SUI → USDC → BUCK,false
+vSUI,DEEP,88831.24,false,vSUI → SUI → DEEP,false
+vSUI,FDUSD,31464.86,false,vSUI → SUI → USDC → FDUSD,false
+vSUI,LBTC,42170.66,false,vSUI → SUI → LBTC,false
+vSUI,MBTC,0.0,false,,false
+vSUI,NAVX,14790.47,false,vSUI → SUI → NAVX,false
+vSUI,SOL,6386.86,false,vSUI → SUI → SOL,false
+vSUI,SUI,93799.91,false,vSUI → SUI,false
+vSUI,USDC,93527.75,false,vSUI → SUI → USDC,false
+vSUI,USDSUI,93521.96,false,vSUI → SUI → USDC → USDSUI,false
+vSUI,USDY,93601.6,false,vSUI → SUI → USDC → USDY,false
+vSUI,WAL,82050.19,false,vSUI → SUI → USDC → WAL,false
+vSUI,WBTC.lz,93188.91,false,vSUI → SUI → USDC → xBTC → WBTC.lz,false
+vSUI,XAUm,92896.2,false,vSUI → SUI → USDC → XAUm,false
+vSUI,enzoBTC,93031.86,false,vSUI → SUI → USDC → xBTC → enzoBTC,false
+vSUI,haSUI,42489.64,false,vSUI → SUI → haSUI,false
+vSUI,stSUI,13412.89,false,vSUI → SUI → stSUI,false
+vSUI,suiETH,84025.23,false,vSUI → SUI → USDC → suiETH,false
+vSUI,suiUSDT,93516.33,false,vSUI → SUI → USDC → suiUSDT,false
+vSUI,suiUSDe,93426.89,false,vSUI → SUI → USDC → suiUSDe,false
+vSUI,wBTC,42595.57,false,vSUI → SUI → LBTC → wBTC,false
+vSUI,wUSDC,35493.12,false,vSUI → SUI → wUSDC,false
+vSUI,xBTC,93075.77,false,vSUI → SUI → USDC → xBTC,false
+wBTC,BUCK,110473.84,false,wBTC → LBTC → WBTC.lz → USDC → BUCK,false
+wBTC,DEEP,2095.82,false,wBTC → xBTC → USDC → SUI → DEEP,false
+wBTC,FDUSD,31084.81,false,wBTC → LBTC → WBTC.lz → USDC → FDUSD,false
+wBTC,LBTC,379873.04,false,wBTC → LBTC,false
+wBTC,MBTC,0.0,false,,false
+wBTC,NAVX,1938.81,false,wBTC → xBTC → USDC → SUI → NAVX,false
+wBTC,SOL,1158.95,false,wBTC → xBTC → USDC → SUI → SOL,false
+wBTC,SUI,110363.63,false,wBTC → LBTC → WBTC.lz → USDC → SUI,false
+wBTC,USDC,110516.54,false,wBTC → LBTC → WBTC.lz → USDC,false
+wBTC,USDSUI,110507.83,false,wBTC → LBTC → WBTC.lz → USDC → USDSUI,false
+wBTC,USDY,110615.39,false,wBTC → LBTC → WBTC.lz → USDC → USDY,false
+wBTC,WAL,74240.29,false,wBTC → LBTC → WBTC.lz → USDC → WAL,false
+wBTC,WBTC.lz,111238.2,false,wBTC → LBTC → WBTC.lz,false
+wBTC,XAUm,109390.52,false,wBTC → LBTC → WBTC.lz → USDC → XAUm,false
+wBTC,enzoBTC,61785.42,false,wBTC → LBTC → WBTC.lz → xBTC → enzoBTC,false
+wBTC,haSUI,0.0,false,wBTC → xBTC → USDC → SUI → haSUI,false
+wBTC,stSUI,0.0,false,wBTC → xBTC → USDC → SUI → stSUI,false
+wBTC,suiETH,27627.7,false,wBTC → suiETH,false
+wBTC,suiUSDT,110495.15,false,wBTC → LBTC → WBTC.lz → USDC → suiUSDT,false
+wBTC,suiUSDe,110349.35,false,wBTC → LBTC → WBTC.lz → USDC → suiUSDe,false
+wBTC,vSUI,0.0,false,wBTC → xBTC → USDC → SUI → vSUI,false
+wBTC,wUSDC,19705.52,false,wBTC → LBTC → WBTC.lz → USDC → wUSDC,false
+wBTC,xBTC,109771.93,false,wBTC → LBTC → WBTC.lz → USDC → xBTC,false
+xBTC,BUCK,328757.45,false,xBTC → WBTC.lz → USDC → BUCK,false
+xBTC,DEEP,28035.75,false,xBTC → WBTC.lz → USDC → SUI → DEEP,false
+xBTC,FDUSD,31312.83,false,xBTC → USDC → FDUSD,false
+xBTC,LBTC,42126.14,false,xBTC → wBTC → LBTC,false
+xBTC,MBTC,0.0,false,,false
+xBTC,NAVX,3378.36,false,xBTC → USDC → SUI → NAVX,false
+xBTC,SOL,1767.72,false,xBTC → USDC → SUI → SOL,false
+xBTC,SUI,327641.93,false,xBTC → WBTC.lz → USDC → SUI,false
+xBTC,USDC,328960.68,false,xBTC → WBTC.lz → USDC,false
+xBTC,USDSUI,328931.8,false,xBTC → WBTC.lz → USDC → USDSUI,false
+xBTC,USDY,328868.57,false,xBTC → WBTC.lz → USDC → USDY,false
+xBTC,WAL,76371.22,false,xBTC → WBTC.lz → USDC → WAL,false
+xBTC,WBTC.lz,442211.45,false,xBTC → WBTC.lz,false
+xBTC,XAUm,270795.11,false,xBTC → WBTC.lz → USDC → XAUm,false
+xBTC,enzoBTC,941114.17,false,xBTC → enzoBTC,false
+xBTC,haSUI,0.0,false,xBTC → USDC → SUI → haSUI,false
+xBTC,stSUI,0.0,false,xBTC → USDC → SUI → stSUI,false
+xBTC,suiETH,38176.49,false,xBTC → WBTC.lz → USDC → suiETH,false
+xBTC,suiUSDT,328725.11,false,xBTC → WBTC.lz → USDC → suiUSDT,false
+xBTC,suiUSDe,327932.1,false,xBTC → WBTC.lz → USDC → suiUSDe,false
+xBTC,vSUI,0.0,false,xBTC → USDC → SUI → vSUI,false
+xBTC,wBTC,42217.23,false,xBTC → wBTC,false
+xBTC,wUSDC,19924.19,false,xBTC → USDC → wUSDC,false

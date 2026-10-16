@@ -1,0 +1,252 @@
+{
+ "run": {
+  "timestamp_utc": "2026-10-09T10:28:56+00:00",
+  "commit": "f98050b518712365c62c42c21d8ca45b8caaa043",
+  "lrg_dirty": true,
+  "params": {
+   "close_factor": 0.35,
+   "beta": 1.0,
+   "platform_share": 0.1,
+   "flash_fee": 0.0009,
+   "lb_max": 0.15,
+   "max_hops": 4,
+   "max_pools_per_leg": 4,
+   "max_candidates": 20,
+   "pick": "split"
+  },
+  "venues": [
+   "aftermath",
+   "bluefin",
+   "cetus",
+   "deepbook",
+   "momentum",
+   "turbos-finance"
+  ]
+ },
+ "collaterals": {
+  "BUCK": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 989.9,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "DEEP": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 5816.86,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "FDUSD": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 1236.92,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "LBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "stSUI",
+   "Q_star_ex_zero": 1680.71,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC",
+    "stSUI"
+   ]
+  },
+  "MBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "USDC",
+   "Q_star_ex_zero": null,
+   "binding_debt_ex_zero": null,
+   "zero_debts": [
+    "BUCK",
+    "DEEP",
+    "FDUSD",
+    "LBTC",
+    "NAVX",
+    "SOL",
+    "SUI",
+    "USDC",
+    "USDSUI",
+    "USDY",
+    "WAL",
+    "WBTC.lz",
+    "XAUm",
+    "enzoBTC",
+    "haSUI",
+    "stSUI",
+    "suiETH",
+    "suiUSDT",
+    "suiUSDe",
+    "vSUI",
+    "wBTC",
+    "wUSDC",
+    "xBTC"
+   ]
+  },
+  "NAVX": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 2167.52,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "SOL": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 1087.23,
+   "binding_debt_ex_zero": "BUCK",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "SUI": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 995.29,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "USDC": {
+   "Q_star": 0.0,
+   "binding_debt": "stSUI",
+   "Q_star_ex_zero": 5487.48,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC",
+    "stSUI"
+   ]
+  },
+  "USDSUI": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 4699.24,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "USDY": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 4639.32,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "WAL": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 5804.37,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "WBTC.lz": {
+   "Q_star": 0.0,
+   "binding_debt": "stSUI",
+   "Q_star_ex_zero": 1669.51,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC",
+    "stSUI"
+   ]
+  },
+  "enzoBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 5782.63,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "haSUI": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 5846.93,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "stSUI": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 5952.22,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "suiETH": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 8278.03,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "suiUSDT": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 4642.79,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "suiUSDe": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 5670.76,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "vSUI": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 5844.43,
+   "binding_debt_ex_zero": "stSUI",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "wBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "MBTC",
+   "Q_star_ex_zero": 1672.98,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC"
+   ]
+  },
+  "xBTC": {
+   "Q_star": 0.0,
+   "binding_debt": "stSUI",
+   "Q_star_ex_zero": 1665.22,
+   "binding_debt_ex_zero": "SOL",
+   "zero_debts": [
+    "MBTC",
+    "stSUI"
+   ]
+  }
+ }
+}
