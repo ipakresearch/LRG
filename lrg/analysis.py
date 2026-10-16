@@ -52,6 +52,11 @@ def to_wide(df: pd.DataFrame, value: str = "capacity_usd") -> pd.DataFrame:
     return df.pivot(index="collateral", columns="debt", values=value)
 
 
+def emode_key(lb: float) -> str:
+    """Key of a bonus in a saved matrix's emode_capacity map."""
+    return f"{lb:.10g}"
+
+
 class LoadedMatrix:
     """
     A saved capacity matrix rehydrated with the risk-parameter table, exposing
@@ -59,7 +64,8 @@ class LoadedMatrix:
 
     Capacities were computed at each collateral's configured budget, so
     q_star(B) is exact. Re-evaluating at a different bonus needs the leg curves,
-    which are not saved — use navi_matrix.build() for that.
+    which are not saved — use navi_matrix.build() for that. The one exception
+    is pair_capacity at the E-Mode bonuses, which run.py saves with the matrix.
     """
 
     def __init__(self, path: str, asset_table=None, assets=None, params=None):
@@ -78,6 +84,14 @@ class LoadedMatrix:
                          for k, v in d.get("dead_leg", {}).items()}
         self.pools_read = d.get("pools_read")
         self.pools_failed = d.get("pools_failed")
+        self.saturated = [tuple(k.split("|")) for k in d.get("saturated", [])]
+        self.no_pool = d.get("no_pool", [])
+        # failed pools come back as pool keys: (id, (coin type, coin type))
+        self.coverage = {tuple(k.split("|")): {"status": v["status"],
+                                               "failed": [(f[0], tuple(f[1])) for f in v["failed"]]}
+                         for k, v in d.get("coverage", {}).items()}
+        # "B|A" -> {lb: capacity} at E-Mode bonuses, written by run.py
+        self.emode_capacity = d.get("emode_capacity", {})
         if assets is not None:
             self.assets = assets
         elif asset_table is not None:
@@ -102,6 +116,18 @@ class LoadedMatrix:
 
     def row(self, B):
         return {A: v for (b, A), v in self.cells.items() if b == B}
+
+    def pair_capacity(self, B, A, lb):
+        """One pair's capacity at bonus lb, from the saved E-Mode capacities.
+        None if the pair is not in the matrix; raises if lb was not saved."""
+        if (B, A) not in self.cells:
+            return None
+        caps = self.emode_capacity.get(f"{B}|{A}", {})
+        key = emode_key(lb)
+        if key not in caps:
+            raise KeyError(f"no saved capacity for {B}->{A} at LB {lb}; "
+                           "re-evaluating at another bonus needs navi_matrix.build()")
+        return caps[key]
 
     def debt_row(self, B):
         ex = set(getattr(self.params, "excluded_debts", ()) or ())

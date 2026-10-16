@@ -20,6 +20,7 @@ simulates Navi's own view function so the two can be compared.
 from __future__ import annotations
 
 import base64
+import gzip
 import json
 import threading
 import time
@@ -396,3 +397,35 @@ def navi_health_factors(state: dict, users: List[str]) -> tuple:
     hfs = [int(x) / RAY for x in r["outputs"][0]["returnValues"][0]["value"]["json"]]
     prices, _ = _prices(state["reserves"], d["address"]["dynamicFields"]["nodes"])
     return hfs, prices
+
+
+# ---------------------------------------------------------------------------
+# Saving and loading a read
+# ---------------------------------------------------------------------------
+# JSON turns reserve-id keys into strings and has no sets; these restore them.
+
+def _ints(d: dict) -> dict:
+    return {int(k): v for k, v in d.items()}
+
+
+def save_positions(pos: dict, path: str) -> None:
+    """Write a read (positions, debt totals, stats, HF check, state, borrowed)
+    as gzipped JSON, for rerunning stress without the chain."""
+    state = dict(pos["state"], protected=sorted(pos["state"]["protected"]))
+    with gzip.open(path, "wt") as fh:
+        json.dump(dict(pos, state=state), fh)
+
+
+def load_positions(path: str) -> dict:
+    """The inverse of save_positions."""
+    with gzip.open(path, "rt") as fh:
+        pos = json.load(fh)
+    st = pos["state"]
+    for k in ("reserves", "prices", "price_ms", "borrow_weights"):
+        st[k] = _ints(st.get(k, {}))
+    st["emode_pairs"] = {int(e): _ints(pair) for e, pair in st["emode_pairs"].items()}
+    st["protected"] = set(st["protected"])
+    pos["debt_tokens_all"] = _ints(pos["debt_tokens_all"])
+    for p in pos["positions"]:
+        p["debt"], p["collateral"] = _ints(p["debt"]), _ints(p["collateral"])
+    return pos

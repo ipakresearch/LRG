@@ -680,7 +680,7 @@ No reserve is isolated. `reserve_field_a/b/c` are 0 and unlabeled, and no other 
 ## Live run (`data/navi/2026-10-16`, exit 0; before the mint venue)
 
 - **Breaking shock, unchanged for every collateral:**
-  - 0% for 18 collaterals, with binding debt vSUI or haSUI
+  - 0% for 18 collaterals, with binding debt vSUI or haSUI (this run wasn't kept, so the count can't be rechecked; the step 13 run, which was, has 16, see the correction there)
   - none for enzoBTC, haSUI, stSUI and vSUI
   - 20% for wBTC (suiETH scenario)
 - **Why so many 0%:** 838 positions are already below HF 1 at current prices. Their vSUI/haSUI debt meets pairs with capacity 0, so those pairs fail with no shock.
@@ -841,4 +841,118 @@ MBTC's zero capacity is real, not a read bug: the price is within 1.2% of the or
 
 ## Stress baseline
 
-838 positions are below HF 1 at current prices, so 18 collaterals break at 0% on pairs with zero capacity. vSUI holds until a 10% vSUI depeg, and wBTC until a 20% shock. Bad debt at baseline is $68; no positions are unpriced.
+838 positions are below HF 1 at current prices, so 16 collaterals break at 0% on pairs with zero capacity (corrected 2026-10-16: this said 18; `summary.json` has 16 at 0%, 5 with no breaking shock — enzoBTC, haSUI, stSUI, suiUSDe, vSUI — and wBTC at 20%). vSUI holds until a 10% vSUI depeg, and wBTC until a 20% shock. Bad debt at baseline is $68; no positions are unpriced.
+
+# Stress materiality floors and rerun from a saved run (2026-10-16)
+
+## Changes
+
+- **`Params.min_position_usd` (100) and `min_sold_usd` (1,000).** They go into `config.json`, `summary.json` and `matrix.json`, and can be overridden with `--min-position-usd` and `--min-sold-usd`.
+- **Dust positions.** A position with total debt under $100, at oracle prices before any shock, is dropped from every scenario. `summary.json` `stress` counts `dust_positions` and `dust_debt_usd`. A position with an unpriced debt is never dust; it stays and is reported as unpriced.
+- **Pair floor.** `stress.csv` gains `material` (Q ≥ $1,000, the E-Mode tranche included). `fails` now means (Q > Q\* or the E-Mode check fails) **and** material.
+- **New `stress_breaks.csv`:**
+  - one row per (collateral, debt, scenario), where the baseline counts as shock 0 of every scenario;
+  - the first material failing shock, with D, Q, Q\*, n_positions and coverage there, or `holds`;
+  - `non_monotone` and `recovers_at` flag a pair that fails at one shock but not at a larger one;
+  - `run.py` prints the count.
+- **Per collateral in `summary.json`:**
+  - `breaking_shock` is the smallest first failing shock over the price-group scenarios and complete pairs; `stress_status` is `breaks` or `holds`;
+  - depegs stay in their own `depeg` block, and incomplete pairs in `breaking_shock_incomplete`.
+- **Q\* over material debts.** `Q_star` ranges over the debts where some scenario has Q ≥ $1,000 (`material_debts`). It is null when there are none. `Q_star_all` keeps the old row minimum. Adequacy and signal 1 are per pair and unchanged.
+- **`run.py --from-run DATE`.** A full run now saves `matrix.json` (with every pair's capacity at each E-Mode bonus, which `LoadedMatrix.pair_capacity` reads) and `positions.json.gz` (positions and Navi state). `--from-run` reruns stress only, from those files. It rewrites `stress.csv`, `stress_breaks.csv`, the stress and Q\* fields of `summary.json` and the params in `config.json`, and records `stress_rerun`.
+- **Tests.** New `tests/test_stress_floors.py` (7 cases); `test_stress` now runs with the floors off. 40 tests pass.
+
+## The old 2026-10-16 run couldn't be rerun
+
+It saved neither positions nor the matrix's curves. A fresh full run replaced `data/navi/2026-10-16`; the old one is in git at `be1a8a7`.
+- The fresh run took about 75 minutes: 27 minutes for the borrow tables and 39 for collateral.
+- A `--from-run` stress pass takes about 5 s.
+
+The before/after below uses the **same saved data**, with the floors set four ways, so market movement plays no part.
+
+## Breaking shock per collateral
+
+| collateral | original run (`be1a8a7`) | floors off | dust only ($100) | pair only ($1,000) | both (now) |
+|---|---|---|---|---|---|
+| BUCK | 0% (haSUI) | 0% (haSUI) | 35% SUI family | holds | **holds** |
+| DEEP | 0% (haSUI) | 0% (haSUI) | 20% suiETH | 40% DEEP (haSUI) | **40% DEEP (haSUI)** |
+| FDUSD | 0% (haSUI) | 0% (haSUI) | 40% SUI family | holds | **holds** |
+| LBTC | 0% (vSUI) | 0% (haSUI) | holds | holds | **holds** |
+| MBTC | 0% (vSUI) | 0% (FDUSD) | 40% BTC family | 40% BTC family (SUI) | **40% BTC family (SUI)** |
+| NAVX | 0% (haSUI) | 0% (haSUI) | 0% (haSUI) | 45% BTC family (BUCK) | **45% BTC family (BUCK)** |
+| SOL | 0% (vSUI) | 0% (haSUI) | 25% BTC family | holds | **holds** |
+| SUI | 0% (vSUI) | 0% (haSUI) | 0% (haSUI) | 40% DEEP (haSUI) | **40% DEEP (haSUI)** |
+| USDC | 0% (vSUI) | 0% (haSUI) | 0% (haSUI) | holds | **holds** |
+| USDSUI | 0% (vSUI) | 0% (haSUI) | 0% (haSUI) | 40% BTC family (vSUI) | **40% BTC family (vSUI)** |
+| USDY | 0% (vSUI) | 0% (haSUI) | 40% BTC family | holds | **holds** |
+| WAL | 0% (haSUI) | 0% (haSUI) | 25% BTC family | 40% DEEP (haSUI) | **40% DEEP (haSUI)** |
+| WBTC.lz | 0% (vSUI) | 0% (vSUI) | 40% BTC family | 40% BTC family (vSUI) | **40% BTC family (vSUI)** |
+| enzoBTC | holds | holds | holds | holds | **holds** |
+| haSUI | holds | holds | holds | holds | **holds** |
+| stSUI | holds | holds | holds | holds | **holds** |
+| suiETH | 0% (haSUI) | 0% (haSUI) | 0% (haSUI) | 20% suiETH (vSUI) | **20% suiETH (vSUI)** |
+| suiUSDT | 0% (vSUI) | 0% (vSUI) | 25% BTC family | holds | **holds** |
+| suiUSDe | holds | 0% (vSUI) | 40% BTC family | holds | **holds** |
+| vSUI | holds | holds | holds | holds | **holds** |
+| wBTC | 20% suiETH (vSUI) | 20% suiETH (vSUI) | 20% suiETH (vSUI) | 40% BTC family (vSUI) | **40% BTC family (vSUI)** |
+| xBTC | 0% (vSUI) | 0% (haSUI) | 40% BTC family | 40% BTC family (vSUI) | **40% BTC family (vSUI)** |
+
+## Were the 0% collaterals driven by dust?
+
+The original run had 16 collaterals at 0%, not 18 (see the correction under the 2026-10-16 rerun). With the floors off, the new run has 17; suiUSDe is the extra one, from a single position that adds $0.00 of Q.
+
+**Mostly, but not only.**
+- **Small amounts throughout.** Every failing baseline pair behind the 17 has Q of at most $39.35, against Q\* = 0.
+- **Dust floor alone ($100):** clears 12 of the 17. In most of these pairs, positions under $100 contribute 100% of Q.
+- **Five stay at 0% under the dust floor alone:** NAVX, SUI, USDC, USDSUI and suiETH. Each rests on one position above $100 whose share of the haSUI or vSUI debt puts very little on the market:
+
+  | pair | Q from that one position |
+  |---|---|
+  | SUI → haSUI | $35.64 |
+  | USDSUI → haSUI | $36.70 |
+  | USDC → haSUI | $0.07 |
+  | NAVX → haSUI | under $0.01 |
+  | suiETH → haSUI | under $0.01 |
+
+  These aren't dust positions; they are dust-sized slices of larger positions.
+- **Pair floor ($1,000):** clears all 17 baseline failures on its own.
+
+**So the 0% results were driven by immaterial amounts.** Dust positions explain 12 of the 17; the pair floor explains the rest.
+
+## What remains (both floors)
+
+- **Positions:** 9,851 read; 7,105 dust ($99,346 of debt); 2,746 stressed.
+- **Breaking shocks:** 9 collaterals hold to 50%. The rest break at 20–45%. None breaks at baseline.
+- **17 complete pairs fail materially.** The largest:
+
+  | pair | first failing shock | Q | Q\* | positions |
+  |---|---|---|---|---|
+  | xBTC → DEEP | BTC −40% | $889,734 | $143,987 | 2 |
+  | MBTC → SUI | BTC −40% | $410,958 | $0 (no market) | 1 |
+  | MBTC → WBTC.lz | BTC −40% | $126,910 | $0 | 1 |
+  | xBTC → vSUI | BTC −40% | $90,026 | $0 | 1 |
+  | suiETH → USDC | suiETH −40% | $80,756 | $25,542 | 6 |
+  | SUI → haSUI | DEEP −40% | $10,779 | $0 | 2 |
+
+  suiETH → vSUI fails first, at −20% ($1,676 against $0), which sets suiETH's 20%.
+- **Concentration:** every material failure involves 1 to 6 positions.
+- **Depegs:** a 10% vSUI depeg breaks USDC, suiETH and vSUI.
+- **Monotonicity:**
+
+  | floors | non-monotone pair-scenarios |
+  |---|---|
+  | off | 50, all with Q ≤ $37 |
+  | dust only | 1: USDSUI → haSUI fails from 0% to 25% of the SUI-family shock, then recovers, because the shock also shrinks its haSUI debt |
+  | pair only, or both | 0 |
+
+## Q\* over material debts vs Q_star_all (both floors)
+
+| Q\* | collaterals |
+|---|---|
+| null: no debt is material | BUCK, FDUSD, SOL, enzoBTC, stSUI, suiUSDT, suiUSDe, and USDY, whose only material debt is USDY itself, a same-asset pair with no cell |
+| 0 | DEEP, MBTC, SUI, USDC, USDSUI, WAL, WBTC.lz, suiETH, wBTC, xBTC: haSUI, vSUI or WBTC.lz debt reaches $1,000 in some scenario and has no capacity |
+| positive | haSUI $495,943 (DEEP), LBTC $98,031 (DEEP), vSUI $42,535 (haSUI), NAVX $2,513 (USDC) |
+
+`Q_star_all` is unchanged in kind: 0 for 19 collaterals; haSUI 7,012, vSUI 6,255 and stSUI 1,365.
+
+Also seen: `material_debts` lists `r2`, a Navi reserve that `navi.py` doesn't name. It has no matrix cell, so it doesn't affect Q\*.

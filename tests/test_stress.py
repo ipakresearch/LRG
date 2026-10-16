@@ -104,9 +104,10 @@ class Aggregate(unittest.TestCase):
         M = FakeMatrix({("SUI", "USDC"): 70.0, ("vSUI", "SUI"): 1000.0,
                         ("USDC", "USDC"): 1e9, ("SUI", "SUI"): 1e9, ("USDC", "SUI"): 1e9},
                        {("vSUI", "SUI", 0.05): 30.0})
-        params = matrix.Params(close_factor=CF, beta=1.0)
+        # floors off: the hand calculations use positions of tens of dollars
+        params = matrix.Params(close_factor=CF, beta=1.0, min_position_usd=0, min_sold_usd=0)
         pos = {"state": STATE, "positions": [P1, P2, P3, P4, P5, P6]}
-        rows, per_coll, _, stats = run.stress(params, M, pos, lambda k: {"status": "complete"})
+        rows, per_coll, _, stats, _, _ = run.stress(params, M, pos, lambda k: {"status": "complete"})
         base = {r["scenario"]: r for r in stats}["baseline"]
         self.assertEqual((base["liquidatable"], base["unpriced"]), (4, 1))
         self.assertAlmostEqual(base["bad_debt_usd"], 50.0)

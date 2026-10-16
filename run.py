@@ -7,14 +7,22 @@ Fetches live pool state, builds the capacity matrix at Navi's current defaults
     matrix.csv      every pair: collateral, debt, capacity_usd, path, and
                     coverage ("complete", or "incomplete" when a failed read
                     could have changed the pair) and the failed pools with TVL
-    summary.json    per collateral: Q* (row minimum) and the binding debt asset,
-                    the minimum over nonzero cells and its debt asset, and the
-                    debt assets with zero capacity
+    summary.json    per collateral: Q* (row minimum over the debts stress
+                    finds material) and its binding debt, Q_star_all over the
+                    whole debt set, the minimum over nonzero cells and its debt
+                    asset, and the debt assets with zero capacity
     adequacy.csv    every pair: liquidation demand now and at caps, bounded
                     by the debt asset's borrowing, against the pair's capacity
     stress.csv      every (scenario, shock, collateral, debt) with liquidations:
                     debt of positions pushed below HF 1, the collateral it puts
-                    on the market, and the pair's capacity
+                    on the market, the pair's capacity, and whether Q is
+                    material (Q >= min_sold_usd)
+    stress_breaks.csv  per (collateral, debt, scenario): the first shock at
+                    which the pair fails materially, with D, Q, Q*, positions
+                    and coverage there, or "holds"; non_monotone flags a pair
+                    that fails at one shock but not at a larger one
+    matrix.json     the matrix with its params, coverage and E-Mode capacities
+    positions.json.gz  the positions and Navi state stress ran on
     config.json     the run's parameters, treasury factors, the debt set and the
                     excluded debts with reasons, and the Q_cap formula
     coverage.json   pools needed and read, each failed pool with its reason,
@@ -64,9 +72,18 @@ tranche is also checked against Q* at the E-Mode budget. Protected positions
 stay in (only a designated liquidator may liquidate them, and each has one).
 A position with an unpriced reserve is counted as unpriced, and one with no
 collateral value as bad debt (summary.json "stress_scenarios"); neither is
-silently dropped. The breaking shock is the smallest s at which a pair with
-complete coverage in B's row fails. Q* is measured before the shock, so
-breaking shocks are upper bounds.
+silently dropped.
+
+Materiality (Params.min_position_usd, min_sold_usd). Positions with less than
+$100 of debt before any shock are dust: left out of stress and counted
+(summary.json "stress": dust_positions, dust_debt_usd). A pair fails only if
+Q > Q* and Q >= $1,000. The baseline is shock 0 of every scenario. The
+breaking shock is the smallest first failing shock over B's price-group
+scenarios and pairs with complete coverage, or "holds" (stress_status) when
+none fails up to 50%; depegs are reported apart. Q* in summary.json ranges
+over the debts where some scenario puts at least $1,000 on the market (None
+if there are none); Q_star_all keeps the unfloored row minimum. Q* is
+measured before the shock, so breaking shocks are upper bounds.
 
 Signal 1 also checks E-Mode-eligible pairs at the E-Mode LTV and bonus.
 
@@ -75,10 +92,14 @@ that disagrees with Navi's own), 2 it finished but the result is unusable (a
 pool failed with a network error, no pools read, no prices, no cells, or every
 cell zero).
 
-    python run.py
+    python run.py                          full run (reads the chain)
+    python run.py --from-run 2026-10-16    redo stress from that run's saved
+                                           matrix.json and positions.json.gz
+    --min-position-usd X --min-sold-usd Y  override the floors, either mode
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import datetime as dt
 import json
@@ -94,6 +115,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 
 from lrg import matrix                      # noqa: E402
+from lrg.analysis import LoadedMatrix, emode_key  # noqa: E402
 from lrg.book import PoolBook, pool_key     # noqa: E402
 from lrg.clmm import gql, Q_FIELDS, Q_OBJECT  # noqa: E402
 from lrg.coins import norm_type            # noqa: E402
@@ -696,10 +718,28 @@ def stress(params, M, pos: dict, coverage_of) -> tuple:
             for s in DEPEGS:
                 scenarios.append((f"depeg {lst}", s, {rid_of[lst]: 1 - s}, "depeg"))
 
+    # dust: less total debt than min_position_usd before any shock; dropped
+    # from every scenario. A position with an unpriced debt is never dust
+    # (it is reported as unpriced instead).
+    px = state["prices"]
+    def debt_usd(p):
+        if any(r not in px for r in p["debt"]):
+            return None
+        return sum(t * px[r] for r, t in p["debt"].items())
+    dust = [p for p in pos["positions"]
+            if debt_usd(p) is not None and debt_usd(p) < params.min_position_usd]
+    dust_users = {p["user"] for p in dust}
+    stressed = [p for p in pos["positions"] if p["user"] not in dust_users]
+    info = {"min_position_usd": params.min_position_usd,
+            "min_sold_usd": params.min_sold_usd,
+            "dust_positions": len(dust),
+            "dust_debt_usd": sum(debt_usd(p) for p in dust),
+            "positions_stressed": len(stressed)}
+
     rows, scen_stats = [], []
     for name, s, factor, kind in scenarios:
         acc, n_liq, unpriced, bad = {}, 0, [], {}
-        for p in pos["positions"]:
+        for p in stressed:
             if navi_positions.health_factor(state, p, factor) >= 1:
                 continue
             status, flows = position_flows(state, p, factor, cf)
@@ -740,43 +780,97 @@ def stress(params, M, pos: dict, coverage_of) -> tuple:
                 qs_e = cap_e if qs_e is None else min(qs_e, cap_e)
                 fails_e = bool(fails_e) or qe > cap_e
             path = M.paths.get((B, A))
+            # Q includes the E-Mode tranche; a pair below the floor never fails
+            material = x["Q"] >= params.min_sold_usd
             rows.append({"scenario": name, "kind": kind, "shock": s, "collateral": B, "debt": A,
                          "D_usd": x["D"], "base_usd": x["base"], "Q": x["Q"], "Q_star": qs,
                          "Q_star_saturated": is_saturated(qs),
                          "Q_emode": q_e, "Q_star_emode": qs_e, "fails_emode": fails_e,
-                         "fails": (bool(fails) or bool(fails_e)) if qs is not None else None,
+                         "material": material,
+                         "fails": ((bool(fails) or bool(fails_e)) and material)
+                         if qs is not None else None,
                          "no_capacity_data": qs is None,
                          "n_positions": x["n"], "D_protected_usd": x["D_protected"],
                          "D_emode_usd": x["D_emode"],
                          "coverage": coverage_of((B, A))["status"] if qs is not None else None,
                          "path": " → ".join(path) if path else ""})
 
+    breaks = stress_breaks(rows, sorted(groups), coverage_of)
+    info["non_monotone"] = sum(1 for b in breaks if b["non_monotone"])
     per_coll = {}
     for B in sorted({b for b, _ in M.cells}):
-        mine = [r for r in rows if r["collateral"] == B and r["fails"]]
+        mine = [b for b in breaks if b["collateral"] == B and b["status"] == "breaks"]
         # an incomplete pair never sets the breaking shock; its own lowest
-        # failing shock is reported apart
-        fail_inc = [r for r in mine if r["kind"] == "grid" and r["coverage"] == "incomplete"]
-        extra = {"breaking_shock_incomplete": min((r["shock"] for r in fail_inc), default=None),
-                 "incomplete_debts": sorted({r["debt"] for r in fail_inc}),
-                 "depeg": {lst: min((r["shock"] for r in mine if r["scenario"] == f"depeg {lst}"
-                                     and r["coverage"] != "incomplete"), default=None)
-                           for lst in LSTS}}
-        failing = [r for r in mine if r["kind"] == "grid" and r["coverage"] != "incomplete"]
+        # failing shock is reported apart. Depegs are reported apart too.
+        grid = [b for b in mine if b["kind"] == "grid"]
+        fail_inc = [b for b in grid if b["coverage"] == "incomplete"]
+        extra = {"breaking_shock_incomplete": min((b["first_fail_shock"] for b in fail_inc),
+                                                  default=None),
+                 "incomplete_debts": sorted({b["debt"] for b in fail_inc}),
+                 "depeg": {lst: min((b["first_fail_shock"] for b in mine
+                                     if b["scenario"] == f"depeg {lst}"
+                                     and b["coverage"] != "incomplete"), default=None)
+                           for lst in LSTS},
+                 "non_monotone_pairs": sum(1 for b in breaks
+                                           if b["collateral"] == B and b["non_monotone"])}
+        failing = [b for b in grid if b["coverage"] != "incomplete"]
         if not failing:
-            per_coll[B] = {"breaking_shock": None, "scenario": None, "binding_debt": None,
-                           "note": f"no complete pair fails up to {max(SHOCKS):.0%}", **extra}
+            per_coll[B] = {"breaking_shock": None, "stress_status": "holds",
+                           "scenario": None, "binding_debt": None,
+                           "note": f"no complete pair fails materially up to {max(SHOCKS):.0%}",
+                           **extra}
             continue
-        s_min = min(r["shock"] for r in failing)
-        worst = max((r for r in failing if r["shock"] == s_min),
-                    key=lambda r: r["Q"] / r["Q_star"] if r["Q_star"] else float("inf"))
-        per_coll[B] = {"breaking_shock": s_min, "scenario": worst["scenario"],
+        s_min = min(b["first_fail_shock"] for b in failing)
+        worst = max((b for b in failing if b["first_fail_shock"] == s_min),
+                    key=lambda b: b["Q"] / b["Q_star"] if b["Q_star"] else float("inf"))
+        per_coll[B] = {"breaking_shock": s_min, "stress_status": "breaks",
+                       "scenario": "baseline" if s_min == 0 else worst["scenario"],
                        "binding_debt": worst["debt"], "Q": worst["Q"],
                        "Q_star": worst["Q_star"], "D_usd": worst["D_usd"],
-                       "base_usd": worst["base_usd"], "n_positions": worst["n_positions"],
-                       "D_emode_usd": worst["D_emode_usd"],
+                       "n_positions": worst["n_positions"],
                        "failed_on_emode": bool(worst["fails_emode"]), **extra}
-    return rows, per_coll, how, scen_stats
+    return rows, per_coll, how, scen_stats, breaks, info
+
+
+def stress_breaks(rows: list, groups: list, coverage_of) -> list:
+    """
+    The first material failure per (collateral, debt, scenario).
+
+    A scenario is one price group shocked 5%..50%, or one LST depegged
+    2/5/10%; the baseline (no shock) is shock 0 of every one of them. A pair
+    with no liquidations at a shock does not fail there. Each row gives the
+    smallest failing shock with D, Q, Q*, n_positions and coverage at it, or
+    status "holds". non_monotone flags a pair that fails at one shock but not
+    at a larger one (Q can fall with the shock, as collateral value drops);
+    recovers_at lists those larger shocks.
+    """
+    at = {(r["collateral"], r["debt"], r["scenario"], r["shock"]): r for r in rows}
+    series = [(g, "grid", SHOCKS) for g in groups] + \
+             [(f"depeg {lst}", "depeg", DEPEGS) for lst in LSTS]
+    pairs = sorted({(r["collateral"], r["debt"]) for r in rows})
+    out = []
+    for B, A in pairs:
+        for name, kind, grid in series:
+            pts = {0.0: at.get((B, A, "baseline", 0.0))}
+            pts.update({s: at.get((B, A, name, s)) for s in grid})
+            if not any(pts.values()):
+                continue
+            fail = [s for s, r in sorted(pts.items()) if r and r["fails"]]
+            first = fail[0] if fail else None
+            r = pts[first] if fail else None
+            recovers = [s for s in sorted(pts) if fail and s > first and s not in fail]
+            out.append({"collateral": B, "debt": A, "scenario": name, "kind": kind,
+                        "status": "breaks" if fail else "holds",
+                        "first_fail_shock": first,
+                        "D_usd": r["D_usd"] if r else None, "Q": r["Q"] if r else None,
+                        "Q_star": r["Q_star"] if r else None,
+                        "n_positions": r["n_positions"] if r else None,
+                        "fails_emode": r["fails_emode"] if r else None,
+                        "max_Q": max(x["Q"] for x in pts.values() if x),
+                        "coverage": coverage_of((B, A))["status"],
+                        "non_monotone": bool(recovers),
+                        "recovers_at": ";".join(f"{x:g}" for x in recovers)})
+    return out
 
 
 def write(params, M, book, live, pos, out_dir: str):
@@ -822,19 +916,9 @@ def write(params, M, book, live, pos, out_dir: str):
     borrowed = pos["borrowed"]
     pairs, per_coll = adequacy(params, M, live, coverage_of, borrowed, pos["state"])
     sig1 = signal_1(pairs)
-    s_rows, s_coll, groups_how, scen_stats = stress(params, M, pos, coverage_of)
+    s_rows, s_coll, groups_how, scen_stats, s_info = write_stress(params, M, pos,
+                                                                  coverage_of, out_dir)
     n_scen = len(scen_stats)
-    s_cols = ["scenario", "kind", "shock", "collateral", "debt", "D_usd", "base_usd", "Q",
-              "Q_star", "Q_star_saturated", "Q_emode", "Q_star_emode", "fails_emode", "fails",
-              "no_capacity_data", "n_positions", "D_protected_usd", "D_emode_usd",
-              "coverage", "path"]
-    with open(os.path.join(out_dir, "stress.csv"), "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=s_cols)
-        w.writeheader()
-        for r in sorted(s_rows, key=lambda r: (r["scenario"] != "baseline", r["scenario"],
-                                               r["shock"], r["collateral"], r["debt"])):
-            w.writerow({k: (str(v).lower() if isinstance(v, bool) else
-                            "" if v is None else v) for k, v in r.items()})
     cols = ["collateral", "debt", "Q_now", "Q_cap", "Q_star", "Q_star_saturated",
             "Q_cap_emode", "Q_star_emode", "status", "status_if_complete", "coverage", "failed_pools",
             "debt_price_missing", "path"]
@@ -849,18 +933,17 @@ def write(params, M, book, live, pos, out_dir: str):
 
     collaterals = {}
     for B in sorted({b for b, _ in M.cells}):
-        q, binding = M.row_min(B)
         row = M.debt_row(B)          # excluded (never-borrowed) debts left out
         positive = {D: v for D, v in row.items() if v}
         D_ex = min(positive, key=positive.get) if positive else None
-        collaterals[B] = {"Q_star": q, "binding_debt": binding,
-                          "Q_star_saturated": is_saturated(q),
+        collaterals[B] = {**star_fields(M, B, s_rows),
                           "Q_star_ex_zero": positive.get(D_ex),
                           "binding_debt_ex_zero": D_ex,
                           "zero_debts": sorted(D for D, v in row.items() if v == 0),
                           "signal_1": sig1[B],
                           "adequacy_status": per_coll[B]["status"],
                           "breaking_shock": s_coll[B]["breaking_shock"],
+                          "stress_status": s_coll[B]["stress_status"],
                           "stress": s_coll[B],
                           "adequacy": per_coll[B]}
     run = {"timestamp_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
@@ -883,7 +966,7 @@ def write(params, M, book, live, pos, out_dir: str):
     run["pairs_incomplete"] = n_incomplete
     with open(os.path.join(out_dir, "summary.json"), "w") as fh:
         json.dump({"run": run, "navi_live": navi_live, "collaterals": collaterals,
-                   "stress_scenarios": scen_stats}, fh, indent=1)
+                   "stress": s_info, "stress_scenarios": scen_stats}, fh, indent=1)
 
     config = {"params": run["params"], "venues": run["venues"],
               "treasury_factors": params.treasury_factors,
@@ -935,12 +1018,164 @@ def write(params, M, book, live, pos, out_dir: str):
     with open(os.path.join(out_dir, "coverage.json"), "w") as fh:
         json.dump(coverage, fh, indent=1)
 
+    # what --from-run needs to redo stress without the chain
+    M.save(os.path.join(out_dir, "matrix.json"),
+           extra={"emode_capacity": emode_capacities(M, pos["state"])})
+    navi_positions.save_positions(pos, os.path.join(out_dir, "positions.json.gz"))
 
-def main() -> int:
+
+S_COLS = ["scenario", "kind", "shock", "collateral", "debt", "D_usd", "base_usd", "Q",
+          "Q_star", "Q_star_saturated", "Q_emode", "Q_star_emode", "fails_emode", "material",
+          "fails", "no_capacity_data", "n_positions", "D_protected_usd", "D_emode_usd",
+          "coverage", "path"]
+B_COLS = ["collateral", "debt", "scenario", "kind", "status", "first_fail_shock", "D_usd",
+          "Q", "Q_star", "n_positions", "fails_emode", "max_Q", "coverage",
+          "non_monotone", "recovers_at"]
+
+
+def _csv_val(v):
+    return str(v).lower() if isinstance(v, bool) else "" if v is None else v
+
+
+def write_stress(params, M, pos, coverage_of, out_dir: str) -> tuple:
+    """Run stress and write stress.csv and stress_breaks.csv to out_dir.
+    Returns (rows, per collateral, price groups, scenario stats, info)."""
+    rows, per_coll, how, scen_stats, breaks, info = stress(params, M, pos, coverage_of)
+    with open(os.path.join(out_dir, "stress.csv"), "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=S_COLS)
+        w.writeheader()
+        for r in sorted(rows, key=lambda r: (r["scenario"] != "baseline", r["scenario"],
+                                             r["shock"], r["collateral"], r["debt"])):
+            w.writerow({k: _csv_val(v) for k, v in r.items()})
+    with open(os.path.join(out_dir, "stress_breaks.csv"), "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=B_COLS)
+        w.writeheader()
+        for b in sorted(breaks, key=lambda b: (b["collateral"], b["debt"], b["kind"],
+                                               b["scenario"])):
+            w.writerow({k: _csv_val(v) for k, v in b.items()})
+    print(f"stress: {info['dust_positions']:,} dust positions "
+          f"(${info['dust_debt_usd']:,.0f}) left out; {info['non_monotone']} "
+          f"pair-scenarios fail at one shock but not at a larger one")
+    return rows, per_coll, how, scen_stats, info
+
+
+def star_fields(M, B: str, s_rows: list) -> dict:
+    """
+    Q* over the debts where some stress scenario puts at least min_sold_usd on
+    the market (material), and Q_star_all over the whole debt set. Q* is None
+    when no debt is material: nothing current to clear.
+    """
+    q_all, b_all = M.row_min(B)
+    material = sorted({r["debt"] for r in s_rows if r["collateral"] == B and r["material"]})
+    row = {A: v for A, v in M.debt_row(B).items() if v is not None and A in material}
+    b = min(row, key=row.get) if row else None
+    return {"Q_star": row.get(b), "binding_debt": b,
+            "Q_star_saturated": is_saturated(row.get(b)),
+            "material_debts": material,
+            "Q_star_all": q_all, "binding_debt_all": b_all,
+            "Q_star_all_saturated": is_saturated(q_all)}
+
+
+def emode_capacities(M, state: dict) -> dict:
+    """Every pair's capacity at each E-Mode bonus of its collateral, keyed as
+    LoadedMatrix.pair_capacity reads it."""
+    sym = reserve_symbols(state)
+    out = {}
+    for pair in state["emode_pairs"].values():
+        for rid, a in pair.items():
+            if not a["collateral"] or rid not in sym:
+                continue
+            B = sym[rid]
+            for (b, A) in M.cells:
+                if b == B:
+                    out.setdefault(f"{B}|{A}", {})[emode_key(a["lb"])] = \
+                        M.pair_capacity(B, A, a["lb"])
+    return out
+
+
+FROM_RUN_NEEDS = ("matrix.json", "positions.json.gz", "summary.json", "config.json")
+
+
+def rerun_stress(day: str, floors: dict) -> str:
+    """
+    Redo stress for a saved run, from its matrix.json and positions.json.gz,
+    without reading the chain. Rewrites stress.csv and stress_breaks.csv, and
+    the stress and Q* fields of summary.json and the params in config.json;
+    adequacy, signal 1, matrix.csv and coverage.json are left as they are.
+    floors overrides min_position_usd / min_sold_usd.
+    """
+    d = os.path.join(OUT_ROOT, day)
+    missing = [f for f in FROM_RUN_NEEDS if not os.path.exists(os.path.join(d, f))]
+    if missing:
+        raise FileNotFoundError(f"{d} lacks {', '.join(missing)}; this run predates "
+                                "saved positions, so stress needs a fresh run")
+    M = LoadedMatrix(os.path.join(d, "matrix.json"), assets={})
+    for k, v in floors.items():
+        setattr(M.params, k, v)
+    pos = navi_positions.load_positions(os.path.join(d, "positions.json.gz"))
+    coverage_of = lambda pair: {"status": M.coverage.get(pair, {"status": "complete"})["status"]}
+
+    tmp = tempfile.mkdtemp(prefix=".stress-", dir=d)
+    try:
+        s_rows, s_coll, _, scen_stats, s_info = write_stress(M.params, M, pos, coverage_of, tmp)
+        summary = json.load(open(os.path.join(d, "summary.json")))
+        for B, c in summary["collaterals"].items():
+            if B not in s_coll:
+                continue
+            c.update(star_fields(M, B, s_rows))
+            c.update({"breaking_shock": s_coll[B]["breaking_shock"],
+                      "stress_status": s_coll[B]["stress_status"], "stress": s_coll[B]})
+        summary["stress"], summary["stress_scenarios"] = s_info, scen_stats
+        summary["run"]["params"].update(floors)
+        summary["run"]["stress_rerun"] = {
+            "timestamp_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
+            **git_state(), "min_position_usd": M.params.min_position_usd,
+            "min_sold_usd": M.params.min_sold_usd}
+        with open(os.path.join(tmp, "summary.json"), "w") as fh:
+            json.dump(summary, fh, indent=1)
+        config = json.load(open(os.path.join(d, "config.json")))
+        config["params"].update({"min_position_usd": M.params.min_position_usd,
+                                 "min_sold_usd": M.params.min_sold_usd})
+        with open(os.path.join(tmp, "config.json"), "w") as fh:
+            json.dump(config, fh, indent=1)
+        for f in ("stress.csv", "stress_breaks.csv", "summary.json", "config.json"):
+            os.replace(os.path.join(tmp, f), os.path.join(d, f))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return d
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    ap.add_argument("--from-run", metavar="DATE",
+                    help="redo stress for data/navi/DATE from its saved positions and "
+                         "matrix, without reading the chain")
+    ap.add_argument("--min-position-usd", type=float,
+                    help=f"dust floor on a position's debt (default "
+                         f"{matrix.Params.min_position_usd:g})")
+    ap.add_argument("--min-sold-usd", type=float,
+                    help=f"materiality floor on a pair's Q (default "
+                         f"{matrix.Params.min_sold_usd:g})")
+    a = ap.parse_args(argv)
+    floors = {k: v for k, v in (("min_position_usd", a.min_position_usd),
+                                ("min_sold_usd", a.min_sold_usd)) if v is not None}
+    if a.from_run:
+        try:
+            print(f"wrote stress to {rerun_stress(a.from_run, floors)}")
+            return 0
+        except FileNotFoundError as e:
+            print(f"cannot rerun stress: {e}", file=sys.stderr)
+            return 1
+        except Exception:
+            traceback.print_exc()
+            return 1
+
     day = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d")
     target = os.path.join(OUT_ROOT, day)
     try:
         params, M, book, live, pos = compute()
+        for k, v in floors.items():
+            setattr(params, k, v)
         os.makedirs(OUT_ROOT, exist_ok=True)
         tmp = tempfile.mkdtemp(prefix=f".{day}-", dir=OUT_ROOT)
         os.chmod(tmp, 0o755)                # mkdtemp creates it owner-only

@@ -7,8 +7,12 @@ Write the result to data/navi/<today>/report.md.
 # Tools
 - `python run.py`: full pipeline. Writes to data/navi/<today>/:
   matrix.csv (capacity per pair, with its coverage), adequacy.csv (signal 1),
-  stress.csv (signal 2), coverage.json (pool reads, coverage share),
-  config.json (parameters, debt set), summary.json.
+  stress.csv (signal 2, every shock), stress_breaks.csv (signal 2, first
+  failing shock per pair and scenario), coverage.json (pool reads, coverage
+  share), config.json (parameters, debt set, floors), summary.json, and
+  matrix.json + positions.json.gz (what stress ran on).
+- `python run.py --from-run <date>`: redo stress for a saved run without
+  reading the chain.
 - The lrg package in Python (see README.md), e.g. clmm.inspect(pool_id),
   clmm.sanity(pool, oracle_price=...), topology.load(...).find(A, B).
 - Earlier runs in data/navi/<date>/.
@@ -22,9 +26,18 @@ pairs are also checked at the E-Mode LTV and bonus. Fails if the market,
 filled to its caps, could not be cleared by the routes. Only the debt set in
 config.json counts.
 Signal 2, current book: breaking shock, the smallest price drop (5% steps to
-50%) at which the liquidations of any (collateral, debt) pair exceed that
-pair's Q*. summary.json also reports LST depegs (vSUI, haSUI, stSUI down 2/5/10%
-against SUI), unpriced positions and bad debt per scenario.
+50%; the baseline is 0%) at which the liquidations of any (collateral, debt)
+pair exceed that pair's Q* and are material: Q >= min_sold_usd ($1,000).
+Positions under min_position_usd ($100) of debt are dust and left out
+(summary.json "stress" counts them). stress_status "holds" means no complete
+pair fails materially up to 50%. stress_breaks.csv has the first failing
+shock per pair and scenario; non_monotone rows fail at one shock but not at
+a larger one: report them, never smooth them over. summary.json also reports
+LST depegs (vSUI, haSUI, stSUI down 2/5/10% against SUI), unpriced positions
+and bad debt per scenario.
+Q* in summary.json ranges over the debts where some stress scenario reaches
+$1,000 (material_debts); Q_star_all is the row minimum over the whole debt
+set. Signal 1 and adequacy are per pair and use every pair's own capacity.
 
 # Coverage
 Every pair has a coverage status in matrix.csv: "complete", or "incomplete"

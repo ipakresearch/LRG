@@ -77,12 +77,16 @@ reads Navi's live parameters and oracle prices, every pool on the routes and eve
 |---|---|
 | `matrix.csv` | every pair: capacity, path, saturated (capacity at the $50M grid top, i.e. "at least"), coverage and the failed pools |
 | `adequacy.csv` | every pair: demand now and at caps (`Q_cap`, debt-bounded), the E-Mode check, status |
-| `stress.csv` | every (scenario, shock, collateral, debt) with liquidations |
-| `summary.json` | per collateral: Q*, binding debt, signal 1, adequacy status, breaking shock, LST depeg; per-scenario unpriced positions and bad debt; live parameters |
+| `stress.csv` | every (scenario, shock, collateral, debt) with liquidations, and whether its Q is material (≥ `min_sold_usd`) |
+| `stress_breaks.csv` | per (collateral, debt, scenario): the first shock at which the pair fails materially, with D, Q, Q*, positions and coverage there, or `holds`; `non_monotone` flags a pair that fails at one shock but not at a larger one |
+| `summary.json` | per collateral: Q* (over material debts) and `Q_star_all`, binding debt, signal 1, adequacy status, breaking shock or `holds`, LST depeg; dust positions; per-scenario unpriced positions and bad debt; live parameters |
+| `matrix.json`, `positions.json.gz` | the matrix (with E-Mode capacities) and the positions stress ran on, for `--from-run` |
 | `coverage.json` | pools read / failed / empty, coverage share, prices and their source, positions and the health-factor check |
 | `config.json` | parameters, treasury factors, debt set and excluded debts, the `Q_cap` formula |
 
 It exits 2 when the result is unusable (a network failure while reading pools, nothing read). `python -m unittest discover tests` runs the tests.
+
+`python run.py --from-run YYYY-MM-DD` redoes only stress for a saved run, from its `matrix.json` and `positions.json.gz`, without reading the chain. It rewrites `stress.csv`, `stress_breaks.csv`, the stress and Q* fields of `summary.json` and the params in `config.json`. `--min-position-usd` and `--min-sold-usd` override the floors in either mode.
 
 To rebuild the pool universe (GeckoTerminal, DeepBook, Aftermath and the LST mint rows, TVL checked on chain):
 
@@ -182,6 +186,8 @@ Adding a venue means writing a class that satisfies `lrg.pool.Pool` — five met
 | debt set | adversarial: the worst debt asset that can be borrowed or still carries debt | a cap cannot rely on which pair a liquidation resolves into |
 | coverage | a pair is `incomplete` when a failed read could have changed it; never reported red or amber | a missing pool is not evidence of a thin route |
 | stress | each position below HF 1 is liquidated: debt split by borrowing power, repayment capped at CF x collateral value per Navi, E-Mode bonus where it applies | follows Navi's `calculate_liquidation` |
+| materiality | positions under $100 of debt are dust, left out of stress and counted; a pair fails only if Q > Q* and Q ≥ $1,000; Q* ranges over debts where some scenario reaches $1,000 (`Q_star_all` does not) (`Params.min_position_usd`, `min_sold_usd`) | a sub-dollar liquidation against a zero cell is not a market failure |
+| breaking shock | the first shock at which a complete pair fails materially; the baseline is shock 0 of every scenario; `holds` if none up to 50%; pairs that recover at a larger shock are flagged, not hidden | Q can fall with the shock, as collateral value drops |
 
 ### What the numbers are not
 

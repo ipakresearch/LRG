@@ -38,7 +38,9 @@
    "MBTC",
    "enzoBTC"
   ],
-  "pick": "split"
+  "pick": "split",
+  "min_position_usd": 100.0,
+  "min_sold_usd": 1000.0
  },
  "venues": [
   "aftermath",
@@ -112,7 +114,7 @@
   "USDY": "borrowable",
   "WAL": "borrowable",
   "WBTC.lz": "borrowable",
-  "XAUm": "not borrowable, 0.28229 tokens of user debt outstanding",
+  "XAUm": "not borrowable, 0.282296 tokens of user debt outstanding",
   "haSUI": "borrowable",
   "stSUI": "borrowable",
   "suiETH": "borrowable",
@@ -120,7 +122,7 @@
   "suiUSDe": "borrowable",
   "vSUI": "borrowable",
   "wBTC": "borrowable",
-  "wUSDC": "not borrowable, 184,195 tokens of user debt outstanding",
+  "wUSDC": "not borrowable, 184,205 tokens of user debt outstanding",
   "xBTC": "borrowable"
  },
  "excluded_debts": {

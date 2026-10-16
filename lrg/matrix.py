@@ -56,6 +56,12 @@ class Params:
     # cells are still computed.
     excluded_debts: Sequence[str] = ()
     pick: str = "split"
+    # Stress materiality. A position with less total debt (USD, oracle prices
+    # before any shock) is dust and left out of stress; a pair fails only if
+    # what its liquidations put on the market, Q, is at least min_sold_usd.
+    # The same floor picks the debts that Q* ranges over.
+    min_position_usd: float = 100.0
+    min_sold_usd: float = 1000.0
 
     def tf(self, symbol: str) -> float:
         """The treasury factor for collateral `symbol`."""
@@ -363,7 +369,9 @@ class Matrix:
 
     # ---- persistence ------------------------------------------------------
 
-    def save(self, path: str):
+    def save(self, path: str, extra: Optional[dict] = None):
+        """Write the matrix as JSON. `extra` is merged in (run.py adds the
+        E-Mode capacities that stress needs, since the curves aren't saved)."""
         d = {
             "params": {k: v for k, v in asdict(self.params).items()
                        if k not in ("venues",)},
@@ -380,6 +388,7 @@ class Matrix:
             "no_pool": self.no_pool,
             "coverage": {f"{b}|{a}": {"status": v["status"], "failed": [list(k) for k in v["failed"]]}
                          for (b, a), v in self.coverage.items()},
+            **(extra or {}),
         }
         with open(path, "w") as fh:
             json.dump(d, fh, indent=1)
