@@ -710,6 +710,20 @@ Pending: breaking shock per collateral before and after.
 - **Wiring:** `PoolBook` loads the venue, `load_pool_rows` keeps `MINT` rows despite their 0 TVL, `navi.VENUES` includes `lst-mint`, and discovery appends the rows. The three rows were appended to `data/navi_pools.csv`.
 - **`tests/test_mint.py`:** fixed rate at any size, one-way, leg selection, and cost equal to the premium at every size. All 33 tests pass.
 
-## Before and after (vSUI/haSUI/stSUI debt cells)
+## Before and after (vSUI/haSUI/stSUI debt cells; one snapshot, CLMM pools from a shared cache)
 
-Pending.
+| debt | cells | zero without mint | zero with mint | increased |
+|---|---|---|---|---|
+| vSUI | 21 | 19 | 19 | 2 |
+| haSUI | 21 | 19 | 19 | 0 |
+| stSUI | 21 | 16 | 16 | 5 |
+
+- **Increased:**
+  - haSUI→vSUI $14,386 → $2,190,553, and haSUI→stSUI $13,530 → $2,249,386, both via haSUI→SUI→mint. The oracle undervalues the haSUI collateral (+8.5% on sale), which outweighs the 7.0% and 3.6% mint premiums.
+  - vSUI→stSUI $13,530 → $90,045.
+  - BUCK→stSUI, suiUSDe→stSUI and FDUSD→stSUI rise 8–12% ($4.0k → $4.5k, $2.8k → $3.0k, $1.2k → $1.3k).
+  - stSUI→vSUI $1,378 → $1,466.
+- **Unchanged:**
+  - haSUI debt stays 0 everywhere, as expected from its 8.5% premium.
+  - The 4.22%-budget collaterals (SOL, DEEP, WAL, enzoBTC and others) still have 0 against stSUI: their legs to SUI cost more than the 0.6 points left after the 3.6% premium.
+- **Conclusion:** the zero LST-debt cells are mostly real. They come from Navi's oracle pricing, not from missing routes.
